@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project>
+	<PropertyGroup>
+		<Title>BibTeX Library Dot Net</Title>
+		<Product>BibTeX Library Dot Net</Product>
+		<Copyright>Lance A. Endres</Copyright>
+		<Company>Digital Production</Company>
+		<Description>A library for reading, parsing, and writing BibTeX files.</Description>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<AssemblyAttribute Include="DigitalProduction.Reflection.AuthorsAttribute">
+			<_Parameter1>Lance A. Endres</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
+
+	<ItemGroup>
+		<AssemblyAttribute Include="DigitalProduction.Reflection.WebsiteAttribute">
+			<_Parameter1>https://github.com/lendres/BibTeX-Library-Dot-Net</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
+
+	<ItemGroup>
+		<AssemblyAttribute Include="DigitalProduction.Reflection.IssuesAddressAttribute">
+			<_Parameter1>https://github.com/lendres/BibTeX-Library-Dot-Net/issues</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
+
+	<ItemGroup>
+		<AssemblyAttribute Include="DigitalProduction.Reflection.DocumentationAddressAttribute">
+			<_Parameter1>https://github.com/lendres/BibTex-Manager-Maui/wiki</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
+</Project>

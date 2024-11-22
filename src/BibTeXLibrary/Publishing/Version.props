@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project>
+	<PropertyGroup>
+		<Major Condition=" '$(Major)' == '' ">0</Major>
+		<Minor Condition=" '$(Minor)' == '' ">1</Minor>
+		<BuildNumber Condition=" '$(BuildNumber)' == '' ">0</BuildNumber>
+		<InformationalVersion>This is a prerelease package.</InformationalVersion>
+
+		<VersionPrefix Condition=" '$(Major)' != '' and '$(Minor)' != '' and '$(BuildNumber)' != ''">$(Major).$(Minor).$(BuildNumber)</VersionPrefix>
+		<VersionPrefix Condition=" '$(Major)' != '' and '$(Minor)' != '' and '$(BuildNumber)' == ''">$(Major).$(Minor)</VersionPrefix>
+		<VersionSuffix Condition=" '$(LastGitHash)' != '' ">$(LastGitHash)</VersionSuffix>
+	</PropertyGroup>
+</Project>

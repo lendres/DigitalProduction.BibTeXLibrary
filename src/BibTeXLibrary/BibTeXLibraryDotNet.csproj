@@ -1,13 +1,30 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<Title>BibTeX Library Dot Net</Title>
+		<Authors>Lance A. Endres</Authors>
+		<PackageProjectUrl>https://github.com/lendres/BibTeX-Library-Dot-Net</PackageProjectUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<RepositoryUrl>https://github.com/lendres/BibTeX-Library-Dot-Net</RepositoryUrl>
+		<PackageTags>BibTeX,LaTeX,C#</PackageTags>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="DigitalProductionDotNetLibrary" Version="0.3.0" />
-  </ItemGroup>
+	<!-- Import version information from the folder containing the project if the file exists -->
+	<Import Project="$(MSBuildProjectDirectory)/Publishing/Assembly.props" Condition="Exists('$(MSBuildProjectDirectory)/Publishing/Assembly.props')" />
+	<Import Project="$(MSBuildProjectDirectory)/Publishing/Version.props" Condition="Exists('$(MSBuildProjectDirectory)/Publishing/Version.props')" />
+	<ItemGroup>
+	  <None Include="..\..\README.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="DigitalProductionDotNetLibrary" Version="0.3.0" />
+	</ItemGroup>
 
 </Project>

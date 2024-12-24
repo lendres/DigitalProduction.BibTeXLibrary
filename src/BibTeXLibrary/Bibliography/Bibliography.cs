@@ -132,7 +132,7 @@ public class Bibliography
 	/// <summary>
 	/// Clean up.
 	/// </summary>
-	public static void Close()
+	public void Close()
 	{
 	}
 
@@ -150,7 +150,7 @@ public class Bibliography
 	/// Checks if the key follows the rules to be a valid auto key.
 	/// </summary>
 	/// <param name="entry">BibEntry to check.</param>
-	public static bool HasValidAutoCiteKey(BibEntry entry)
+	public bool HasValidAutoCiteKey(BibEntry entry)
 	{
 		string keyBase = GenerateCiteKeyBase(entry);
 

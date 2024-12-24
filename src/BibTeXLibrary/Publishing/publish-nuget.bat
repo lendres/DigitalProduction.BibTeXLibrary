@@ -10,9 +10,10 @@ echo %cd%
 
 rem Publish.
 for /f %%a in ('call dir *.nupkg /b') do (
-	echo
+	echo.
 	echo Processing: %%a
 	dotnet nuget push %%a --api-key %api-key% --source https://api.nuget.org/v3/index.json --skip-duplicate
 )
 
+echo.
 pause

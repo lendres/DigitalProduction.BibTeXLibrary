@@ -7,3 +7,5 @@ using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("Style", "IDE0130:Namespace does not match folder structure", Justification = "<Pending>", Scope = "namespace", Target = "~N:BibTeXLibrary")]
 [assembly: SuppressMessage("Performance", "CA1859:Use concrete types when possible for improved performance", Justification = "<Pending>", Scope = "member", Target = "~M:BibTeXLibrary.Bibliography.GetSuffixGenerator~DigitalProduction.Strings.IAlphaNumericStringProvider")]
+[assembly: SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<Pending>", Scope = "member", Target = "~M:BibTeXLibrary.Bibliography.Close")]
+[assembly: SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<Pending>", Scope = "member", Target = "~M:BibTeXLibrary.Bibliography.HasValidAutoCiteKey(BibTeXLibrary.BibEntry)~System.Boolean")]

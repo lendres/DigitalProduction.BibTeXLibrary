@@ -1,4 +1,5 @@
 ﻿using DigitalProduction.Strings;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 
 namespace BibTeXLibrary;
@@ -10,9 +11,9 @@ public class BibliographyDOM
 {
 	#region Fields
 
-	private readonly List<string>				_header				= [];
-	private readonly BindingList<BibEntry>		_bibEntries			= [];
-	private readonly List<StringConstantPart>	_strings			= [];
+	private readonly List<string>						_header				= [];
+	private readonly ObservableCollection<BibEntry>		_bibEntries			= [];
+	private readonly List<StringConstantPart>			_strings			= [];
 
 	#endregion
 
@@ -37,7 +38,7 @@ public class BibliographyDOM
 	/// <summary>
 	/// Get the bibliography entries.
 	/// </summary>
-	public BindingList<BibEntry> BibliographyEntries { get => _bibEntries; }
+	public ObservableCollection<BibEntry> BibliographyEntries { get => _bibEntries; }
 
 	/// <summary>
 	/// The number of bibliography entries.
@@ -148,7 +149,7 @@ public class BibliographyDOM
 	/// <param name="comparer">Comparison function.</param>
 	/// <param name="itemMustExist">If the item must exist, an error is thrown if the item is not found.  Otherwise, the position where the item would be found is returned.</param>
 	/// <exception cref="ArgumentOutOfRangeException"></exception>
-	public static int BinarySearch<T>(BindingList<T> list, T item, IComparer<T> comparer, bool itemMustExist = true)
+	public static int BinarySearch<T>(ObservableCollection<T> list, T item, IComparer<T> comparer, bool itemMustExist = true)
 	{
 		int min = 0;
 		int max = list.Count - 1;

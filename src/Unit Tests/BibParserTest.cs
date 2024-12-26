@@ -1,4 +1,5 @@
 ﻿using BibTeXLibrary;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text;
 
@@ -96,7 +97,7 @@ public class BibParserTest
     public void TestParserWithBibFile()
     {
 		BibParser parser = new(new StreamReader("TestData/BibParserTest1_In.bib", Encoding.Default));
-		BindingList<BibEntry> entries = parser.Parse().BibliographyEntries;
+		ObservableCollection<BibEntry> entries = parser.Parse().BibliographyEntries;
 
 		Assert.AreEqual(4,														entries.Count);
 		Assert.AreEqual("nobody",												entries[0].Publisher);
@@ -108,7 +109,7 @@ public class BibParserTest
     [TestMethod]
     public void TestStaticParseWithBibFile()
     {
-		BindingList<BibEntry> entries = BibParser.Parse(new StreamReader("TestData/BibParserTest1_In.bib", Encoding.Default)).BibliographyEntries;
+		ObservableCollection<BibEntry> entries = BibParser.Parse(new StreamReader("TestData/BibParserTest1_In.bib", Encoding.Default)).BibliographyEntries;
 
 		Assert.AreEqual(4,														entries.Count);
 		Assert.AreEqual("nobody",												entries[0].Publisher);

@@ -1,4 +1,5 @@
 ﻿using DigitalProduction.Strings;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text;
 using System.Xml.Serialization;
@@ -33,7 +34,7 @@ public class Bibliography
 	/// BibTeX entries.
 	/// </summary>
 	[XmlIgnore()]
-	public BindingList<BibEntry> Entries { get => _bibliographyDOM.BibliographyEntries;}
+	public ObservableCollection<BibEntry> Entries { get => _bibliographyDOM.BibliographyEntries;}
 
 	/// <summary>
 	/// The bibliography document object model.

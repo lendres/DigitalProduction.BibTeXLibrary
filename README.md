@@ -5,7 +5,7 @@ A utility library for BibTeX files written in C#.
 **[BibTeXLibrary](https://github.com/BERef/BibTeXLibrary)**\
 Original library.
 
-**[BibTeX-Library](https://github.com/BERef/BibTeX-Library)**\
+**[BibTeX-Library](https://github.com/lendres/BibTeX-Library)**\
 A library that heavily modified the original to correct issues and add additions.  The objective of these modifications is to prepare the library for use in an application for maintaining a BibTeX file (see [BibTeX Manager](https://github.com/lendres/BibTeX-Manager))  As a result, it is no longer compatible with the original library.
 
 **[This Library](https://github.com/lendres/BibTeX-Library-Dot-Net)**\

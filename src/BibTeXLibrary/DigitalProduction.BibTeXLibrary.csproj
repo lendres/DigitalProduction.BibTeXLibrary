@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-		<Title>BibTeX Library Dot Net</Title>
+		<Title>DigitalProduction.BibTeXLibrary</Title>
 		<Authors>Lance A. Endres</Authors>
 		<PackageProjectUrl>https://github.com/lendres/BibTeX-Library-Dot-Net</PackageProjectUrl>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
@@ -22,9 +22,8 @@
 	    <PackagePath>\</PackagePath>
 	  </None>
 	</ItemGroup>
-
 	<ItemGroup>
-		<PackageReference Include="DigitalProductionDotNetLibrary" Version="0.3.0" />
+	  <PackageReference Include="DigitalProduction.Net" Version="0.5.2" />
 	</ItemGroup>
 
 </Project>

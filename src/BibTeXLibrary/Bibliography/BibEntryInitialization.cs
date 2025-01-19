@@ -1,7 +1,4 @@
-﻿using DigitalProduction.XML.Serialization;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using DigitalProduction.Xml.Serialization;
 using System.Xml.Serialization;
 
 namespace BibTeXLibrary;

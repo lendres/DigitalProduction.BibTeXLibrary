@@ -9,7 +9,7 @@ public class BibEntryTest
     public void TestIndexer()
     {
         const string title = "Mapreduce";
-        var entry = new BibEntry {["Title"] = title};
+        BibEntry entry = new() {["Title"] = title};
 
         Assert.AreEqual(title, entry["title"]);
         Assert.AreEqual(title, entry["Title"]);
@@ -20,7 +20,7 @@ public class BibEntryTest
     public void TestProperty()
     {
         const string title = "Mapreduce";
-        var entry = new BibEntry {["Title"] = title};
+        BibEntry entry = new() {["Title"] = title};
 
         Assert.AreEqual(title, entry.Title);
     }
@@ -28,7 +28,7 @@ public class BibEntryTest
     [TestMethod]
     public void TestSetType()
     {
-        var entry = new BibEntry {Type = "inbook"};
+        BibEntry entry = new() {Type = "inbook"};
         Assert.AreEqual("inbook", entry.Type);
 
         entry.Type = "inBoOK";

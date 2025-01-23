@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Project>
 	<PropertyGroup>
-		<Title>BibTeX Library Dot Net</Title>
-		<Product>BibTeX Library Dot Net</Product>
+		<Title>DigitalProduction.BibTeXLibrary</Title>
+		<Product>DigitalProduction.BibTeXLibrary</Product>
 		<Copyright>Lance A. Endres</Copyright>
 		<Company>Digital Production</Company>
 		<Description>A library for reading, parsing, and writing BibTeX files.</Description>

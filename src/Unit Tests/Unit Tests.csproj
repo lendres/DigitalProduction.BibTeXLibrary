@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BibTeXLibrary\BibTeXLibraryDotNet.csproj" />
+    <ProjectReference Include="..\BibTeXLibrary\DigitalProduction.BibTeXLibrary.csproj" />
   </ItemGroup>
 
   <ItemGroup>

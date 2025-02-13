@@ -26,97 +26,97 @@ public sealed class BibParser : IDisposable
 	/// </summary>
 	private static readonly StateMap StateMap = new()
 	{
-            {ParserState.Begin,       new Action {
-                { TokenType.Comment,			new Next(ParserState.InHeader,		BibBuilderState.SetHeader) }, 
-                { TokenType.Start,				new Next(ParserState.InStart,		BibBuilderState.Skip) }
-            } },
+			{ParserState.Begin,       new Action {
+				{ TokenType.Comment,            new Next(ParserState.InHeader,      BibBuilderState.SetHeader) },
+				{ TokenType.Start,              new Next(ParserState.InStart,       BibBuilderState.Skip) }
+			} },
 
 		{ParserState.InHeader,    new Action {
-			{ TokenType.Comment,			new Next(ParserState.InHeader,		BibBuilderState.SetHeader) },
-			{ TokenType.Start,				new Next(ParserState.InStart,		BibBuilderState.Skip) }
+			{ TokenType.Comment,            new Next(ParserState.InHeader,      BibBuilderState.SetHeader) },
+			{ TokenType.Start,              new Next(ParserState.InStart,       BibBuilderState.Skip) }
 		} },
 
 		{ParserState.InStart,     new Action {
-                { TokenType.Name,				new Next(ParserState.InEntry,		BibBuilderState.SetType) },
-			{ TokenType.StringType,			new Next(ParserState.InStringEntry,	BibBuilderState.SetType) }
+				{ TokenType.Name,               new Next(ParserState.InEntry,       BibBuilderState.SetType) },
+			{ TokenType.StringType,         new Next(ParserState.InStringEntry, BibBuilderState.SetType) }
 		} },
 
-            {ParserState.InEntry,     new Action {
-                { TokenType.LeftBrace,			new Next(ParserState.InKey,			BibBuilderState.Skip) }
-            } },
+			{ParserState.InEntry,     new Action {
+				{ TokenType.LeftBrace,          new Next(ParserState.InKey,         BibBuilderState.Skip) }
+			} },
 
 		{ParserState.InStringEntry,     new Action {
-			{ TokenType.LeftBrace,			new Next(ParserState.InTagName,         BibBuilderState.Skip) },
-			{ TokenType.LeftParenthesis,	new Next(ParserState.InTagName,         BibBuilderState.Skip) }
+			{ TokenType.LeftBrace,          new Next(ParserState.InTagName,         BibBuilderState.Skip) },
+			{ TokenType.LeftParenthesis,    new Next(ParserState.InTagName,         BibBuilderState.Skip) }
 		} },
 
 		{ParserState.InKey,       new Action {
-                { TokenType.RightBrace,			new Next(ParserState.OutEntry,		BibBuilderState.Build) },
-                { TokenType.Name,				new Next(ParserState.OutKey,		BibBuilderState.SetKey) },
-                { TokenType.String,				new Next(ParserState.OutKey,		BibBuilderState.SetKey) },
-                { TokenType.Comma,				new Next(ParserState.InTagName,		BibBuilderState.Skip) }
+				{ TokenType.RightBrace,         new Next(ParserState.OutEntry,      BibBuilderState.Build) },
+				{ TokenType.Name,               new Next(ParserState.OutKey,        BibBuilderState.SetKey) },
+				{ TokenType.String,             new Next(ParserState.OutKey,        BibBuilderState.SetKey) },
+				{ TokenType.Comma,              new Next(ParserState.InTagName,     BibBuilderState.Skip) }
 		} },
 
-            {ParserState.OutKey,      new Action {
-                { TokenType.Comma,				new Next(ParserState.InTagName,		BibBuilderState.Skip) }
-            } },
+			{ParserState.OutKey,      new Action {
+				{ TokenType.Comma,              new Next(ParserState.InTagName,     BibBuilderState.Skip) }
+			} },
 
-            {ParserState.InTagName,   new Action {
-                { TokenType.Name,				new Next(ParserState.InTagEqual,	BibBuilderState.SetTagName) },
-                { TokenType.RightBrace,			new Next(ParserState.OutEntry,		BibBuilderState.Build) }
-            } },
+			{ParserState.InTagName,   new Action {
+				{ TokenType.Name,               new Next(ParserState.InTagEqual,    BibBuilderState.SetTagName) },
+				{ TokenType.RightBrace,         new Next(ParserState.OutEntry,      BibBuilderState.Build) }
+			} },
 
-            {ParserState.InTagEqual,  new Action {
-                { TokenType.Equal,				new Next(ParserState.InTagValue,	BibBuilderState.Skip) }
-             } },
+			{ParserState.InTagEqual,  new Action {
+				{ TokenType.Equal,              new Next(ParserState.InTagValue,    BibBuilderState.Skip) }
+			 } },
 
-            {ParserState.InTagValue,  new Action {
-                { TokenType.String,				new Next(ParserState.OutTagValue,	BibBuilderState.SetTagValue) },
-                { TokenType.Name,				new Next(ParserState.OutTagValue,	BibBuilderState.SetTagValue) }
-            } },
+			{ParserState.InTagValue,  new Action {
+				{ TokenType.String,             new Next(ParserState.OutTagValue,   BibBuilderState.SetTagValue) },
+				{ TokenType.Name,               new Next(ParserState.OutTagValue,   BibBuilderState.SetTagValue) }
+			} },
 
-            {ParserState.OutTagValue, new Action {
-                { TokenType.Concatenation,		new Next(ParserState.InTagValue,	BibBuilderState.Skip) },
-                { TokenType.Comma,				new Next(ParserState.InTagName,		BibBuilderState.SetTag) },
-                { TokenType.RightBrace,			new Next(ParserState.OutEntry,		BibBuilderState.Build) },
-                { TokenType.RightParenthesis,	new Next(ParserState.OutEntry,		BibBuilderState.Build) },
-                { TokenType.Comment,			new Next(ParserState.OutTagValue,	BibBuilderState.Skip) },
-             } },
+			{ParserState.OutTagValue, new Action {
+				{ TokenType.Concatenation,      new Next(ParserState.InTagValue,    BibBuilderState.Skip) },
+				{ TokenType.Comma,              new Next(ParserState.InTagName,     BibBuilderState.SetTag) },
+				{ TokenType.RightBrace,         new Next(ParserState.OutEntry,      BibBuilderState.Build) },
+				{ TokenType.RightParenthesis,   new Next(ParserState.OutEntry,      BibBuilderState.Build) },
+				{ TokenType.Comment,            new Next(ParserState.OutTagValue,   BibBuilderState.Skip) },
+			 } },
 
 		{ParserState.OutEntry,    new Action {
-                { TokenType.Start,				new Next(ParserState.InStart,		BibBuilderState.Skip) },
-                { TokenType.Comment,			new Next(ParserState.InComment,		BibBuilderState.Skip) }
-            } },
+				{ TokenType.Start,              new Next(ParserState.InStart,       BibBuilderState.Skip) },
+				{ TokenType.Comment,            new Next(ParserState.InComment,     BibBuilderState.Skip) }
+			} },
 
-            {ParserState.InComment,    new Action {
-                { TokenType.Start,				new Next(ParserState.InStart,		BibBuilderState.Skip) },
-                { TokenType.Comment,			new Next(ParserState.InComment,		BibBuilderState.Skip) } 
-            } },
+			{ParserState.InComment,    new Action {
+				{ TokenType.Start,              new Next(ParserState.InStart,       BibBuilderState.Skip) },
+				{ TokenType.Comment,            new Next(ParserState.InComment,     BibBuilderState.Skip) }
+			} },
 	};
 
-        #endregion
+	#endregion
 
 	#region Private Fields
 
-        /// <summary>
-        /// Input text stream.
-        /// </summary>
-        private readonly TextReader		_inputText;
+	/// <summary>
+	/// Input text stream.
+	/// </summary>
+	private readonly TextReader     _inputText;
 
-        /// <summary>
-        /// Line No. counter.
-        /// </summary>
-        private int						_lineCount					= 1;
+	/// <summary>
+	/// Line No. counter.
+	/// </summary>
+	private int                     _lineCount                  = 1;
 
-        /// <summary>
-        /// Column counter.
-        /// </summary>
-        private int						_columnCount;
+	/// <summary>
+	/// Column counter.
+	/// </summary>
+	private int                     _columnCount;
 
-        /// <summary>
-        /// Initializer for BibEntrys.  Used  to allow a defined order of tags.
-        /// </summary>
-        private BibEntryInitialization	_bibEntryInitialization		= new();
+	/// <summary>
+	/// Initializer for BibEntrys.  Used  to allow a defined order of tags.
+	/// </summary>
+	private BibEntryInitialization  _bibEntryInitialization     = new();
 
 	#endregion
 
@@ -136,7 +136,7 @@ public sealed class BibParser : IDisposable
 	/// </summary>
 	/// <param name="path">Full path and file name to the file to reader.</param>
 	public BibParser(string path) :
-            this(new StreamReader(path, Encoding.UTF8))
+		this(new StreamReader(path, Encoding.UTF8))
 	{
 	}
 
@@ -155,9 +155,9 @@ public sealed class BibParser : IDisposable
 	/// </summary>
 	/// <param name="textReader">TextReader.</param>
 	public BibParser(TextReader textReader)
-        {
-            _inputText = textReader;
-        }
+	{
+		_inputText = textReader;
+	}
 
 	/// <summary>
 	/// Constructor.
@@ -175,14 +175,13 @@ public sealed class BibParser : IDisposable
 	/// <param name="textReader">TextReader.</param>
 	/// <param name="bibEntryInitialization">BibEntryInitialization.</param>
 	public BibParser(TextReader textReader, BibEntryInitialization? bibEntryInitialization)
-
 	{
 		if (bibEntryInitialization == null)
 		{
 			throw new ArgumentNullException(nameof(bibEntryInitialization), "The BibEntryInitializaiton is null.");
 		}
-		_inputText				= textReader;
-		_bibEntryInitialization	= bibEntryInitialization;
+		_inputText              = textReader;
+		_bibEntryInitialization = bibEntryInitialization;
 	}
 
 	#endregion
@@ -245,7 +244,7 @@ public sealed class BibParser : IDisposable
 	/// Get all results from the Parser.
 	/// </summary>
 	public BibliographyDOM Parse()
-	{ 
+	{
 		BibliographyDOM bibliographyDOM = new();
 		Parse(bibliographyDOM);
 		return bibliographyDOM;
@@ -258,13 +257,13 @@ public sealed class BibParser : IDisposable
 	{
 		try
 		{
-			ParserState				curState			= ParserState.Begin;
-			ParserState				nextState			= ParserState.Begin;
+			ParserState             curState            = ParserState.Begin;
+			ParserState             nextState           = ParserState.Begin;
 
-			BibliographyPart?		bibPart				= null;
-			string					tagName				= "";
-			bool					tagValueIsString	= false;
-			StringBuilder			tagValueBuilder		= new();
+			BibliographyPart?       bibPart             = null;
+			string                  tagName             = "";
+			bool                    tagValueIsString    = false;
+			StringBuilder           tagValueBuilder     = new();
 
 			// Fetch token from Tokenizer and build BibEntry.
 			foreach (Token token in Tokenize())
@@ -312,10 +311,10 @@ public sealed class BibParser : IDisposable
 						break;
 
 					case BibBuilderState.SetTagName:
-                        tagName = token.Value;
-                        break;
+						tagName = token.Value;
+						break;
 
-                    case BibBuilderState.SetTagValue:
+					case BibBuilderState.SetTagValue:
 						if (token.Type != TokenType.Concatenation)
 						{
 							tagValueIsString = token.Type == TokenType.String;
@@ -345,15 +344,15 @@ public sealed class BibParser : IDisposable
 			//    ParserState.Begin    : There are no entries and no header information.
 			//    ParserState.InHeader : We read header information, but did not find any entries in the file.
 			if (curState != ParserState.OutEntry & curState != ParserState.Begin & curState != ParserState.InHeader)
-            {
-			IEnumerable<BibTeXLibrary.TokenType> expected = from pair in StateMap[curState] select pair.Key;
-                throw new UnexpectedTokenException(_lineCount, _columnCount, TokenType.EOF, expected.ToArray());
-            }
-        }
-        finally
-        {
-            Dispose();
-        }
+			{
+				IEnumerable<BibTeXLibrary.TokenType> expected = from pair in StateMap[curState] select pair.Key;
+				throw new UnexpectedTokenException(_lineCount, _columnCount, TokenType.EOF, expected.ToArray());
+			}
+		}
+		finally
+		{
+			Dispose();
+		}
 
 		return bibliographyDOM;
 	}
@@ -378,48 +377,54 @@ public sealed class BibParser : IDisposable
 	/// </summary>
 	/// <returns></returns>
 	private IEnumerable<Token> Tokenize()
-        {
-            int     code;
-            char    c;
-            int     braceCount			= 0;
-		int		parenthesisCount	= 0;
+	{
+		int     code;
+		char    c;
+		int     braceCount          = 0;
+		int     parenthesisCount    = 0;
 
-            while ((code = Peek()) != -1)
-            {
-                c = (char)code;
+		while ((code = Peek()) != -1)
+		{
+			c = (char)code;
 
-                if (c == '@')
-                {                    
+			if (c == '@')
+			{
 				Read();
 				yield return new Token(TokenType.Start);
-                }
-                else if (IsStringCharacter(c))
-                {
-                    StringBuilder value = new();
+			}
+			else if (IsStringCharacter(c))
+			{
+				StringBuilder value = new();
 
-                    while (true)
-                    {
-                        c = (char)Read();
-                        value.Append(c);
+				while (true)
+				{
+					c = (char)Read();
+					value.Append(c);
 
-                        if ((code = Peek()) == -1) break;
-                        c = (char)code;
+					if ((code = Peek()) == -1)
+					{
+						break;
+					}
+					c = (char)code;
 
-					if (!IsStringCharacter(c)) break;
-                    }
+					if (!IsStringCharacter(c))
+					{
+						break;
+					}
+				}
 
 				string valueString = value.ToString();
 				TokenType tokenType = valueString.ToLower().Trim() == "string" ? TokenType.StringType : TokenType.Name;
 
-                    yield return new Token(tokenType, valueString);
-                }
-                else if (c == '"')
-                {
-				StringBuilder value		= new();
-				int internalBraceCount	= 0;
+				yield return new Token(tokenType, valueString);
+			}
+			else if (c == '"')
+			{
+				StringBuilder value     = new();
+				int internalBraceCount  = 0;
 
 				Read();
-				
+
 				while ((code = Peek()) != -1)
 				{
 					if (c == '{')
@@ -449,26 +454,26 @@ public sealed class BibParser : IDisposable
 				yield return new Token(TokenType.String, value.ToString());
 			}
 			else if (c == '{')
-                {
+			{
 				// Braces have to be handled differently depending on if the are the opening bracket for a group or
 				// internal backets used to internally group for keeping capital letters, et cetera.
 				// To parse BibTex strings, we have to allow for a parentheses used as the grouping characters, so we need
 				// to also prevent returning the left bracket in those cases.
-                    if (braceCount == 0 && parenthesisCount == 0)
-                    {
+				if (braceCount == 0 && parenthesisCount == 0)
+				{
 					braceCount++;
 					Read();
 					yield return new Token(TokenType.LeftBrace);
-                    }
-                    else
-                    {
-                        StringBuilder value = new();
+				}
+				else
+				{
+					StringBuilder value = new();
 					// Read the brace (was only peeked).
-                        Read();
+					Read();
 					int internalBraceCount = 1;
 					while (internalBraceCount > 0 && Peek() != -1)
-                        {
-                            c = (char)Read();
+					{
+						c = (char)Read();
 						if (c == '{')
 						{
 							internalBraceCount++;
@@ -483,15 +488,15 @@ public sealed class BibParser : IDisposable
 							value.Append(c);
 						}
 					}
-                        yield return new Token(TokenType.String, value.ToString());
-                    }
-                }
-                else if (c == '}')
-                {
+					yield return new Token(TokenType.String, value.ToString());
+				}
+			}
+			else if (c == '}')
+			{
 				Read();
 				braceCount--;
-                    yield return new Token(TokenType.RightBrace);
-                }
+				yield return new Token(TokenType.RightBrace);
+			}
 			else if (c == '(')
 			{
 				Read();
@@ -505,43 +510,43 @@ public sealed class BibParser : IDisposable
 				yield return new Token(TokenType.RightParenthesis);
 			}
 			else if (c == ',')
-                {
+			{
 				Read();
 				yield return new Token(TokenType.Comma);
-                }
-                else if (c == '#')
-                {
+			}
+			else if (c == '#')
+			{
 				Read();
 				yield return new Token(TokenType.Concatenation);
-                }
-                else if (c == '=')
-                {
+			}
+			else if (c == '=')
+			{
 				Read();
 				yield return new Token(TokenType.Equal);
-                }
-                else if (c == '\n')
-                {
-				Read();
-                    _columnCount = 0;
-                    _lineCount++;
-                }
-                else if (_beginCommentCharacters.Any(item => item == c))
-                {
-                    _columnCount = 0;
-                    _lineCount++;
-                    yield return new Token(TokenType.Comment, _inputText.ReadLine()!);
 			}
-                else if (!char.IsWhiteSpace(c))
-                {
-                    throw new UnrecognizableCharacterException(_lineCount, _columnCount, c);
-                }
+			else if (c == '\n')
+			{
+				Read();
+				_columnCount = 0;
+				_lineCount++;
+			}
+			else if (_beginCommentCharacters.Any(item => item == c))
+			{
+				_columnCount = 0;
+				_lineCount++;
+				yield return new Token(TokenType.Comment, _inputText.ReadLine()!);
+			}
+			else if (!char.IsWhiteSpace(c))
+			{
+				throw new UnrecognizableCharacterException(_lineCount, _columnCount, c);
+			}
 			else
 			{
 				// Read white space.
 				Read();
 			}
-            }
-        }
+		}
+	}
 
 	private static bool IsStringCharacter(char c)
 	{
@@ -562,22 +567,22 @@ public sealed class BibParser : IDisposable
 		}
 	}
 
-        /// <summary>
-        /// Peek next char but not move forward.
-        /// </summary>
-        /// <returns></returns>
-        private int Peek()
-        {
-            return _inputText.Peek();
-        }
+	/// <summary>
+	/// Peek next char but not move forward.
+	/// </summary>
+	/// <returns></returns>
+	private int Peek()
+	{
+		return _inputText.Peek();
+	}
 
-        /// <summary>
-        /// Read next char and move forward.
-        /// </summary>
-        /// <returns></returns>
-        private int Read()
-        {
-            _columnCount++;
+	/// <summary>
+	/// Read next char and move forward.
+	/// </summary>
+	/// <returns></returns>
+	private int Read()
+	{
+		_columnCount++;
 		if (_inputText.Peek() != -1)
 		{
 			return _inputText.Read();
@@ -586,9 +591,9 @@ public sealed class BibParser : IDisposable
 		{
 			return -1;
 		}
-        }
+	}
 
-        #endregion
+	#endregion
 
 	#region Impement Interface "IDisposable"
 

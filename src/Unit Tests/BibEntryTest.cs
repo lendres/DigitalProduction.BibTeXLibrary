@@ -1,41 +1,40 @@
 ﻿using BibTeXLibrary;
 
-namespace UnitTest;
+namespace DigitalProduction.UnitTests;
 
-[TestClass]
 public class BibEntryTest
 {
-    [TestMethod]
+    [Fact]
     public void TestIndexer()
     {
         const string title = "Mapreduce";
         BibEntry entry = new() {["Title"] = title};
 
-        Assert.AreEqual(title, entry["title"]);
-        Assert.AreEqual(title, entry["Title"]);
-        Assert.AreEqual(title, entry["TitlE"]);
+        Assert.Equal(title, entry["title"]);
+        Assert.Equal(title, entry["Title"]);
+        Assert.Equal(title, entry["TitlE"]);
     }
 
-    [TestMethod]
+    [Fact]
     public void TestProperty()
     {
         const string title = "Mapreduce";
         BibEntry entry = new() {["Title"] = title};
 
-        Assert.AreEqual(title, entry.Title);
+        Assert.Equal(title, entry.Title);
     }
 
-    [TestMethod]
+    [Fact]
     public void TestSetType()
     {
         BibEntry entry = new() {Type = "inbook"};
-        Assert.AreEqual("inbook", entry.Type);
+        Assert.Equal("inbook", entry.Type);
 
         entry.Type = "inBoOK";
-        Assert.AreEqual("inBoOK", entry.Type);
+        Assert.Equal("inBoOK", entry.Type);
     }
 
-    [TestMethod]
+    [Fact]
     public void TestToString()
     {
         //TODO:

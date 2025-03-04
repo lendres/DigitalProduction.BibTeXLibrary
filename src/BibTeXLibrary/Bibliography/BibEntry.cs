@@ -35,7 +35,7 @@ public class BibEntry : BibliographyPart
 	/// </summary>
 	/// <param name="bibEntryInitialization">BibEntryInitialization.</param>
 	/// <param name="type">The "type" of the bibliography entry.  The type must have an initialization template.</param>
-	public static BibEntry NewBibEntryTemplate(BibEntryInitialization bibEntryInitialization, string type)
+	public static BibEntry NewBibEntryFromTemplate(BibEntryInitialization bibEntryInitialization, string type)
 	{
 		BibEntry bibEntry = new() { Type = type };
 		bibEntry.Initialize(bibEntryInitialization.GetDefaultTags(type));

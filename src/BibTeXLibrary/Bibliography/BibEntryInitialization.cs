@@ -41,9 +41,9 @@ public class BibEntryInitialization
 	[XmlElement("templates")]
 	public SerializableDictionary<string, List<string>> Templates { get => _templates; set => _templates = value; }
 
-	public List<string> TypeNames { get => (from string item in _typeToTemplateMap.Keys select item).ToList(); }
+	public List<string> TypeNames { get => [.. from string item in _typeToTemplateMap.Keys select item]; }
 
-	public List<string> TemplateNames { get => (from string item in _templates.Keys select item).ToList(); }
+	public List<string> TemplateNames { get => [.. from string item in _templates.Keys select item]; }
 
 	#endregion
 

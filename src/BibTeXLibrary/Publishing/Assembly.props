@@ -16,19 +16,19 @@
 
 	<ItemGroup>
 		<AssemblyAttribute Include="DigitalProduction.Reflection.WebsiteAttribute">
-			<_Parameter1>https://github.com/lendres/BibTeX-Library-Dot-Net</_Parameter1>
+			<_Parameter1>https://github.com/lendres/DigitalProduction.BibTeXLibrary</_Parameter1>
 		</AssemblyAttribute>
 	</ItemGroup>
 
 	<ItemGroup>
 		<AssemblyAttribute Include="DigitalProduction.Reflection.IssuesAddressAttribute">
-			<_Parameter1>https://github.com/lendres/BibTeX-Library-Dot-Net/issues</_Parameter1>
+			<_Parameter1>https://github.com/lendres/DigitalProduction.BibTeXLibrary/issues</_Parameter1>
 		</AssemblyAttribute>
 	</ItemGroup>
 
 	<ItemGroup>
 		<AssemblyAttribute Include="DigitalProduction.Reflection.DocumentationAddressAttribute">
-			<_Parameter1>https://github.com/lendres/BibTex-Manager-Maui/wiki</_Parameter1>
+			<_Parameter1>https://github.com/lendres/DigitalProduction.BibTeXLibrary/wiki</_Parameter1>
 		</AssemblyAttribute>
 	</ItemGroup>
 </Project>

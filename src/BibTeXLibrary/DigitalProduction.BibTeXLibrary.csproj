@@ -7,9 +7,9 @@
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Title>DigitalProduction.BibTeXLibrary</Title>
 		<Authors>Lance A. Endres</Authors>
-		<PackageProjectUrl>https://github.com/lendres/BibTeX-Library-Dot-Net</PackageProjectUrl>
+		<PackageProjectUrl>https://github.com/lendres/DigitalProduction.BibTeXLibrary</PackageProjectUrl>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<RepositoryUrl>https://github.com/lendres/BibTeX-Library-Dot-Net</RepositoryUrl>
+		<RepositoryUrl>https://github.com/lendres/DigitalProduction.BibTeXLibrary</RepositoryUrl>
 		<PackageTags>BibTeX,LaTeX,C#</PackageTags>
 	</PropertyGroup>
 

@@ -226,7 +226,7 @@ public class Bibliography
 		throw new IndexOutOfRangeException("Ran out of suffix characters.");
 	}
 
-	private bool IsKeyInUse(string key)
+	public bool IsKeyInUse(string key)
 	{
 		// BibTeX seems to be case sensitive keys.  I.e.
 		// @book{ref:shakespeare,

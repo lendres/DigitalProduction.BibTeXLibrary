@@ -1,4 +1,4 @@
-﻿using DigitalProduction.Interface;
+﻿using DigitalProduction.ComponentModel;
 using System.ComponentModel;
 using System.Xml.Serialization;
 
@@ -7,14 +7,14 @@ namespace BibTeXLibrary;
 /// <summary>
 /// Settings to use when writing a bib file.
 /// </summary>
-public class WriteSettings : IModified
+public class WriteSettings : INotifyModifiedChanged
 {
 	#region Events
 
 	/// <summary>
 	/// Occurs when the instance is modfied.
 	/// </summary>
-	public event ModifiedEventHandler? OnModifiedChanged;
+	public event ModifiedChangedEventHandler? ModifiedChanged;
 
 	#endregion
 
@@ -323,7 +323,7 @@ public class WriteSettings : IModified
 	/// </summary>
 	private void RaiseOnModifiedChangedEvent()
 	{
-		OnModifiedChanged?.Invoke(Modified);
+		ModifiedChanged?.Invoke(this, Modified);
 	}
 
 	#endregion

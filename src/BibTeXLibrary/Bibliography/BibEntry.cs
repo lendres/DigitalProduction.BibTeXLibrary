@@ -283,7 +283,7 @@ public class BibEntry : BibliographyPart
         {
 		// Build the entry opening and key.
 		StringBuilder bibliographyPart = new("@");
-        bibliographyPart.Append(this.Type);
+        bibliographyPart.Append(Type);
         bibliographyPart.Append('{');
         bibliographyPart.Append(Key);
         bibliographyPart.Append(',');
@@ -348,7 +348,7 @@ public class BibEntry : BibliographyPart
 	/// <exception cref="ArgumentException">Thrown if the new tag Key already exists.</exception>
 	public void RenameTagKey(string tagKey, string newTagKey)
 	{
-		List<string> tagNames = this.TagNames;
+		List<string> tagNames = TagNames;
 
 		// It should have already been checked that the key is contained before getting here.
 		System.Diagnostics.Debug.Assert(tagNames.Contains(tagKey));
@@ -387,7 +387,7 @@ public class BibEntry : BibliographyPart
 	{
 		// Get the authors.  The first step is to remove any internal braces ({}).  Then split on the "and" string.
 		// If there are no authors, return a blank string.
-		string authorTag = this.Author.TrimStart('{').TrimEnd('}');
+		string authorTag = Author.TrimStart('{').TrimEnd('}');
 		string[] authors = authorTag.Split(["and"], StringSplitOptions.RemoveEmptyEntries);
 		if (authors.Length == 0)
 		{

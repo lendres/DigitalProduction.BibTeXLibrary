@@ -68,7 +68,7 @@ public class StringConstantPart : BibliographyPart
 	{
 		// Build the entry opening and key.
 		StringBuilder bibliographyPart = new("@");
-		bibliographyPart.Append(this.Type);
+		bibliographyPart.Append(Type);
 		bibliographyPart.Append('(');
 
 		// Get the first (and only) entry.

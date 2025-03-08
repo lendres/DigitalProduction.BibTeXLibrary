@@ -37,7 +37,7 @@ public sealed class UnexpectedTokenException : ParseErrorException
 		// Remove last comma and space.
 		errorMsg.Remove(errorMsg.Length - 2, 2);
 
-		this.Message = errorMsg.ToString();
+		Message = errorMsg.ToString();
     }
 
     #endregion

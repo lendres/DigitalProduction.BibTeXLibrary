@@ -20,13 +20,15 @@ public class WriteSettings : INotifyModifiedChanged
 
 	#region Fields
 
+	private	bool				_modified			= false;
+
 	private WhiteSpace			_whiteSpace			= WhiteSpace.Tab;
 	private int					_tabSize			= 4;
 	private bool				_alignTagValues		= true;
 	private int					_alignAtColumn		= 24;
 	private int					_alignAtTabStop		= 5;
 	private bool				_removeLastComma	= true;
-	private string				_newLine			= "\n";
+	private string				_newLine			= Environment.NewLine;
 	private char				_tab				= '\t';
 
 	#endregion
@@ -44,20 +46,22 @@ public class WriteSettings : INotifyModifiedChanged
 
 	#region Properties
 
+
 	/// <summary>
-	/// Specifies if the project has been modified since last being saved/loaded.
+	/// Specifies if changes have been made since the last save.
 	/// </summary>
 	[XmlIgnore()]
 	public bool Modified
 	{
-		get
-		{
-			return false;
-		}
+		get => _modified;
 
-		set
+		private set
 		{
-			RaiseOnModifiedChangedEvent();
+			if (_modified != value)
+			{
+				_modified = value;
+				ModifiedChanged?.Invoke(this, value);
+			}
 		}
 	}
 
@@ -77,7 +81,7 @@ public class WriteSettings : INotifyModifiedChanged
 			if (_whiteSpace != value)
 			{
 				_whiteSpace = value;
-				this.Modified = true;
+				Modified = true;
 			}
 		}
 	}
@@ -97,7 +101,7 @@ public class WriteSettings : INotifyModifiedChanged
 			if (_tabSize != value)
 			{
 				_tabSize = value;
-				this.Modified = true;
+				Modified = true;
 			}
 		}
 	}
@@ -118,7 +122,7 @@ public class WriteSettings : INotifyModifiedChanged
 			if (_alignTagValues != value)
 			{
 				_alignTagValues = value;
-				this.Modified = true;
+				Modified = true;
 			}
 		}
 	}
@@ -138,7 +142,7 @@ public class WriteSettings : INotifyModifiedChanged
 			if (_alignAtColumn != value)
 			{
 				_alignAtColumn = value;
-				this.Modified = true;
+				Modified = true;
 			}
 		}
 	}
@@ -159,7 +163,7 @@ public class WriteSettings : INotifyModifiedChanged
 			if (_alignAtTabStop != value)
 			{
 				_alignAtTabStop = value;
-				this.Modified = true;
+				Modified = true;
 			}
 		}
 	}
@@ -180,7 +184,7 @@ public class WriteSettings : INotifyModifiedChanged
 			if (_removeLastComma != value)
 			{
 				_removeLastComma = value;
-				this.Modified = true;
+				Modified = true;
 			}
 		}
 	}
@@ -201,7 +205,7 @@ public class WriteSettings : INotifyModifiedChanged
 			if (_newLine != value)
 			{
 				_newLine = value;
-				this.Modified = true;
+				Modified = true;
 			}
 		}
 	}
@@ -222,7 +226,7 @@ public class WriteSettings : INotifyModifiedChanged
 			if (_tab != value)
 			{
 				_tab = value;
-				this.Modified = true;
+				Modified = true;
 			}
 		}
 	}
@@ -234,7 +238,7 @@ public class WriteSettings : INotifyModifiedChanged
 	{
 		get
 		{
-			return new string(' ', this.TabSize);
+			return new string(' ', TabSize);
 		}
 	}
 	
@@ -246,10 +250,10 @@ public class WriteSettings : INotifyModifiedChanged
 	{
 		get
 		{
-			return this.WhiteSpace switch
+			return WhiteSpace switch
 			{
-				WhiteSpace.Tab => new string(this.Tab, 1),
-				WhiteSpace.Space => this.TabAsSpaces,
+				WhiteSpace.Tab => new string(Tab, 1),
+				WhiteSpace.Space => TabAsSpaces,
 				_ => throw new InvalidEnumArgumentException("Invalid \"WhiteSpace\" value."),
 			};
 		}
@@ -278,26 +282,26 @@ public class WriteSettings : INotifyModifiedChanged
 	/// <param name="tagKey">The tag key as a string.</param>
 	public string GetInterTagSpacing(string tagKey)
 	{
-		if (this.AlignTagValues)
+		if (AlignTagValues)
 		{
 			// To align the values is much more complicated.  First decide if spaces or tabs are going to be inserted.
-			switch (this.WhiteSpace)
+			switch (WhiteSpace)
 			{
 				case WhiteSpace.Tab:
 				{
 					// Subtract the initial line indent and the length of the key from the desired number of tabs.
-					int requiredTabs = this.AlignAtTabStop - 1 - (int)System.Math.Ceiling((double)(tagKey.Length / this.TabSize));
+					int requiredTabs = AlignAtTabStop - 1 - (int)System.Math.Ceiling((double)(tagKey.Length / TabSize));
 					if (requiredTabs < 0)
 					{
 						throw new ArgumentOutOfRangeException(nameof(tagKey), "The key is too long for the space allocated for aligning tag values.");
 					}
-					//int tabs = (int)System.Math.Ceiling((double)requiredTabs / this.TabSize);
-					return new string(this.Tab, requiredTabs);
+					//int tabs = (int)System.Math.Ceiling((double)requiredTabs / TabSize);
+					return new string(Tab, requiredTabs);
 				}
 				case WhiteSpace.Space:
 				{
 					// Subtract the initial line indent and the length of the key from the desired aligning column.
-					int requiredSpaces = this.AlignAtColumn - 1 - tagKey.Length - this.TabSize;
+					int requiredSpaces = AlignAtColumn - 1 - tagKey.Length - TabSize;
 					if (requiredSpaces < 0)
 					{
 						throw new ArgumentOutOfRangeException(nameof(tagKey), "The key is too long for the space allocated for aligning tag values.");

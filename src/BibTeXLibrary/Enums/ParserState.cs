@@ -6,12 +6,8 @@ namespace BibTeXLibrary;
 /// The state of the parser.
 /// 
 /// The "Description" attribute can be accessed using Reflection to get a string representing the enumeration type.
-/// 
-/// The "Length" enumeration can be used in loops as a convenient way of terminating a loop that does not have to be changed if
-/// the number of items in the enumeration changes.  The "Length" enumeration must be the last item.
-/// for (int i = 0; i &lt; (int)EnumType.Length; i++) {...}
 /// </summary>
-public enum ParserState
+internal enum ParserState
 {
 	/// <summary>Begin.</summary>
 	[Description("Begin")]
@@ -21,8 +17,8 @@ public enum ParserState
 	[Description("In Header")]
 	InHeader,
 
-	/// <summary>At the start of a bibliography entry where the type is written..</summary>
-	[Description("Bibliography Entry Type")]
+	/// <summary>At the start of a bibliography entry where the type is written.</summary>
+	[Description("In Start")]
 	InStart,
 
 	/// <summary>Immediatly after the start of an entry and before the cite key (the opening brace).</summary>
@@ -63,10 +59,6 @@ public enum ParserState
 
 	/// <summary>At the end of an entry (the closing brace).</summary>
 	[Description("Out of Entry")]
-	OutEntry,
-
-	/// <summary>The number of types/items in the enumeration.</summary>
-	[Description("Length")]
-	Length
+	OutEntry
 
 } // End enum.

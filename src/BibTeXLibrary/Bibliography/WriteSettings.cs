@@ -7,20 +7,9 @@ namespace BibTeXLibrary;
 /// <summary>
 /// Settings to use when writing a bib file.
 /// </summary>
-public class WriteSettings : INotifyModifiedChanged
+public class WriteSettings : NotifyModifiedChanged
 {
-	#region Events
-
-	/// <summary>
-	/// Occurs when the instance is modfied.
-	/// </summary>
-	public event ModifiedChangedEventHandler? ModifiedChanged;
-
-	#endregion
-
 	#region Fields
-
-	private	bool				_modified			= false;
 
 	private WhiteSpace			_whiteSpace			= WhiteSpace.Tab;
 	private int					_tabSize			= 4;
@@ -45,25 +34,6 @@ public class WriteSettings : INotifyModifiedChanged
 	#endregion
 
 	#region Properties
-
-
-	/// <summary>
-	/// Specifies if changes have been made since the last save.
-	/// </summary>
-	[XmlIgnore()]
-	public bool Modified
-	{
-		get => _modified;
-
-		private set
-		{
-			if (_modified != value)
-			{
-				_modified = value;
-				ModifiedChanged?.Invoke(this, value);
-			}
-		}
-	}
 
 	/// <summary>
 	/// Type of white space character to use.
@@ -212,7 +182,7 @@ public class WriteSettings : INotifyModifiedChanged
 	/// <summary>
 	/// Get the same amount of white space a tab would take up as a string of spaces.
 	/// </summary>
-	private string TabAsSpaces { get => new string(' ', TabSize); }
+	private string TabAsSpaces { get => new(' ', TabSize); }
 	
 	/// <summary>
 	/// Get a tab or the same amount of spaces as a tab would use.
@@ -234,6 +204,14 @@ public class WriteSettings : INotifyModifiedChanged
 	#endregion
 
 	#region Methods
+
+	/// <summary>
+	/// The WriteSettings do not save/serialize themselves.  Therefore, we provide a method for to indicate the object was saved.
+	/// </summary>
+	public void MarkSaved()
+	{
+		Modified = false;
+	}
 
 	/// <summary>
 	/// Get the space between the tag "key" and the tag "value".
@@ -292,14 +270,6 @@ public class WriteSettings : INotifyModifiedChanged
 			return " ";
 		}
 
-	}
-
-	/// <summary>
-	/// Access for manually firing event for external sources.
-	/// </summary>
-	private void RaiseOnModifiedChangedEvent()
-	{
-		ModifiedChanged?.Invoke(this, Modified);
 	}
 
 	#endregion

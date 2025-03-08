@@ -8,10 +8,6 @@ namespace BibTeXLibrary;
 /// </summary>
 public class StringConstantPart : BibliographyPart
 {
-	#region Fields
-
-	#endregion
-
 	#region Construction
 
 	/// <summary>
@@ -51,10 +47,6 @@ public class StringConstantPart : BibliographyPart
 			return tagEnumerator.Value!.ToString()!;
 		}
 	}
-
-	#endregion
-
-	#region Methods
 
 	#endregion
 

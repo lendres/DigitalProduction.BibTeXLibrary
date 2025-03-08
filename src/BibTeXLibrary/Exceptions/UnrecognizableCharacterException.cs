@@ -13,9 +13,8 @@ public class UnrecognizableCharacterException : ParseErrorException
 
     #region Constructor
 
-    public UnrecognizableCharacterException(int lineNumber, int columnNumber
-	, char unexpected)
-        : base(lineNumber, columnNumber)
+    public UnrecognizableCharacterException(int lineNumber, int columnNumber , char unexpected) :
+		base(lineNumber, columnNumber)
     {
         Message = $"An unexpected character was found.\nCharacter: '{unexpected}'.\nAt line {lineNumber+1}, column {columnNumber+1}.";
     }

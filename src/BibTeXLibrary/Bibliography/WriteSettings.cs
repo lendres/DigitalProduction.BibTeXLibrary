@@ -71,10 +71,7 @@ public class WriteSettings : INotifyModifiedChanged
 	[XmlAttribute("whitespace")]
 	public WhiteSpace WhiteSpace
 	{
-		get
-		{
-			return _whiteSpace;
-		}
+		get => _whiteSpace;
 
 		set
 		{
@@ -92,10 +89,8 @@ public class WriteSettings : INotifyModifiedChanged
 	[XmlAttribute("spacespertab")]
 	public int TabSize
 	{
-		get
-		{
-			return _tabSize;
-		}
+		get => _tabSize;
+
 		set
 		{
 			if (_tabSize != value)
@@ -112,10 +107,7 @@ public class WriteSettings : INotifyModifiedChanged
 	[XmlAttribute("alignatequals")]
 	public bool AlignTagValues
 	{
-		get
-		{
-			return _alignTagValues;
-		}
+		get => _alignTagValues;
 
 		set
 		{
@@ -133,10 +125,8 @@ public class WriteSettings : INotifyModifiedChanged
 	[XmlAttribute("alignatcolumn")]
 	public int AlignAtColumn
 	{
-		get
-		{
-			return _alignAtColumn;
-		}
+		get => _alignAtColumn;
+
 		set
 		{
 			if (_alignAtColumn != value)
@@ -153,10 +143,7 @@ public class WriteSettings : INotifyModifiedChanged
 	[XmlAttribute("alignattabstop")]
 	public int AlignAtTabStop
 	{
-		get
-		{
-			return _alignAtTabStop;
-		}
+		get => _alignAtTabStop;
 
 		set
 		{
@@ -174,10 +161,7 @@ public class WriteSettings : INotifyModifiedChanged
 	[XmlAttribute("removelastcomma")]
 	public bool RemoveLastComma
 	{
-		get
-		{
-			return _removeLastComma;
-		}
+		get => _removeLastComma;
 
 		set
 		{
@@ -195,10 +179,7 @@ public class WriteSettings : INotifyModifiedChanged
 	[XmlIgnore()]
 	public string NewLine
 	{
-		get
-		{
-			return _newLine;
-		}
+		get => _newLine;
 
 		set
 		{
@@ -216,10 +197,7 @@ public class WriteSettings : INotifyModifiedChanged
 	[XmlIgnore()]
 	public char Tab
 	{
-		get
-		{
-			return _tab;
-		}
+		get => _tab;
 
 		set
 		{
@@ -234,13 +212,7 @@ public class WriteSettings : INotifyModifiedChanged
 	/// <summary>
 	/// Get the same amount of white space a tab would take up as a string of spaces.
 	/// </summary>
-	private string TabAsSpaces
-	{
-		get
-		{
-			return new string(' ', TabSize);
-		}
-	}
+	private string TabAsSpaces { get => new string(' ', TabSize); }
 	
 	/// <summary>
 	/// Get a tab or the same amount of spaces as a tab would use.

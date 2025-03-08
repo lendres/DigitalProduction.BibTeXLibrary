@@ -23,8 +23,8 @@ public sealed class UnexpectedTokenException : ParseErrorException
 	/// <param name="columnNumber">Column number where the token was found.</param>
 	/// <param name="unexpectedToken">The token found.</param>
 	/// <param name="expectedTokens">The list of tokens that were expected/allowed.</param>
-    public UnexpectedTokenException(int lineNumber, int columnNumber, TokenType unexpectedToken, params TokenType[] expectedTokens)
-        : base(lineNumber, columnNumber)
+    public UnexpectedTokenException(int lineNumber, int columnNumber, TokenType unexpectedToken, params TokenType[] expectedTokens) :
+		base(lineNumber, columnNumber)
     {
 		StringBuilder errorMsg = new StringBuilder($"An unexpected token was found.\nToken: '{unexpectedToken}'.\nAt line {lineNumber}, column {columnNumber}.");
 

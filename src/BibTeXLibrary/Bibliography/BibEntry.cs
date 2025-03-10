@@ -1,4 +1,5 @@
 ﻿using DigitalProduction.Strings;
+using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -12,7 +13,10 @@ public class BibEntry : BibliographyPart
 {
 	#region Fields
 
-	private static readonly string[]                  _nameSuffixes                   = ["jr", "jr.", "sr", "sr.", "ii", "iii", "iv", "v", @"p\`{e}re", "fils"];
+	private static readonly string[]							_nameSuffixes			= ["jr", "jr.", "sr", "sr.", "ii", "iii", "iv", "v", @"p\`{e}re", "fils"];
+
+	/// <summary>Store all tags.</summary>
+	protected readonly OrderedDictionary<string, TagValue>		_tags					= [];
 
 	#endregion
 
@@ -46,6 +50,21 @@ public class BibEntry : BibliographyPart
 	#endregion
 
 	#region Public Properties
+
+	/// <summary>
+	/// Bibliography entry type, e.g. "book", "thesis", "string".  This is the name that follows the "@".
+	/// </summary>
+	public override string Type { get => GetValueOrDefault<string>(string.Empty); set => SetValue(value); }
+
+	/// <summary>
+	/// Entry's key.
+	/// </summary>
+	public string Key { get => GetValueOrDefault<string>(string.Empty); set => SetValue(value); }
+
+	/// <summary>
+	/// Get the names of the tags.
+	/// </summary>
+	public List<string> TagNames { get => (from string item in _tags.Keys select item).ToList(); }
 
 	/// <summary>
 	/// The address entry or an empty string if the address was not specified.
@@ -218,7 +237,7 @@ public class BibEntry : BibliographyPart
             set
             {
                 this[GetFormattedName()] = value;
-                NotifyPropertyChanged("Title");
+                OnPropertyChanged(nameof(Title));
             }
 	}
 
@@ -260,14 +279,143 @@ public class BibEntry : BibliographyPart
 
 	#endregion
 
+	#region Public Methods
+
+	public string FindTagValue(string value, bool caseSensitive = false)
+	{
+		string result = "";
+		string matchValue = caseSensitive ? value : value.ToLower();
+
+		IDictionaryEnumerator tagEnumerator = _tags.GetEnumerator();
+		while (tagEnumerator.MoveNext())
+		{
+			string tagValue = tagEnumerator.Value!.ToString()!;
+			if (!caseSensitive)
+			{
+				tagValue = tagValue.ToLower();
+			}
+
+			if (tagValue == matchValue)
+			{
+				result = tagEnumerator.Key.ToString()!;
+				break;
+			}
+		}
+
+		return result;
+	}
+
+	/// <summary>
+	/// Get value by given tag name (index) or create new tag by index and value.
+	/// </summary>
+	/// <param name="tagName">Tag name.</param>
+	public string this[string tagName]
+	{
+		get
+		{
+			if (!_caseSensitivetags)
+			{
+				tagName = tagName.ToLower();
+			}
+			return _tags.ContainsKey(tagName) ? _tags[tagName].Content : "";
+		}
+
+		set
+		{
+			if (!_caseSensitivetags)
+			{
+				tagName = tagName.ToLower();
+			}
+
+			if (_tags.TryGetValue(tagName, out TagValue? tagValue))
+			{
+				tagValue.Content = value;
+				Modified = true;
+			}
+			else
+			{
+				_tags[tagName] = new TagValue(value);
+				OnPropertyChanged(nameof(TagNames));
+				Modified = true;
+			}
+		}
+	}
+
+	/// <summary>
+	/// Get a TagValue.
+	/// </summary>
+	/// <param name="tagName">Name of the tag to get.</param>
+	public TagValue GetTagValue(string tagName)
+	{
+		if (!_caseSensitivetags)
+		{
+			tagName = tagName.ToLower();
+		}
+		if (_tags.TryGetValue(tagName, out TagValue? tagValue))
+		{
+			return tagValue;
+		}
+		throw new Exception("Invalid tag name: "+tagName);		
+	}
+
+	/// <summary>
+	/// Set a TagValue.
+	/// </summary>
+	/// <param name="tagName">Name of the tag.</param>
+	/// <param name="tagValue">Value of the tag.</param>
+	public void SetTagValue(string tagName, string tagValue)
+	{
+		if (_caseSensitivetags)
+		{
+			tagName = tagName.ToLower();
+		}
+		TagValue tagValueObject		= GetTagValue(tagName);
+		tagValueObject.Content		= tagValue;
+		_tags[tagName]				= tagValueObject;
+	}
+
+	/// <summary>
+	/// Set a TagValue.
+	/// </summary>
+	/// <param name="tagName">Name of the tag to get.</param>
+	public override void SetTagValue(string tagName, string tagValue, TagValueType tagValueType)
+	{
+		if (!_caseSensitivetags)
+		{
+			tagName = tagName.ToLower();
+		}
+
+		TagValue tagValueObject = new(tagValue);
+		switch (tagValueType)
+		{
+			case TagValueType.String:
+				// This is a regular string, so put brackets around it.
+				tagValueObject.Format = TagValueFormat.Bracket;
+				break;
+
+			case TagValueType.StringConstant:
+				// This is a string constant so we do not want brackets around it.
+				tagValueObject.Format = TagValueFormat.None;
+				break;
+		}
+
+		_tags[tagName] = tagValueObject;
+	}
+
+	#endregion
+
 	#region Private Methods
 
 	/// <summary>
 	/// Uses the calling member name to create a lowercase name to use as an index.
 	/// </summary>
 	/// <param name="propertyName">Name of the property/calling method.</param>
-	private static string GetFormattedName([CallerMemberName] string? propertyName = null)
+	private string GetFormattedName([CallerMemberName] string? propertyName = null)
 	{
+		if (!_caseSensitivetags)
+		{
+			propertyName = propertyName!.ToLower();
+		}
 		return propertyName!.ToLower();
 	}
 

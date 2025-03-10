@@ -1,7 +1,8 @@
 ﻿namespace BibTeXLibrary;
 
 /// <summary>
-/// The tag value for a BibTeX library.
+/// The tag value for a BibTeX library.  This is an object to allow more complex behavior.  Specifically,
+/// it allows different types of writing (ToString) for the value.
 /// </summary>
 public class TagValue
 {
@@ -27,11 +28,11 @@ public class TagValue
 	/// Default constructor.
 	/// </summary>
 	/// <param name="content">The tag content.</param>
-	/// <param name="isString">Specifies if the tag value string.  If false, the value is a "Name" (named BibTeX @string).</param>
-	public TagValue(string content, bool isString)
+	/// <param name="format">Specifies the format to write in.</param>
+	public TagValue(string content, TagValueFormat format)
 	{
-		Content		= content;
-		IsString	= isString;
+		Content	= content;
+		Format	= format;
 	}
 
 	#endregion
@@ -46,7 +47,7 @@ public class TagValue
 	/// <summary>
 	/// Specifies is the value is a common entry (text) or a BibTeX string.
 	/// </summary>
-	public bool IsString { get; set; } = true;
+	public TagValueFormat Format { get; set; } = TagValueFormat.Bracket;
 
 	#endregion
 
@@ -57,7 +58,13 @@ public class TagValue
 	/// </summary>
 	public override string ToString()
 	{
-		return IsString ? "{"+Content+"}" : Content;
+		return Format switch
+		{
+			TagValueFormat.Bracket => "{"+Content+"}",
+			TagValueFormat.Quote => "\""+Content+"\"",
+			TagValueFormat.None => Content,
+			_ => throw new Exception("Invalid tag format."),
+		};
 	}
 
 	#endregion

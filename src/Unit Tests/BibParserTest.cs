@@ -121,12 +121,12 @@ public class BibParserTest
     {
 		BibParser parser = new(new StreamReader("TestData/BibParserTest1_In.bib", Encoding.Default));
 		BibEntry entry = parser.Parse().BibliographyEntries[0];
+		string entryString = entry.ToString().TrimEnd('\n').TrimEnd('\r');
 
 		StreamReader sr = new("TestData/BibParserTest1_Out1.bib", Encoding.Default);
-		string expected = sr.ReadToEnd().Replace("\r", "");
+		string expected = sr.ReadToEnd();
 
-		Assert.Equal(expected, entry.ToString());
-
+		Assert.Equal(expected, entryString);
 		parser.Dispose();
     }
 
@@ -136,8 +136,8 @@ public class BibParserTest
 		BibParser parser = new(new StringReader("@string{NAME = {Title of Conference}}"));
 		StringConstantPart entry = parser.Parse().StringConstants[0];
 
-		Assert.Equal("string", entry.Type);
-		Assert.Equal("Title of Conference", entry["NAME"]);
+		Assert.Equal(StringConstantPart.TypeString, entry.Type);
+		Assert.Equal("Title of Conference", entry.Value);
 
 		parser.Dispose();
 	}
@@ -148,8 +148,8 @@ public class BibParserTest
 		BibParser parser = new(new StringReader("@string(NAME = {Title of Conference})"));
 		StringConstantPart entry = parser.Parse().StringConstants[0];
 
-		Assert.Equal("string", entry.Type);
-		Assert.Equal("Title of Conference", entry["NAME"]);
+		Assert.Equal(StringConstantPart.TypeString, entry.Type);
+		Assert.Equal("Title of Conference", entry.Value);
 
 		parser.Dispose();
 	}
@@ -160,8 +160,8 @@ public class BibParserTest
 		BibParser parser = new(new StringReader("@string{NAME = \"Title of Conference\"}"));
 		StringConstantPart entry = parser.Parse().StringConstants[0];
 
-		Assert.Equal("string", entry.Type);
-		Assert.Equal("Title of Conference", entry["NAME"]);
+		Assert.Equal(StringConstantPart.TypeString, entry.Type);
+		Assert.Equal("Title of Conference", entry.Value);
 
 		parser.Dispose();
 	}
@@ -172,8 +172,8 @@ public class BibParserTest
 		BibParser parser = new(new StringReader("@string(NAME = \"Title of Conference\")"));
 		StringConstantPart entry = parser.Parse().StringConstants[0];
 
-		Assert.Equal("string", entry.Type);
-		Assert.Equal("Title of Conference", entry["NAME"]);
+		Assert.Equal(StringConstantPart.TypeString, entry.Type);
+		Assert.Equal("Title of Conference", entry.Value);
 
 		parser.Dispose();
 	}

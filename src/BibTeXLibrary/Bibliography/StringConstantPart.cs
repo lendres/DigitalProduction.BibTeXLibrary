@@ -8,6 +8,15 @@ namespace BibTeXLibrary;
 /// </summary>
 public class StringConstantPart : BibliographyPart
 {
+	#region Fields
+
+	public static readonly string TypeString = "string";
+
+	private string		_name		= string.Empty;
+	private TagValue	_value		= new();
+
+	#endregion
+
 	#region Construction
 
 	/// <summary>
@@ -23,29 +32,36 @@ public class StringConstantPart : BibliographyPart
 	#region Properties
 
 	/// <summary>
+	/// Bibliography entry type, e.g. "book", "thesis", "string".  This is the name that follows the "@".
+	/// </summary>
+	public override string Type { get => TypeString; set => throw new Exception("You cannot set the type of a StringConstantPart"); }
+
+	/// <summary>
 	/// Name of the string constant.
 	/// </summary>
-	public string StringName
-	{
-		get
-		{
-			IDictionaryEnumerator tagEnumerator = _tags.GetEnumerator();
-			tagEnumerator.MoveNext();
-			return tagEnumerator.Key.ToString()!;
-		}
-	}
+	public string Name { get => _name; }
 
 	/// <summary>
 	/// Value of the string constant.
 	/// </summary>
-	public string StringValue
+	public string Value { get => _value.Content; }
+
+	#endregion
+
+	#region Public Tag Value Methods
+
+	/// <summary>
+	/// Set a TagValue.
+	/// </summary>
+	/// <param name="tagName">Name of the tag to get.</param>
+	public override void SetTagValue(string tagName, string tagValue, TagValueType tagValueType)
 	{
-		get
+		if (!_caseSensitivetags)
 		{
-			IDictionaryEnumerator tagEnumerator = _tags.GetEnumerator();
-			tagEnumerator.MoveNext();
-			return tagEnumerator.Value!.ToString()!;
+			tagName = tagName.ToLower();
 		}
+		_name = tagName;
+		_value = new TagValue(tagValue, TagValueFormat.Quote);
 	}
 
 	#endregion
@@ -63,20 +79,16 @@ public class StringConstantPart : BibliographyPart
 		bibliographyPart.Append(Type);
 		bibliographyPart.Append('(');
 
-		// Get the first (and only) entry.
-		IDictionaryEnumerator tagEnumerator = _tags.GetEnumerator();
-		tagEnumerator.MoveNext();
-
 		// Write the name of the string constant.
-		bibliographyPart.Append(tagEnumerator.Key.ToString());
+		bibliographyPart.Append(_name);
 
 		// Add the space between the key and equal sign.
-		bibliographyPart.Append(writeSettings.GetInterTagSpacing(tagEnumerator.Key.ToString()!));
+		bibliographyPart.Append(writeSettings.GetInterTagSpacing(Name));
 
 		// Add the string constant value.
 		bibliographyPart.Append("= ");
-		bibliographyPart.Append(tagEnumerator.Value!.ToString());
-		bibliographyPart.Append(')');
+		bibliographyPart.Append(_value.ToString());
+		bibliographyPart.Append(")");
 
 		bibliographyPart.Append(writeSettings.NewLine);
 

@@ -13,10 +13,10 @@ public class BibEntry : BibliographyPart
 {
 	#region Fields
 
-	private static readonly string[]							_nameSuffixes			= ["jr", "jr.", "sr", "sr.", "ii", "iii", "iv", "v", @"p\`{e}re", "fils"];
+	private static readonly string[]                            _nameSuffixes           = ["jr", "jr.", "sr", "sr.", "ii", "iii", "iv", "v", @"p\`{e}re", "fils"];
 
 	/// <summary>Store all tags.</summary>
-	protected readonly OrderedDictionary<string, TagValue>		_tags					= [];
+	protected readonly OrderedDictionary<string, TagValue>      _tags                   = [];
 
 	#endregion
 
@@ -27,8 +27,8 @@ public class BibEntry : BibliographyPart
 	/// </summary>
 	public BibEntry() :
 		base(false)
-    {
-    }
+	{
+	}
 
 	#endregion
 
@@ -70,212 +70,323 @@ public class BibEntry : BibliographyPart
 	/// The address entry or an empty string if the address was not specified.
 	/// </summary>
 	public string Address
-        {
-            get => this[GetFormattedName()];
-            set => this[GetFormattedName()] = value;
-        }
+	{
+		get => this[GetFormattedName()];
+
+		set
+		{
+			this[GetFormattedName()] = value;
+			OnPropertyChanged();
+		}
+	}
 
 	/// <summary>
 	/// The annote entry or an empty string if the annote was not specified.
 	/// </summary>
 	public string Annote
-        {
-            get => this[GetFormattedName()];
-            set => this[GetFormattedName()] = value;
-        }
+	{
+		get => this[GetFormattedName()];
+
+		set
+		{
+			this[GetFormattedName()] = value;
+			OnPropertyChanged();
+		}
+	}
 
 	/// <summary>
 	/// The author entry or an empty string if the author was not specified.
 	/// </summary>
 	public string Author
-        {
-            get => this[GetFormattedName()];
-            set => this[GetFormattedName()] = value;
-        }
+	{
+		get => this[GetFormattedName()];
+
+		set
+		{
+			this[GetFormattedName()] = value;
+			OnPropertyChanged();
+		}
+	}
 
 	/// <summary>
 	/// The booktitle entry or an empty string if the booktitle was not specified.
 	/// </summary>
 	public string BookTitle
-        {
-            get => this[GetFormattedName()];
-            set => this[GetFormattedName()] = value;
-        }
+	{
+		get => this[GetFormattedName()];
+
+		set
+		{
+			this[GetFormattedName()] = value;
+			OnPropertyChanged();
+		}
+	}
 
 	/// <summary>
 	/// The chapter entry or an empty string if the chapter was not specified.
 	/// </summary>
 	public string Chapter
-        {
-            get => this[GetFormattedName()];
-            set => this[GetFormattedName()] = value;
-        }
+	{
+		get => this[GetFormattedName()];
+
+		set
+		{
+			this[GetFormattedName()] = value;
+			OnPropertyChanged();
+		}
+	}
 
 	/// <summary>
 	/// The crossref entry or an empty string if the crossref was not specified.
 	/// </summary>
 	public string CrossRef
-        {
-            get => this[GetFormattedName()];
-            set => this[GetFormattedName()] = value;
-        }
+	{
+		get => this[GetFormattedName()];
+
+		set
+		{
+			this[GetFormattedName()] = value;
+			OnPropertyChanged();
+		}
+	}
 
 	/// <summary>
 	/// The edition entry or an empty string if the edition was not specified.
 	/// </summary>
 	public string Edition
-        {
-            get => this[GetFormattedName()];
-            set => this[GetFormattedName()] = value;
-        }
+	{
+		get => this[GetFormattedName()];
+
+		set
+		{
+			this[GetFormattedName()] = value;
+			OnPropertyChanged();
+		}
+	}
 
 	/// <summary>
 	/// The editor entry or an empty string if the editor was not specified.
 	/// </summary>
 	public string Editor
-        {
-            get => this[GetFormattedName()];
-            set => this[GetFormattedName()] = value;
-        }
+	{
+		get => this[GetFormattedName()];
+
+		set
+		{
+			this[GetFormattedName()] = value;
+			OnPropertyChanged();
+		}
+	}
 
 	/// <summary>
 	/// The howpublished entry or an empty string if the howpublished was not specified.
 	/// </summary>
 	public string HowPublished
-        {
-            get => this[GetFormattedName()];
-            set => this[GetFormattedName()] = value;
-        }
+	{
+		get => this[GetFormattedName()];
+
+		set
+		{
+			this[GetFormattedName()] = value;
+			OnPropertyChanged();
+		}
+	}
 
 	/// <summary>
 	/// The institution entry or an empty string if the institution was not specified.
 	/// </summary>
 	public string Institution
-        {
-            get => this[GetFormattedName()];
-            set => this[GetFormattedName()] = value;
-        }
+	{
+		get => this[GetFormattedName()];
+
+		set
+		{
+			this[GetFormattedName()] = value;
+			OnPropertyChanged();
+		}
+	}
 
 	/// <summary>
 	/// The journal entry or an empty string if the journal was not specified.
 	/// </summary>
 	public string Journal
-        {
-            get => this[GetFormattedName()];
-            set => this[GetFormattedName()] = value;
-        }
+	{
+		get => this[GetFormattedName()];
+
+		set
+		{
+			this[GetFormattedName()] = value;
+			OnPropertyChanged();
+		}
+	}
 
 	/// <summary>
 	/// The note entry or an empty string if the note was not specified.
 	/// </summary>
 	public string Note
-        {
-            get => this[GetFormattedName()];
-            set => this[GetFormattedName()] = value;
-        }
+	{
+		get => this[GetFormattedName()];
+
+		set
+		{
+			this[GetFormattedName()] = value;
+			OnPropertyChanged();
+		}
+	}
 
 	/// <summary>
 	/// The number entry or an empty string if the number was not specified.
 	/// </summary>
 	public string Number
-        {
-            get => this[GetFormattedName()];
-            set => this[GetFormattedName()] = value;
-        }
+	{
+		get => this[GetFormattedName()];
+
+		set
+		{
+			this[GetFormattedName()] = value;
+			OnPropertyChanged();
+		}
+	}
 
 	/// <summary>
 	/// The organization entry or an empty string if the organization was not specified.
 	/// </summary>
 	public string Organization
-        {
-            get => this[GetFormattedName()];
-            set => this[GetFormattedName()] = value;
-        }
+	{
+		get => this[GetFormattedName()];
+
+		set
+		{
+			this[GetFormattedName()] = value;
+			OnPropertyChanged();
+		}
+	}
 
 	/// <summary>
 	/// The pages entry or an empty string if the pages was not specified.
 	/// </summary>
 	public string Pages
-        {
-            get => this[GetFormattedName()];
-            set => this[GetFormattedName()] = value;
-        }
+	{
+		get => this[GetFormattedName()];
+
+		set
+		{
+			this[GetFormattedName()] = value;
+			OnPropertyChanged();
+		}
+	}
 
 	/// <summary>
 	/// The publisher entry or an empty string if the publisher was not specified.
 	/// </summary>
 	public string Publisher
-        {
-            get => this[GetFormattedName()];
-            set => this[GetFormattedName()] = value;
-        }
+	{
+		get => this[GetFormattedName()];
+
+		set
+		{
+			this[GetFormattedName()] = value;
+			OnPropertyChanged();
+		}
+	}
 
 	/// <summary>
 	/// The school entry or an empty string if the school was not specified.
 	/// </summary>
 	public string School
-        {
-            get => this[GetFormattedName()];
-            set => this[GetFormattedName()] = value;
-        }
+	{
+		get => this[GetFormattedName()];
+
+		set
+		{
+			this[GetFormattedName()] = value;
+			OnPropertyChanged();
+		}
+	}
 
 	/// <summary>
 	/// The series entry or an empty string if the series was not specified.
 	/// </summary>
 	public string Series
-        {
-            get => this[GetFormattedName()];
-            set => this[GetFormattedName()] = value;
-        }
+	{
+		get => this[GetFormattedName()];
+
+		set
+		{
+			this[GetFormattedName()] = value;
+			OnPropertyChanged();
+		}
+	}
 
 	/// <summary>
 	/// The title entry or an empty string if the title was not specified.
 	/// </summary>
 	public string Title
-        {
-            get => this[GetFormattedName()];
-            set
-            {
-                this[GetFormattedName()] = value;
-                OnPropertyChanged(nameof(Title));
-            }
+	{
+		get => this[GetFormattedName()];
+
+		set
+		{
+			this[GetFormattedName()] = value;
+			OnPropertyChanged();
+		}
 	}
 
 	/// <summary>
 	/// The volume entry or an empty string if the volume was not specified.
 	/// </summary>
-        public string Volume
-        {
-            get => this[GetFormattedName()];
-            set => this[GetFormattedName()] = value;
-        }
+	public string Volume
+	{
+		get => this[GetFormattedName()];
+
+		set
+		{
+			this[GetFormattedName()] = value;
+			OnPropertyChanged();
+		}
+	}
 
 	/// <summary>
 	/// The year entry or an empty string if the year was not specified.
 	/// </summary>
 	public string Year
-        {
-            get => this[GetFormattedName()];
-            set => this[GetFormattedName()] = value;
-        }
+	{
+		get => this[GetFormattedName()];
+
+		set
+		{
+			this[GetFormattedName()] = value;
+			OnPropertyChanged();
+		}
+	}
 
 	/// <summary>
 	/// The month entry or an empty string if the month was not specified.
 	/// </summary>
 	public string Month
-        {
-            get => this[GetFormattedName()];
-            set => this[GetFormattedName()] = value;
-        }
+	{
+		get => this[GetFormattedName()];
+
+		set
+		{
+			this[GetFormattedName()] = value;
+			OnPropertyChanged();
+		}
+	}
 
 	/// <summary>
 	/// The abstract entry or an empty string if the abstract was not specified.
 	/// </summary>
 	public string Abstract
-        {
-            get => this[GetFormattedName()];
-            set => this[GetFormattedName()] = value;
-        }
+	{
+		get => this[GetFormattedName()];
+
+		set
+		{
+			this[GetFormattedName()] = value;
+			OnPropertyChanged();
+		}
+	}
 
 	#endregion
 
@@ -355,23 +466,7 @@ public class BibEntry : BibliographyPart
 		{
 			return tagValue;
 		}
-		throw new Exception("Invalid tag name: "+tagName);		
-	}
-
-	/// <summary>
-	/// Set a TagValue.
-	/// </summary>
-	/// <param name="tagName">Name of the tag.</param>
-	/// <param name="tagValue">Value of the tag.</param>
-	public void SetTagValue(string tagName, string tagValue)
-	{
-		if (_caseSensitivetags)
-		{
-			tagName = tagName.ToLower();
-		}
-		TagValue tagValueObject		= GetTagValue(tagName);
-		tagValueObject.Content		= tagValue;
-		_tags[tagName]				= tagValueObject;
+		throw new Exception("Invalid tag name: "+tagName);
 	}
 
 	/// <summary>
@@ -399,7 +494,13 @@ public class BibEntry : BibliographyPart
 				break;
 		}
 
+		bool exists = _tags.ContainsKey(tagName);
 		_tags[tagName] = tagValueObject;
+		Modified = true;
+		if (!exists)
+		{
+			OnPropertyChanged(nameof(TagNames));
+		}
 	}
 
 	#endregion
@@ -412,11 +513,12 @@ public class BibEntry : BibliographyPart
 	/// <param name="propertyName">Name of the property/calling method.</param>
 	private string GetFormattedName([CallerMemberName] string? propertyName = null)
 	{
+		System.Diagnostics.Debug.Assert(propertyName != null);
 		if (!_caseSensitivetags)
 		{
-			propertyName = propertyName!.ToLower();
+			propertyName = propertyName.ToLower();
 		}
-		return propertyName!.ToLower();
+		return propertyName;
 	}
 
 	#endregion
@@ -428,26 +530,26 @@ public class BibEntry : BibliographyPart
 	/// </summary>
 	/// <param name="writeSettings">The settings for writing the bibliography file.</param>
 	public override string ToString(WriteSettings writeSettings)
-        {
+	{
 		// Build the entry opening and key.
 		StringBuilder bibliographyPart = new("@");
-        bibliographyPart.Append(Type);
-        bibliographyPart.Append('{');
-        bibliographyPart.Append(Key);
-        bibliographyPart.Append(',');
-        bibliographyPart.Append(writeSettings.NewLine);
+		bibliographyPart.Append(Type);
+		bibliographyPart.Append('{');
+		bibliographyPart.Append(Key);
+		bibliographyPart.Append(',');
+		bibliographyPart.Append(writeSettings.NewLine);
 
 		// Write all the tags.
 		IDictionaryEnumerator tagEnumerator = _tags.GetEnumerator();
 		while (tagEnumerator.MoveNext())
 		{
-                // Initial line indent and tag key.
-                bibliographyPart.Append(writeSettings.Indent);
-                //bib.Append(tag.Key);
-                bibliographyPart.Append(tagEnumerator.Key.ToString());
+			// Initial line indent and tag key.
+			bibliographyPart.Append(writeSettings.Indent);
+			//bib.Append(tag.Key);
+			bibliographyPart.Append(tagEnumerator.Key.ToString());
 
-                // Add the space between the key and equal sign.
-                bibliographyPart.Append(writeSettings.GetInterTagSpacing(tagEnumerator.Key.ToString()!));
+			// Add the space between the key and equal sign.
+			bibliographyPart.Append(writeSettings.GetInterTagSpacing(tagEnumerator.Key.ToString()!));
 
 			// Add the tag value.
 			bibliographyPart.Append("= ");
@@ -456,7 +558,7 @@ public class BibEntry : BibliographyPart
 
 			// End the line.
 			bibliographyPart.Append(writeSettings.NewLine);
-            }
+		}
 		// Option to remove comma after last tag.
 		if (writeSettings.RemoveLastComma)
 		{
@@ -466,12 +568,12 @@ public class BibEntry : BibliographyPart
 			bibliographyPart.Append(writeSettings.NewLine);
 		}
 
-            // Closing bracket and end of entry.
-            bibliographyPart.Append('}');
+		// Closing bracket and end of entry.
+		bibliographyPart.Append('}');
 		bibliographyPart.Append(writeSettings.NewLine);
 
 		return bibliographyPart.ToString();
-        }
+	}
 
 	#endregion
 
@@ -542,8 +644,8 @@ public class BibEntry : BibliographyPart
 			return "";
 		}
 
-		string firstAuthorName	= "";
-		string result			= "";
+		string firstAuthorName  = "";
+		string result           = "";
 
 		// Split the first author on a comma.  Author names can be in the formats of:
 		// William Shakespeare

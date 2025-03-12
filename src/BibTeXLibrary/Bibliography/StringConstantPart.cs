@@ -12,9 +12,6 @@ public class StringConstantPart : BibliographyPart
 
 	public static readonly string TypeString = "string";
 
-	private string		_name		= string.Empty;
-	private TagValue	_value		= new();
-
 	#endregion
 
 	#region Construction
@@ -39,12 +36,17 @@ public class StringConstantPart : BibliographyPart
 	/// <summary>
 	/// Name of the string constant.
 	/// </summary>
-	public string Name { get => _name; }
+	public string Name { get => GetValueOrDefault<string>(string.Empty); protected set => SetValue(value); }
 
 	/// <summary>
 	/// Value of the string constant.
 	/// </summary>
-	public string Value { get => _value.Content; }
+	public string Value { get => GetValueOrDefault<string>(string.Empty); protected set => SetValue(value); }
+
+	/// <summary>
+	/// Value of the string constant.
+	/// </summary>
+	public TagValue TagValue { get => GetValueOrDefault<TagValue>(new TagValue(string.Empty, TagValueFormat.Quote)); protected set => SetValue(value); }
 
 	#endregion
 
@@ -60,8 +62,9 @@ public class StringConstantPart : BibliographyPart
 		{
 			tagName = tagName.ToLower();
 		}
-		_name = tagName;
-		_value = new TagValue(tagValue, TagValueFormat.Quote);
+
+		Name = tagName;
+		TagValue = new TagValue(tagValue, TagValueFormat.Quote);
 	}
 
 	#endregion
@@ -80,14 +83,14 @@ public class StringConstantPart : BibliographyPart
 		bibliographyPart.Append('(');
 
 		// Write the name of the string constant.
-		bibliographyPart.Append(_name);
+		bibliographyPart.Append(Name);
 
 		// Add the space between the key and equal sign.
 		bibliographyPart.Append(writeSettings.GetInterTagSpacing(Name));
 
 		// Add the string constant value.
 		bibliographyPart.Append("= ");
-		bibliographyPart.Append(_value.ToString());
+		bibliographyPart.Append(TagValue.ToString());
 		bibliographyPart.Append(")");
 
 		bibliographyPart.Append(writeSettings.NewLine);

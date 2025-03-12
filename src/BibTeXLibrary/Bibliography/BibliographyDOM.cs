@@ -11,9 +11,9 @@ public class BibliographyDOM
 {
 	#region Fields
 
-	private readonly List<string>						_header				= [];
-	private readonly ObservableCollection<BibEntry>		_bibEntries			= [];
-	private readonly List<StringConstantPart>			_strings			= [];
+	private readonly List<string>									_header				= [];
+	private readonly ObservableCollection<BibEntry>					_bibEntries			= [];
+	private readonly ObservableCollection<StringConstantPart>		_strings			= [];
 
 	#endregion
 
@@ -48,7 +48,7 @@ public class BibliographyDOM
 	/// <summary>
 	/// String constants.
 	/// </summary>
-	public List<StringConstantPart> StringConstants { get => _strings; }
+	public ObservableCollection<StringConstantPart> StringConstants { get => _strings; }
 
 	/// <summary>
 	/// The number of string constants.

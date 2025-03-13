@@ -1,4 +1,5 @@
-﻿using DigitalProduction.Strings;
+﻿using DigitalProduction.ComponentModel;
+using DigitalProduction.Strings;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
@@ -7,7 +8,7 @@ namespace BibTeXLibrary;
 /// <summary>
 /// Bibliography Document Object Model.
 /// </summary>
-public class BibliographyDOM
+public class BibliographyDOM : NotifyPropertyModifiedChanged
 {
 	#region Fields
 
@@ -24,6 +25,8 @@ public class BibliographyDOM
 	/// </summary>
 	public BibliographyDOM()
 	{
+		_bibEntries.CollectionChanged += OnBibEntriesCollectionChanged;
+		_strings.CollectionChanged += OnStringsCollectionChanged;
 	}
 
 	#endregion
@@ -57,6 +60,34 @@ public class BibliographyDOM
 
 	#endregion
 
+	#region Events
+
+	private void OnBibEntriesCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+	{
+		Modified = true;
+		OnPropertyChanged(nameof(BibliographyEntries));
+		OnPropertyChanged(nameof(NumberOfBibliographyEntries));
+	}
+
+	private void OnStringsCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+	{
+		Modified = true;
+		OnPropertyChanged(nameof(StringConstants));
+		OnPropertyChanged(nameof(NumberOfStringConstants));
+	}
+
+	private void OnPartModifiedChanged(object sender, bool modified)
+	{
+		Modified = true;
+	}
+
+	private void OnPartPropertyChanged(object? sender, PropertyChangedEventArgs eventArgs)
+	{
+		OnPropertyChanged(sender, eventArgs);
+	}
+
+	#endregion
+
 	#region General Methods
 
 	/// <summary>
@@ -79,6 +110,8 @@ public class BibliographyDOM
 	/// <param name="part">BibliographyPart.</param>
 	public void AddBibPart(BibliographyPart part)
 	{
+		part.PropertyChanged += OnPartPropertyChanged;
+		part.ModifiedChanged += OnPartModifiedChanged;
 		if (part.Type.Equals("string", StringComparison.CurrentCultureIgnoreCase))
 		{
 			_strings.Add((StringConstantPart)part);

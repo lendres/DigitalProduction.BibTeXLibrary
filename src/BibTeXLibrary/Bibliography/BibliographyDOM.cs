@@ -41,7 +41,7 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 	/// <summary>
 	/// Get the bibliography entries.
 	/// </summary>
-	public ObservableCollection<BibEntry> BibliographyEntries { get => _bibEntries; }
+	public ObservableCollection<BibEntry> Entries { get => _bibEntries; }
 
 	/// <summary>
 	/// The number of bibliography entries.
@@ -65,7 +65,7 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 	private void OnBibEntriesCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
 	{
 		Modified = true;
-		OnPropertyChanged(nameof(BibliographyEntries));
+		OnPropertyChanged(nameof(Entries));
 		OnPropertyChanged(nameof(NumberOfBibliographyEntries));
 	}
 

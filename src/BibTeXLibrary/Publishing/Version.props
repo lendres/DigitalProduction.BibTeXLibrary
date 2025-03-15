@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<Major Condition=" '$(Major)' == '' ">0</Major>
 		<Minor Condition=" '$(Minor)' == '' ">5</Minor>
-		<BuildNumber Condition=" '$(BuildNumber)' == '' ">4</BuildNumber>
+		<BuildNumber Condition=" '$(BuildNumber)' == '' ">5</BuildNumber>
 		<InformationalVersion>This is a prerelease package.</InformationalVersion>
 
 		<VersionPrefix Condition=" '$(Major)' != '' and '$(Minor)' != '' and '$(BuildNumber)' != ''">$(Major).$(Minor).$(BuildNumber)</VersionPrefix>

@@ -31,6 +31,21 @@ public class WriteSettings : NotifyModifiedChanged
 	{
 	}
 
+	/// <summary>
+	/// Copy constructor.
+	/// </summary>
+	public WriteSettings(WriteSettings writeSettings)
+	{
+		_whiteSpace			= writeSettings._whiteSpace;
+		_tabSize			= writeSettings._tabSize;
+		_alignTagValues		= writeSettings._alignTagValues;
+		_alignAtColumn		= writeSettings._alignAtColumn;
+		_alignAtTabStop		= writeSettings._alignAtTabStop;
+		_removeLastComma	= writeSettings._removeLastComma;
+		_newLine			= writeSettings._newLine;
+		_tab				= writeSettings._tab;
+	}
+
 	#endregion
 
 	#region Properties

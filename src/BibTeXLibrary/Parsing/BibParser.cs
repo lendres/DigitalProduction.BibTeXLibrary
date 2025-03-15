@@ -257,13 +257,13 @@ public sealed class BibParser : IDisposable
 	{
 		try
 		{
-			ParserState             curState            = ParserState.Begin;
-			ParserState             nextState           = ParserState.Begin;
+			ParserState				curState			= ParserState.Begin;
+			ParserState				nextState			= ParserState.Begin;
 
-			BibliographyPart?       bibPart             = null;
-			string                  tagName             = "";
-			bool                    tagValueIsString    = false;
-			StringBuilder           tagValueBuilder     = new();
+			BibliographyPart?		bibPart				= null;
+			string					tagName				= "";
+			TagValueType			tagValueType		= TagValueType.String;
+			StringBuilder			tagValueBuilder		= new();
 
 			// Fetch token from Tokenizer and build BibEntry.
 			foreach (Token token in Tokenize())
@@ -282,59 +282,69 @@ public sealed class BibParser : IDisposable
 				switch (StateMap[curState][token.Type].Item2)
 				{
 					case BibBuilderState.SetHeader:
+					{
 						bibliographyDOM.AddHeaderLine(token.Value);
 						break;
+					}
 
 					case BibBuilderState.SetType:
-						if (token.Value == "string")
+					{
+						if (token.Value == StringConstantPart.TypeString)
 						{
-							bibPart = new StringConstantPart
-							{
-								Type = token.Value
-							};
+							bibPart = new StringConstantPart();
 						}
 						else
 						{
 							// Must add the value before doing the initialization.
-							BibEntry bibEntry = new()
-							{
-								Type = token.Value
-							};
+							BibEntry bibEntry = new() { Type = token.Value };
 							bibEntry.Initialize(_bibEntryInitialization.GetDefaultTags(bibEntry));
 							bibPart = bibEntry;
 						}
 						break;
+					}
 
 					case BibBuilderState.SetKey:
+					{
 						Debug.Assert(bibPart != null, "bib != null");
-						bibPart.Key = token.Value;
+						BibEntry? bibEntry = bibPart as BibEntry;
+						Debug.Assert(bibEntry != null, "Invalid operation, the state should only be SetKey for a BibEntry.");
+						bibEntry.Key = token.Value;
 						break;
+					}
 
 					case BibBuilderState.SetTagName:
+					{
 						tagName = token.Value;
 						break;
+					}
 
 					case BibBuilderState.SetTagValue:
+					{
 						if (token.Type != TokenType.Concatenation)
 						{
-							tagValueIsString = token.Type == TokenType.String;
+							tagValueType = token.Type == TokenType.String ? TagValueType.String : TagValueType.StringConstant;
 						}
 						tagValueBuilder.Append(token.Value);
 						break;
+					}
 
 					case BibBuilderState.SetTag:
+					{
 						Debug.Assert(bibPart != null, "bib != null");
-						SetTag(bibPart, ref tagName, tagValueIsString, tagValueBuilder);
+						SetTag(bibPart, ref tagName, tagValueType, tagValueBuilder);
 						break;
+					}
 
 					case BibBuilderState.Build:
+					{
 						Debug.Assert(bibPart != null, "bib != null");
 						if (tagName != string.Empty)
 						{
-							SetTag(bibPart, ref tagName, tagValueIsString, tagValueBuilder);
+							SetTag(bibPart, ref tagName, tagValueType, tagValueBuilder);
 						}
 						bibliographyDOM.AddBibPart(bibPart);
 						break;
+					}
 				}
 				curState = nextState;
 			}
@@ -364,10 +374,10 @@ public sealed class BibParser : IDisposable
 	/// <param name="tagName">The name of the tag.</param>
 	/// <param name="tagValueIsString">A boolean to indicate if the value of the tag is a name (string constant) or an ordinary string.</param>
 	/// <param name="tagValueBuilder">String builder used to build the tag value.</param>
-	private static void SetTag(BibliographyPart bibPart, ref string tagName, bool tagValueIsString, StringBuilder tagValueBuilder)
+	private static void SetTag(BibliographyPart bibPart, ref string tagName, TagValueType tagValueType, StringBuilder tagValueBuilder)
 	{
 		Debug.Assert(bibPart != null, "bib != null");
-		bibPart.SetTagValue(tagName, new TagValue(tagValueBuilder.ToString(), tagValueIsString));
+		bibPart.SetTagValue(tagName, tagValueBuilder.ToString(), tagValueType);
 		tagValueBuilder.Clear();
 		tagName = string.Empty;
 	}
@@ -414,7 +424,7 @@ public sealed class BibParser : IDisposable
 				}
 
 				string valueString = value.ToString();
-				TokenType tokenType = valueString.ToLower().Trim() == "string" ? TokenType.StringType : TokenType.Name;
+				TokenType tokenType = valueString.ToLower().Trim() == StringConstantPart.TypeString ? TokenType.StringType : TokenType.Name;
 
 				yield return new Token(tokenType, valueString);
 			}

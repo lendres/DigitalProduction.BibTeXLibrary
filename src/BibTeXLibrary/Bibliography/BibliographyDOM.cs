@@ -1,4 +1,5 @@
-﻿using DigitalProduction.Strings;
+﻿using DigitalProduction.ComponentModel;
+using DigitalProduction.Strings;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
@@ -7,13 +8,13 @@ namespace BibTeXLibrary;
 /// <summary>
 /// Bibliography Document Object Model.
 /// </summary>
-public class BibliographyDOM
+public class BibliographyDOM : NotifyPropertyModifiedChanged
 {
 	#region Fields
 
-	private readonly List<string>						_header				= [];
-	private readonly ObservableCollection<BibEntry>		_bibEntries			= [];
-	private readonly List<StringConstantPart>			_strings			= [];
+	private readonly List<string>									_header				= [];
+	private readonly ObservableCollection<BibEntry>					_bibEntries			= [];
+	private readonly ObservableCollection<StringConstantPart>		_strings			= [];
 
 	#endregion
 
@@ -24,6 +25,8 @@ public class BibliographyDOM
 	/// </summary>
 	public BibliographyDOM()
 	{
+		_bibEntries.CollectionChanged += OnBibEntriesCollectionChanged;
+		_strings.CollectionChanged += OnStringsCollectionChanged;
 	}
 
 	#endregion
@@ -38,7 +41,7 @@ public class BibliographyDOM
 	/// <summary>
 	/// Get the bibliography entries.
 	/// </summary>
-	public ObservableCollection<BibEntry> BibliographyEntries { get => _bibEntries; }
+	public ObservableCollection<BibEntry> Entries { get => _bibEntries; }
 
 	/// <summary>
 	/// The number of bibliography entries.
@@ -48,12 +51,40 @@ public class BibliographyDOM
 	/// <summary>
 	/// String constants.
 	/// </summary>
-	public List<StringConstantPart> StringConstants { get => _strings; }
+	public ObservableCollection<StringConstantPart> StringConstants { get => _strings; }
 
 	/// <summary>
 	/// The number of string constants.
 	/// </summary>
 	public int NumberOfStringConstants { get => _strings.Count; }
+
+	#endregion
+
+	#region Events
+
+	private void OnBibEntriesCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+	{
+		Modified = true;
+		OnPropertyChanged(nameof(Entries));
+		OnPropertyChanged(nameof(NumberOfBibliographyEntries));
+	}
+
+	private void OnStringsCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+	{
+		Modified = true;
+		OnPropertyChanged(nameof(StringConstants));
+		OnPropertyChanged(nameof(NumberOfStringConstants));
+	}
+
+	private void OnPartModifiedChanged(object sender, bool modified)
+	{
+		Modified = true;
+	}
+
+	private void OnPartPropertyChanged(object? sender, PropertyChangedEventArgs eventArgs)
+	{
+		OnPropertyChanged(sender, eventArgs);
+	}
 
 	#endregion
 
@@ -79,6 +110,8 @@ public class BibliographyDOM
 	/// <param name="part">BibliographyPart.</param>
 	public void AddBibPart(BibliographyPart part)
 	{
+		part.PropertyChanged += OnPartPropertyChanged;
+		part.ModifiedChanged += OnPartModifiedChanged;
 		if (part.Type.Equals("string", StringComparison.CurrentCultureIgnoreCase))
 		{
 			_strings.Add((StringConstantPart)part);

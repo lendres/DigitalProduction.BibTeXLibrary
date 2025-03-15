@@ -34,6 +34,21 @@ public class BibEntryTest
         Assert.Equal("inBoOK", entry.Type);
     }
 
+
+    [Fact]
+    public void TestSettingTagType()
+    {
+        const string title = "Mapreduce";
+		BibEntry entry = new();
+		entry.SetTagValue("Title", title, TagValueType.StringConstant);
+        Assert.Equal(title, entry.Title);
+        Assert.Equal(title, entry.GetTagValue("title").ToString());
+
+		entry.SetTagValue("Title", title, TagValueType.String);
+        Assert.Equal(title, entry.Title);
+        Assert.Equal("{"+title+"}", entry.GetTagValue("title").ToString());
+    }
+
     [Fact]
     public void TestToString()
     {

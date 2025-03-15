@@ -34,7 +34,7 @@
 	  </None>
 	</ItemGroup>
 	<ItemGroup>
-	  <PackageReference Include="DigitalProduction.Net" Version="0.8.9" />
+	  <PackageReference Include="DigitalProduction.Net" Version="0.8.11" />
 	</ItemGroup>
 
 </Project>

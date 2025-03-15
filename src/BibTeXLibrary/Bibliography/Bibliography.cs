@@ -8,14 +8,8 @@ namespace BibTeXLibrary;
 /// <summary>
 /// Internal representation of a bib file.
 /// </summary>
-public class Bibliography
+public class Bibliography : BibliographyDOM
 {
-	#region Fields
-
-	private readonly BibliographyDOM				_bibliographyDOM				= new();
-
-	#endregion
-
 	#region Construction
 
 	/// <summary>
@@ -27,21 +21,6 @@ public class Bibliography
 
 	#endregion
 	
-	#region Properties
-
-	/// <summary>
-	/// BibTeX entries.
-	/// </summary>
-	[XmlIgnore()]
-	public ObservableCollection<BibEntry> Entries { get => _bibliographyDOM.BibliographyEntries;}
-
-	/// <summary>
-	/// The bibliography document object model.
-	/// </summary>
-	public BibliographyDOM DocumentObjectModel { get => _bibliographyDOM; }
-
-	#endregion
-
 	#region Methods
 
 	#region Reading and Writing
@@ -52,11 +31,11 @@ public class Bibliography
 	/// <param name="bibFilePath">Full path to the bibliography file.</param>
 	public void Read(string bibFilePath)
 	{
-		_bibliographyDOM.Clear();
+		Clear();
 		try
 		{
 			BibParser parser = new(bibFilePath);
-			parser.Parse(_bibliographyDOM);
+			parser.Parse(this);
 		}
 		catch (UnexpectedTokenException exception)
 		{
@@ -66,6 +45,7 @@ public class Bibliography
 		{
 			throw new Exception($"An error occured reading the bibliography file:\n" + bibFilePath + "\n\n" + exception.Message);
 		}
+		Modified = false;
 	}
 
 	/// <summary>
@@ -75,11 +55,11 @@ public class Bibliography
 	/// <param name="bibEntryInitializationFile">Full path to the bibliography entry initialization file.</param>
 	public void Read(string bibFilePath, string bibEntryInitializationFile)
 	{
-		_bibliographyDOM.Clear();
+		Clear();
 		try
 		{
 			BibParser parser = new(bibFilePath, bibEntryInitializationFile);
-			parser.Parse(_bibliographyDOM);
+			parser.Parse(this);
 		}
 		catch (UnexpectedTokenException exception)
 		{
@@ -89,6 +69,7 @@ public class Bibliography
 		{
 			throw new Exception($"An error occured reading the bibliography file:\n" + bibFilePath + "\nUsing the initialization file:\n" + bibEntryInitializationFile + "\n\n" + exception.Message);
 		}
+		Modified = false;
 	}
 
 	/// <summary>
@@ -116,24 +97,30 @@ public class Bibliography
 
 		// Write the header.  The header is stored as separate lines so when we write it we can use
 		// the expected line ending type (\r\n, \n) used by the writer.
-		foreach (string line in _bibliographyDOM.Header)
+		foreach (string line in Header)
 		{
 			streamWriter.WriteLine(line);
 		}
 
+		// Write string constants.
+		if (StringConstants.Count > 0)
+		{
+			streamWriter.WriteLine();
+		}
+		foreach (StringConstantPart stringConstant in StringConstants)
+		{
+			streamWriter.Write(stringConstant.ToString());
+		}
+
 		// Write each entry with a blank line preceeding it.
-		foreach (BibEntry bibEntry in _bibliographyDOM.BibliographyEntries)
+		foreach (BibEntry bibEntry in Entries)
 		{
 			streamWriter.WriteLine();
 			streamWriter.Write(bibEntry.ToString(writeSettings));
 		}
-	}
 
-	/// <summary>
-	/// Clean up.
-	/// </summary>
-	public void Close()
-	{
+		streamWriter.Close();
+		Modified = false;
 	}
 
 	#endregion
@@ -234,7 +221,7 @@ public class Bibliography
 		// However, this could be confusing or error prone, so (for now anyway) we will do a case insensitive comparison.
 		key = key.ToLower();
 
-		foreach (BibEntry entry in _bibliographyDOM.BibliographyEntries)
+		foreach (BibEntry entry in Entries)
 		{
 			if (entry.Key.Equals(key, StringComparison.CurrentCultureIgnoreCase))
 			{

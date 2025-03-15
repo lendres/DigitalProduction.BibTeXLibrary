@@ -41,7 +41,17 @@ public class StringConstantPart : BibliographyPart
 	/// <summary>
 	/// Value of the string constant.
 	/// </summary>
-	public string Value { get => GetValueOrDefault<string>(string.Empty); protected set => SetValue(value); }
+	public string Value
+	{
+		get => TagValue.Content;
+
+		set
+		{
+			TagValue.Content = value;
+			OnPropertyChanged();
+			OnPropertyChanged(nameof(TagValue));
+		}
+	}
 
 	/// <summary>
 	/// Value of the string constant.

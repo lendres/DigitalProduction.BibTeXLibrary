@@ -1,6 +1,5 @@
 ﻿using BibTeXLibrary;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Text;
 
 namespace DigitalProduction.UnitTests;
@@ -113,7 +112,7 @@ public class BibParserTest
 		Assert.Equal(4,														entries.Count);
 		Assert.Equal("nobody",												entries[0].Publisher);
 		Assert.Equal("Apache hadoop yarn: Yet another resource negotiator",	entries[1].Title);
-		Assert.Equal("KalavriShang-797",										entries[2].Key);
+		Assert.Equal("KalavriShang-797",									entries[2].Key);
     }
 
     [Fact]

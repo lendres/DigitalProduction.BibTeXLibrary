@@ -45,6 +45,7 @@ public class Bibliography : BibliographyDOM
 		{
 			throw new Exception($"An error occured reading the bibliography file:\n" + bibFilePath + "\n\n" + exception.Message);
 		}
+		Modified = false;
 	}
 
 	/// <summary>
@@ -68,6 +69,7 @@ public class Bibliography : BibliographyDOM
 		{
 			throw new Exception($"An error occured reading the bibliography file:\n" + bibFilePath + "\nUsing the initialization file:\n" + bibEntryInitializationFile + "\n\n" + exception.Message);
 		}
+		Modified = false;
 	}
 
 	/// <summary>
@@ -100,19 +102,25 @@ public class Bibliography : BibliographyDOM
 			streamWriter.WriteLine(line);
 		}
 
+		// Write string constants.
+		if (StringConstants.Count > 0)
+		{
+			streamWriter.WriteLine();
+		}
+		foreach (StringConstantPart stringConstant in StringConstants)
+		{
+			streamWriter.Write(stringConstant.ToString());
+		}
+
 		// Write each entry with a blank line preceeding it.
 		foreach (BibEntry bibEntry in Entries)
 		{
 			streamWriter.WriteLine();
 			streamWriter.Write(bibEntry.ToString(writeSettings));
 		}
-	}
 
-	/// <summary>
-	/// Clean up.
-	/// </summary>
-	public void Close()
-	{
+		streamWriter.Close();
+		Modified = false;
 	}
 
 	#endregion

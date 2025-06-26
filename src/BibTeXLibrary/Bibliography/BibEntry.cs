@@ -400,13 +400,15 @@ public class BibEntry : BibliographyPart
 		IDictionaryEnumerator tagEnumerator = _tags.GetEnumerator();
 		while (tagEnumerator.MoveNext())
 		{
-			string tagValue = tagEnumerator.Value!.ToString()!;
+			TagValue tagValue		= (TagValue)tagEnumerator.Value!;
+			string tagValueString	= tagValue.ToString(TagValueFormat.None)!;
+
 			if (!caseSensitive)
 			{
-				tagValue = tagValue.ToLower();
+				tagValueString = tagValueString.ToLower();
 			}
 
-			if (tagValue == matchValue)
+			if (tagValueString == matchValue)
 			{
 				result = tagEnumerator.Key.ToString()!;
 				break;

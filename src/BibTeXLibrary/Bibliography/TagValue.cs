@@ -58,7 +58,15 @@ public class TagValue
 	/// </summary>
 	public override string ToString()
 	{
-		return Format switch
+		return ToString(Format);
+	}
+
+	/// <summary>
+	/// Get a string representation.
+	/// </summary>
+	public string ToString(TagValueFormat format)
+	{
+		return format switch
 		{
 			TagValueFormat.Bracket => "{"+Content+"}",
 			TagValueFormat.Quote => "\""+Content+"\"",

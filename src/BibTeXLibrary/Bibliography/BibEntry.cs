@@ -63,7 +63,7 @@ public class BibEntry : BibliographyPart
 	/// <summary>
 	/// Get the names of the tags.
 	/// </summary>
-	public List<string> TagNames { get => (from string item in _tags.Keys select item).ToList(); }
+	public List<string> TagNames { get => [.. (from string item in _tags.Keys select item)]; }
 
 	/// <summary>
 	/// The address entry or an empty string if the address was not specified.
@@ -443,7 +443,7 @@ public class BibEntry : BibliographyPart
 			{
 				tagName = tagName.ToLower();
 			}
-			return _tags.ContainsKey(tagName) ? _tags[tagName].Content : "";
+			return _tags.TryGetValue(tagName, out TagValue? value) ? value.Content : "";
 		}
 
 		set

@@ -6,9 +6,9 @@ public class BibliographyDomTest
 {
 	# region Fields
 
-	private BibliographyDOM _bibliographyDom;
+	private readonly BibliographyDOM _bibliographyDom;
 
-	private string _bibString = 
+	private readonly string _bibString = 
 		"@book{ref:keyA1, booktitle = {Acme Journal of Science}, author = {John Smith}, year = {2023}, abstract = {Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.}}" +
 		"@book{ref:keyB2, booktitle = {Journal of Science Fiction}, author = {Jane Smith}, year = {2023}, abstract = {John lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.}}";
 

@@ -216,4 +216,34 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 
 	#endregion
 
+	#region Search Methods
+
+	/// <summary>
+	/// Searches the values of the specified tags for the search string.
+	/// </summary>
+	/// <param name="tags">Bibliography tags to search.</param>
+	/// <param name="value"></param>
+	/// <param name="caseSensitive"></param>
+	/// <returns></returns>
+	public List<BibEntry> SearchBibEntries(IEnumerable<string> tags, bool searchkey, string value, bool caseSensitive = false)
+	{
+		List<BibEntry> matches = [];
+		foreach (BibEntry entry in _bibEntries)
+		{
+			if (searchkey && entry.Key.Contains(value, caseSensitive ? StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase))
+			{
+				matches.Add(entry);
+				continue;
+			}
+			entry.Key.Contains(value);	
+			if (entry.DoesTagsContainString(tags, value, caseSensitive))
+			{
+				matches.Add(entry);
+			}
+		}
+		return matches;
+	}
+
+	#endregion
+
 } // End class.

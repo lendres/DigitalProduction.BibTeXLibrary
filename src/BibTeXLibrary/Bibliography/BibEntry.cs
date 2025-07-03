@@ -1,5 +1,4 @@
 ﻿using DigitalProduction.Strings;
-using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -419,6 +418,20 @@ public class BibEntry : BibliographyPart
 	}
 
 	/// <summary>
+	/// Check if the BibEntry contains a tag with the given name.
+	/// </summary>
+	/// <param name="tagName">Name to check for.</param>
+	/// <returns>True if the tag name exists, false otherwise.</returns>
+	public bool ContainsTag(string tagName)
+	{
+		if (!_caseSensitivetags)
+		{
+			tagName = tagName.ToLower();
+		}
+		return _tags.ContainsKey(tagName);
+	}
+
+	/// <summary>
 	/// Get value by given tag name (index) or create new tag by index and value.
 	/// </summary>
 	/// <param name="tagName">Tag name.</param>
@@ -503,6 +516,23 @@ public class BibEntry : BibliographyPart
 		{
 			OnPropertyChanged(nameof(TagNames));
 		}
+	}
+
+	public bool DoesTagsContainString(IEnumerable<string> tags, string searchString, bool caseSensitive = false)
+	{
+		StringComparison stringComparison = caseSensitive ? StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase;
+		foreach (string tagName in tags)
+		{
+			if (ContainsTag(tagName))
+			{
+				string tagValue = this[tagName];
+				if (tagValue.Contains(searchString, stringComparison))
+				{
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	#endregion

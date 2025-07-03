@@ -1,21 +1,4 @@
 ﻿using BibTeXLibrary;
-using Microsoft.VisualBasic;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Buffers.Text;
-using System.ComponentModel;
-using System.Diagnostics.Metrics;
-using System.Net;
-using System.Numerics;
-using System.Reflection.PortableExecutable;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.Intrinsics.Arm;
-using System.Runtime.Intrinsics.X86;
-using System.Security.Cryptography;
-using System.Security.Principal;
-using System.Threading;
-using System.Xml.Linq;
-using System;
 
 namespace DigitalProduction.UnitTests;
 
@@ -67,16 +50,9 @@ public class BibEntryTest
     }
 
     [Fact]
-    public void TestToString()
-    {
-		//TODO:
-    }
-
-    [Fact]
     public void TestFindTagValue()
 	{
-		string tagValue = "SPE Drilling Conference and Exhibition";
-
+		string tagValue		= "SPE Drilling Conference and Exhibition";
 		string bibString	= "@book{ref:key, booktitle = \"" + tagValue + "\", author = {Author}, year = {2023}}";
 		string key			= ParseAndGetKey(tagValue, bibString);
 		Assert.Equal("booktitle", key);
@@ -84,6 +60,18 @@ public class BibEntryTest
 		bibString	= "@book{ref:key, booktitle = {" + tagValue + "}, author = {Author}, year = {2023}}";
 		key			= ParseAndGetKey(tagValue, bibString);
 		Assert.Equal("booktitle", key);
+	}
+
+    [Fact]
+    public void TestSearchInTagValues()
+    {
+		string tagValue		= "Acme Journal of Science";
+		string bibString	= "@book{ref:key, booktitle = \"" + tagValue + "\", author = {John Smith}, year = {2023}, abstract = {Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.}}";
+
+		List<string> tagNames = ["booktitle", "author", "year", "abstract"];
+		BibEntry entry = ParseBibEntry(bibString);
+		Assert.True(entry.DoesTagsContainString(tagNames, "acme"));
+
 	}
 
 	private static string ParseAndGetKey(string tagValue, string bibString)
@@ -97,4 +85,5 @@ public class BibEntryTest
 		BibParser parser = new(new StringReader(bibString));
 		return parser.Parse().Entries[0];
 	}
+
 } // End class.

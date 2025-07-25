@@ -222,21 +222,21 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 	/// Searches the values of the specified tags for the search string.
 	/// </summary>
 	/// <param name="tags">Bibliography tags to search.</param>
-	/// <param name="value"></param>
+	/// <param name="searchString"></param>
 	/// <param name="caseSensitive"></param>
 	/// <returns></returns>
-	public List<BibEntry> SearchBibEntries(IEnumerable<string> tags, bool searchkey, string value, bool caseSensitive = false)
+	public List<BibEntry> SearchBibEntries(IEnumerable<string> tags, bool searchKey, string searchString, bool caseSensitive = false)
 	{
 		List<BibEntry> matches = [];
 		foreach (BibEntry entry in _bibEntries)
 		{
-			if (searchkey && entry.Key.Contains(value, caseSensitive ? StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase))
+			if (searchKey && entry.Key.Contains(searchString, caseSensitive ? StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase))
 			{
 				matches.Add(entry);
 				continue;
 			}
-			entry.Key.Contains(value);	
-			if (entry.DoesTagsContainString(tags, value, caseSensitive))
+			entry.Key.Contains(searchString);	
+			if (entry.DoesTagsContainString(tags, searchString, caseSensitive))
 			{
 				matches.Add(entry);
 			}

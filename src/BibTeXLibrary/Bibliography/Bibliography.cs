@@ -1,7 +1,5 @@
 ﻿using DigitalProduction.Strings;
-using System.Collections.ObjectModel;
 using System.Text;
-using System.Xml.Serialization;
 
 namespace BibTeXLibrary;
 

@@ -525,7 +525,8 @@ public class BibEntry : BibliographyPart
 		{
 			if (ContainsTag(tagName))
 			{
-				string tagValue = this[tagName];
+				// Some tags may contain brackets "{}" to indicate that the value should not be changed by BibTeX.  We do not want the search to include the brackets.
+				string tagValue = this[tagName].Replace("{", string.Empty).Replace("}", string.Empty);
 				if (tagValue.Contains(searchString, stringComparison))
 				{
 					return true;

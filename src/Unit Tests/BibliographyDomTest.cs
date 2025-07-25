@@ -9,8 +9,8 @@ public class BibliographyDomTest
 	private readonly BibliographyDOM _bibliographyDom;
 
 	private readonly string _bibString = 
-		"@book{ref:keyA1, booktitle = {Acme Journal of Science}, author = {John Smith}, year = {2023}, abstract = {Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.}}" +
-		"@book{ref:keyB2, booktitle = {Journal of Science Fiction}, author = {Jane Smith}, year = {2023}, abstract = {John lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.}}";
+		"@book{ref:keyA1, booktitle = {Acme Journal of Science}, author = {John Smith}, year = {2023}, abstract = {Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.}} " +
+		"@book{ref:keyB2, booktitle = {Journal of {SCIENCE} Fiction}, author = {Jane Smith}, year = {2023}, abstract = {John lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.}}";
 
 	#endregion
 
@@ -52,6 +52,15 @@ public class BibliographyDomTest
     {
 		List<string> tagNames = ["author"];
 		List<BibEntry> result = _bibliographyDom.SearchBibEntries(tagNames, true, "A1");
+		Assert.Single(result);
+	}
+
+	[Fact]
+    public void TestSearchOfTagWithBrackets()
+    {
+		// The book title is "Journal of {SCIENCE} Fiction" but we will search for "Journal of SCIENCE Fiction".
+		List<string> tagNames = ["booktitle"];
+		List<BibEntry> result = _bibliographyDom.SearchBibEntries(tagNames, true, "Journal of SCIENCE Fiction");
 		Assert.Single(result);
 	}
 

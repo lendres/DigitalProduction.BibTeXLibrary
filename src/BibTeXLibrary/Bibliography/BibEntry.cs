@@ -668,7 +668,7 @@ public class BibEntry : BibliographyPart
 	/// <exception cref="NotSupportedException">The name format specified was not valid.</exception>
 	public string GetFirstAuthorsName(NameFormat format, StringCase toCase)
 	{
-		// Get the authors.  The first step is to remove any internal braces ({}).  Then split on the "and" string.
+		// Get the authors.  The first step is to remove any internal braces ({}).  Then split on the " and " string (need spaces).
 		// If there are no authors, return a blank string.
 		string authorTag = Author.TrimStart('{').TrimEnd('}');
 		string[] authors = authorTag.Split([" and "], StringSplitOptions.RemoveEmptyEntries);

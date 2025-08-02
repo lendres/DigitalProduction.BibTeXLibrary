@@ -671,7 +671,7 @@ public class BibEntry : BibliographyPart
 		// Get the authors.  The first step is to remove any internal braces ({}).  Then split on the "and" string.
 		// If there are no authors, return a blank string.
 		string authorTag = Author.TrimStart('{').TrimEnd('}');
-		string[] authors = authorTag.Split(["and"], StringSplitOptions.RemoveEmptyEntries);
+		string[] authors = authorTag.Split([" and "], StringSplitOptions.RemoveEmptyEntries);
 		if (authors.Length == 0)
 		{
 			return "";

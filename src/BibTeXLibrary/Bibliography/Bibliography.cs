@@ -169,8 +169,8 @@ public class Bibliography : BibliographyDOM
 	/// <param name="entry">BibEntry.</param>
 	private static string GenerateCiteKeyBase(BibEntry entry)
 	{
-		string prefix = "ref:";
-		StringBuilder key = new(prefix);
+		string prefix		= "ref:";
+		StringBuilder key	= new(prefix);
 
 		// This is setup to allow different key formats such as first and last name of author, et cetera.  For now last name and lower case.
 		// The names may have special characters and those need to be removed.  We do this by only allowing certain letters.

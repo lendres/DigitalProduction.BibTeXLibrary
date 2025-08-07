@@ -235,8 +235,8 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 				matches.Add(entry);
 				continue;
 			}
-			entry.Key.Contains(searchString);	
-			if (entry.DoesTagsContainString(tags, searchString, caseSensitive))
+
+			if (entry.DoTagsContainString(tags, searchString, caseSensitive))
 			{
 				matches.Add(entry);
 			}

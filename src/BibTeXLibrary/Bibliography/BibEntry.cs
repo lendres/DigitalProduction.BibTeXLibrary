@@ -518,7 +518,7 @@ public class BibEntry : BibliographyPart
 		}
 	}
 
-	public bool DoesTagsContainString(IEnumerable<string> tags, string searchString, bool caseSensitive = false)
+	public bool DoTagsContainString(IEnumerable<string> tags, string searchString, bool caseSensitive = false)
 	{
 		StringComparison stringComparison = caseSensitive ? StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase;
 		foreach (string tagName in tags)

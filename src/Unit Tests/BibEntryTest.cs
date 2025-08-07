@@ -70,7 +70,7 @@ public class BibEntryTest
 
 		List<string> tagNames = ["booktitle", "author", "year", "abstract"];
 		BibEntry entry = ParseBibEntry(bibString);
-		Assert.True(entry.DoesTagsContainString(tagNames, "acme"));
+		Assert.True(entry.DoTagsContainString(tagNames, "acme"));
 
 	}
 

@@ -29,6 +29,7 @@ public class Bibliography : BibliographyDOM
 	/// <param name="bibFilePath">Full path to the bibliography file.</param>
 	public void Read(string bibFilePath)
 	{
+		InvokeChangeEvents = false;
 		Clear();
 		try
 		{
@@ -43,7 +44,8 @@ public class Bibliography : BibliographyDOM
 		{
 			throw new Exception($"An error occured reading the bibliography file:\n" + bibFilePath + "\n\n" + exception.Message);
 		}
-		Modified = false;
+		InvokeChangeEvents	= true;
+		Modified			= false;
 	}
 
 	/// <summary>

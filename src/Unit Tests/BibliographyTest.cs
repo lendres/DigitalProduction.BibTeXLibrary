@@ -1,4 +1,6 @@
 ﻿using BibTeXLibrary;
+using System.ComponentModel;
+using System.Diagnostics;
 
 namespace DigitalProduction.UnitTests;
 
@@ -24,6 +26,8 @@ public class BibliographyTest
 
 	#endregion
 
+	#region Basic Tests
+
 	[Fact]
 	public void TestHavingAndInName()
 	{
@@ -38,5 +42,64 @@ public class BibliographyTest
 		BibParser parser = new(new StringReader(bibString));
 		return (Bibliography)parser.Parse(_bibliography);
 	}
+
+	#endregion
+
+	#region Reading from File Tests
+
+	[Fact]
+	public void ReadBibFilePerformance()
+	{
+		// Setup.
+		string filePath = GetTestFilePath("BibParserTest1_In.bib");
+
+		Bibliography bibliography = new();
+		bibliography.ModifiedChanged += OnModifiedChanged;
+		bibliography.PropertyChanged += OnPropertyChanged;
+
+		// Read the file.
+		Stopwatch stopwatch = Stopwatch.StartNew();
+		bibliography.Read(filePath);
+		stopwatch.Stop();
+		long firstReadMs = stopwatch.ElapsedMilliseconds;
+		int count1 = bibliography.NumberOfBibliographyEntries;
+
+		// Act - Second read.
+		stopwatch.Restart();
+		bibliography.Read(filePath);
+		stopwatch.Stop();
+		long secondReadMs	= stopwatch.ElapsedMilliseconds;
+		int count2			= bibliography.NumberOfBibliographyEntries;
+
+		// Optional: ensure same number of entries, etc.
+		Assert.Equal(count1, count2);
+
+		// Output timing (diagnostic, not assertion).
+		Console.WriteLine($"First read:  {firstReadMs} ms");
+		Console.WriteLine($"Second read: {secondReadMs} ms");
+
+		// Optional soft assertion (not strict).
+		// This just checks nothing pathological happened.
+		Assert.True(secondReadMs < firstReadMs * 2, "Second read is unexpectedly slower by a large margin.");
+		Assert.True(firstReadMs < secondReadMs * 2, "First read is unexpectedly slower by a large margin.");
+	}
+
+	private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+	{
+		System.Threading.Thread.Sleep(2);
+	}
+
+	private void OnModifiedChanged(object sender, bool modified)
+	{
+		System.Threading.Thread.Sleep(2);
+	}
+
+	private string GetTestFilePath(string fileName)
+	{
+		// Adjust based on your project structure.
+		return Path.Combine(AppContext.BaseDirectory, "TestData", fileName);
+	}
+
+	#endregion
 
 } // End class.

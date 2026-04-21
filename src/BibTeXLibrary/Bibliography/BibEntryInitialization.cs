@@ -32,8 +32,8 @@ public class BibEntryInitialization
 	/// <summary>
 	/// Type bibliography type to template map.
 	/// </summary>
-	[XmlElement("typetotemplatemap")]
-	public SerializableDictionary<string, string> TypeToTemplateMap { get => _typeToTemplateMap; set => _typeToTemplateMap = value; }
+	[XmlElement("aliases")]
+	public SerializableDictionary<string, string> Aliases { get => _typeToTemplateMap; set => _typeToTemplateMap = value; }
 
 	/// <summary>
 	/// The templates used to initialize a BibEntry.
@@ -66,14 +66,17 @@ public class BibEntryInitialization
 	{
 		type = type.ToLower();
 
+		if (_templates.ContainsKey(type))
+		{
+			return _templates[type];
+		}
+
 		if (_typeToTemplateMap.TryGetValue(type, out string? template))
 		{
 			return _templates[template];
 		}
-		else
-		{
-			return [];
-		}
+		
+		return [];
 	}
 
 	#endregion

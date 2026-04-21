@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<bibentryinitialization xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <aliases>
+        <item key="booklet">
+            <value>basic</value>
+        </item>
+        <item key="conference">
+            <value>basic</value>
+        </item>
+        <item key="inbook">
+            <value>basic</value>
+        </item>
+        <item key="incollection">
+            <value>inproceedings</value>
+        </item>
+        <item key="mastersthesis">
+            <value>thesis</value>
+        </item>
+        <item key="misc">
+            <value>basic</value>
+        </item>
+        <item key="phdthesis">
+            <value>thesis</value>
+        </item>
+        <item key="proceedings">
+            <value>inproceedings</value>
+        </item>
+        <item key="unpublished">
+            <value>basic</value>
+        </item>
+    </aliases>
+    <templates>
+        <item key="article">
+            <value>author</value>
+            <value>title</value>
+            <value>journal</value>
+            <value>volume</value>
+            <value>number</value>
+			<value>day</value>
+			<value>month</value>
+            <value>year</value>
+            <value>pages</value>
+			<value>organization</value>
+			<value>speid</value>
+			<value>issn</value>
+			<value>doi</value>
+			<value>url</value>
+			<value>href</value>
+			<value>eprint</value>
+			<value>logline</value>
+			<value>abstract</value>
+        </item>
+        <item key="basic">
+            <value>author</value>
+            <value>title</value>
+        </item>
+        <item key="book">
+            <value>author</value>
+            <value>title</value>
+            <value>publisher</value>
+            <value>year</value>
+            <value>edition</value>
+            <value>isbn</value>
+        </item>
+        <item key="inproceedings">
+            <value>author</value>
+            <value>affiliation</value>
+            <value>title</value>
+            <value>booktitle</value>
+            <value>month</value>
+            <value>year</value>
+            <value>volume</value>
+			<value>pages</value>
+            <value>organization</value>
+            <value>address</value>
+            <value>speid</value>
+            <value>doi</value>
+            <value>url</value>
+			<value>href</value>
+			<value>note</value>
+            <value>logline</value>
+            <value>abstract</value>
+        </item>
+        <item key="manual">
+            <value>author</value>
+            <value>title</value>
+            <value>organization</value>
+            <value>address</value>
+            <value>month</value>
+            <value>year</value>
+        </item>
+        <item key="patent">
+            <value>author</value>
+            <value>title</value>
+            <value>assignee</value>
+            <value>number</value>
+            <value>publisher</value>
+            <value>filedday</value>
+            <value>filedmonth</value>
+            <value>filedyear</value>
+            <value>pubday</value>
+            <value>pubmonth</value>
+            <value>pubyear</value>
+            <value>issuedday</value>
+            <value>issuedmonth</value>
+            <value>issuedyear</value>
+        </item>
+		<item key="software">
+			<value>author</value>
+			<value>title</value>
+			<value>license</value>
+			<value>version</value>
+			<value>month</value>
+			<value>year</value>
+			<value>url</value>
+		</item>
+		<item key="techreport">
+			<value>author</value>
+			<value>title</value>
+			<value>institution</value>
+			<value>address</value>
+			<value>month</value>
+			<value>year</value>
+		</item>
+        <item key="thesis">
+            <value>author</value>
+            <value>title</value>
+            <value>school</value>
+            <value>year</value>
+            <value>url</value>
+            <value>doi</value>
+            <value>abstract</value>
+        </item>
+        <item key="webhref">
+            <value>author</value>
+            <value>title</value>
+            <value>websitename</value>
+            <value>year</value>
+            <value>url</value>
+        </item>
+    </templates>
+</bibentryinitialization>

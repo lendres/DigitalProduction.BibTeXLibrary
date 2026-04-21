@@ -25,8 +25,8 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 	/// </summary>
 	public BibliographyDOM()
 	{
-		_bibEntries.CollectionChanged += OnBibEntriesCollectionChanged;
-		_strings.CollectionChanged += OnStringsCollectionChanged;
+		//_bibEntries.CollectionChanged	+= OnBibEntriesCollectionChanged;
+		//_strings.CollectionChanged		+= OnStringsCollectionChanged;
 	}
 
 	#endregion
@@ -65,15 +65,21 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 	private void OnBibEntriesCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
 	{
 		Modified = true;
-		OnPropertyChanged(nameof(Entries));
-		OnPropertyChanged(nameof(NumberOfBibliographyEntries));
+		if (InvokeChangeEvents)
+		{
+			OnPropertyChanged(nameof(Entries));
+			OnPropertyChanged(nameof(NumberOfBibliographyEntries));
+		}
 	}
 
 	private void OnStringsCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
 	{
 		Modified = true;
-		OnPropertyChanged(nameof(StringConstants));
-		OnPropertyChanged(nameof(NumberOfStringConstants));
+		if (InvokeChangeEvents)
+		{
+			OnPropertyChanged(nameof(StringConstants));
+			OnPropertyChanged(nameof(NumberOfStringConstants));
+		}
 	}
 
 	private void OnPartModifiedChanged(object sender, bool modified)

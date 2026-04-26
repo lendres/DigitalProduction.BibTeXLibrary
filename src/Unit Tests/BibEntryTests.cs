@@ -2,7 +2,7 @@
 
 namespace DigitalProduction.UnitTests;
 
-public class BibEntryTest
+public class BibEntryTests
 {
     [Fact]
     public void TestIndexer()

@@ -2,7 +2,7 @@
 
 namespace DigitalProduction.UnitTests;
 
-public class BibliographyTest
+public class BibliographyTests
 {
 	# region Fields
 
@@ -17,7 +17,7 @@ public class BibliographyTest
 
 	#region Construction
 
-	public BibliographyTest()
+	public BibliographyTests()
 	{
 		_bibliography = ParseBibEntry(_bibString);
 	}

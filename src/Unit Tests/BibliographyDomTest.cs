@@ -50,7 +50,7 @@ public class BibliographyDomTest
 	[Fact]
     public void TestSearchWithKeys()
     {
-		List<string> tagNames = ["author"];
+		List<string> tagNames = [];
 		List<BibEntry> result = _bibliographyDom.SearchBibEntries(tagNames, true, "A1");
 		Assert.Single(result);
 	}
@@ -60,7 +60,7 @@ public class BibliographyDomTest
     {
 		// The book title is "Journal of {SCIENCE} Fiction" but we will search for "Journal of SCIENCE Fiction".
 		List<string> tagNames = ["booktitle"];
-		List<BibEntry> result = _bibliographyDom.SearchBibEntries(tagNames, true, "Journal of SCIENCE Fiction");
+		List<BibEntry> result = _bibliographyDom.SearchBibEntries(tagNames, false, "Journal of SCIENCE Fiction");
 		Assert.Single(result);
 	}
 

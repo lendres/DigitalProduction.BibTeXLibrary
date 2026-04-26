@@ -71,7 +71,6 @@ public class BibEntryTest
 		List<string> tagNames = ["booktitle", "author", "year", "abstract"];
 		BibEntry entry = ParseBibEntry(bibString);
 		Assert.True(entry.DoTagsContainString(tagNames, "acme"));
-
 	}
 
 	private static string ParseAndGetKey(string tagValue, string bibString)

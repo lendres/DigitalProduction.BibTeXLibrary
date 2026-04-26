@@ -12,8 +12,8 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 {
 	#region Fields
 
-	private readonly List<string>									_header				= [];
-	private readonly ObservableCollection<BibEntry>					_bibEntries			= [];
+	private readonly List<string>								_header				= [];
+	private readonly ObservableCollection<BibEntry>				_bibEntries			= [];
 	private readonly ObservableCollection<StringConstant>		_strings			= [];
 
 	#endregion
@@ -25,8 +25,8 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 	/// </summary>
 	public BibliographyDOM()
 	{
-		_bibEntries.CollectionChanged += OnBibEntriesCollectionChanged;
-		_strings.CollectionChanged += OnStringsCollectionChanged;
+		_bibEntries.CollectionChanged	+= OnBibEntriesCollectionChanged;
+		_strings.CollectionChanged		+= OnStringsCollectionChanged;
 	}
 
 	#endregion
@@ -163,13 +163,41 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 		}
 	}
 
+	#region Search Methods
+
+	/// <summary>
+	/// Searches the values of the specified tags for the search string.
+	/// </summary>
+	/// <param name="tags">Bibliography tags to search.</param>
+	/// <param name="searchString"></param>
+	/// <param name="caseSensitive"></param>
+	/// <returns></returns>
+	public List<BibEntry> SearchBibEntries(IEnumerable<string> tags, bool searchKey, string searchString, bool caseSensitive = false)
+	{
+		List<BibEntry> matches = [];
+		foreach (BibEntry entry in _bibEntries)
+		{
+			if (searchKey && entry.Key.Contains(searchString, caseSensitive ? StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase))
+			{
+				matches.Add(entry);
+				continue;
+			}
+
+			if (entry.DoTagsContainString(tags, searchString, caseSensitive))
+			{
+				matches.Add(entry);
+			}
+		}
+		return matches;
+	}
+
 	public int FindInsertIndex(BibEntry entry, SortBy sortBy)
 	{
 		return sortBy switch
 		{
-			SortBy.FirstAuthorLastName => BinarySearch(_bibEntries, entry, new CompareByFirstAuthorLastName(), false),
-			SortBy.Key => BinarySearch(_bibEntries, entry, new CompareByCiteKey(), false),
-			_ => throw new ArgumentException("The specified method of sorting is not valid."),
+			SortBy.FirstAuthorLastName	=> BinarySearch(_bibEntries, entry, new CompareByFirstAuthorLastName(), false),
+			SortBy.Key					=> BinarySearch(_bibEntries, entry, new CompareByCiteKey(), false),
+			_							=> throw new ArgumentException("The specified method of sorting is not valid."),
 		};
 	}
 
@@ -182,7 +210,7 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 	/// <param name="comparer">Comparison function.</param>
 	/// <param name="itemMustExist">If the item must exist, an error is thrown if the item is not found.  Otherwise, the position where the item would be found is returned.</param>
 	/// <exception cref="ArgumentOutOfRangeException"></exception>
-	public static int BinarySearch<T>(ObservableCollection<T> list, T item, IComparer<T> comparer, bool itemMustExist = true)
+	private static int BinarySearch<T>(ObservableCollection<T> list, T item, IComparer<T> comparer, bool itemMustExist = true)
 	{
 		int min = 0;
 		int max = list.Count - 1;
@@ -215,34 +243,6 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 	}
 
 	#endregion
-
-	#region Search Methods
-
-	/// <summary>
-	/// Searches the values of the specified tags for the search string.
-	/// </summary>
-	/// <param name="tags">Bibliography tags to search.</param>
-	/// <param name="searchString"></param>
-	/// <param name="caseSensitive"></param>
-	/// <returns></returns>
-	public List<BibEntry> SearchBibEntries(IEnumerable<string> tags, bool searchKey, string searchString, bool caseSensitive = false)
-	{
-		List<BibEntry> matches = [];
-		foreach (BibEntry entry in _bibEntries)
-		{
-			if (searchKey && entry.Key.Contains(searchString, caseSensitive ? StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase))
-			{
-				matches.Add(entry);
-				continue;
-			}
-
-			if (entry.DoTagsContainString(tags, searchString, caseSensitive))
-			{
-				matches.Add(entry);
-			}
-		}
-		return matches;
-	}
 
 	#endregion
 

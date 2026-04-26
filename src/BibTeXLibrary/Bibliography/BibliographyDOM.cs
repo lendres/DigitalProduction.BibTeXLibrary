@@ -14,7 +14,7 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 
 	private readonly List<string>									_header				= [];
 	private readonly ObservableCollection<BibEntry>					_bibEntries			= [];
-	private readonly ObservableCollection<StringConstantPart>		_strings			= [];
+	private readonly ObservableCollection<StringConstant>		_strings			= [];
 
 	#endregion
 
@@ -51,7 +51,7 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 	/// <summary>
 	/// String constants.
 	/// </summary>
-	public ObservableCollection<StringConstantPart> StringConstants { get => _strings; }
+	public ObservableCollection<StringConstant> StringConstants { get => _strings; }
 
 	/// <summary>
 	/// The number of string constants.
@@ -114,7 +114,7 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 		part.ModifiedChanged += OnPartModifiedChanged;
 		if (part.Type.Equals("string", StringComparison.CurrentCultureIgnoreCase))
 		{
-			_strings.Add((StringConstantPart)part);
+			_strings.Add((StringConstant)part);
 		}
 		else
 		{

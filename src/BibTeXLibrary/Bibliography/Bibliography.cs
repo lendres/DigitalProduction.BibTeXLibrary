@@ -105,7 +105,7 @@ public class Bibliography : BibliographyDOM
 		{
 			streamWriter.WriteLine();
 		}
-		foreach (StringConstantPart stringConstant in StringConstants)
+		foreach (StringConstant stringConstant in StringConstants)
 		{
 			streamWriter.Write(stringConstant.ToString());
 		}

@@ -151,9 +151,9 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 
 		IOrderedEnumerable<BibEntry> sorted = sortBy switch
 		{
-			SortBy.FirstAuthorLastName => copy.OrderBy(entry => entry.GetFirstAuthorsName(NameFormat.Last, StringCase.LowerCase)),
-			SortBy.Key => copy.OrderBy(entry => entry.Key),
-			_ => throw new ArgumentException("The specified method of sorting is not valid."),
+			SortBy.FirstAuthorLastName	=> copy.OrderBy(entry => entry.GetFirstAuthorsName(NameFormat.Last, StringCase.LowerCase)),
+			SortBy.Key					=> copy.OrderBy(entry => entry.Key),
+			_							=> throw new ArgumentException("The specified method of sorting is not valid.")
 		};
 
 		_bibEntries.Clear();
@@ -163,21 +163,52 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 		}
 	}
 
+	/// <summary>
+	/// Sort the string entries.
+	/// </summary>
+	/// <param name="sortBy">Method to sort the entries by.</param>
+	/// <exception cref="ArgumentException">The SortBy method is not valid.</exception>
+	public void SortStringConstants(SortStringsBy sortBy)
+	{
+		// The copy constructor doesn't work, it points to the _bibEntry list and when that list is cleared, both are cleared (and the enumerators).
+		BindingList<StringConstant> copy = [];
+		foreach (StringConstant entry in _strings)
+		{
+			copy.Add(entry);
+		}
+
+		IOrderedEnumerable<StringConstant> sorted = sortBy switch
+		{
+			SortStringsBy.Name	=> copy.OrderBy(entry => entry.Name),
+			SortStringsBy.Value	=> copy.OrderBy(entry => entry.Value),
+			_					=> throw new ArgumentException("The specified method of sorting is not valid.")
+		};
+
+		_strings.Clear();
+		foreach (StringConstant entry in sorted)
+		{
+			_strings.Add(entry);
+		}
+	}
+
 	#region Search Methods
 
 	/// <summary>
 	/// Searches the values of the specified tags for the search string.
 	/// </summary>
 	/// <param name="tags">Bibliography tags to search.</param>
-	/// <param name="searchString"></param>
-	/// <param name="caseSensitive"></param>
-	/// <returns></returns>
+	/// <param name="searchKey">Whether to search the cite key.</param>
+	/// <param name="searchString">The string to search for.</param>
+	/// <param name="caseSensitive">Whether the search should be case-sensitive.</param>
+	/// <returns>A list of matching bibliography entries.</returns>
 	public List<BibEntry> SearchBibEntries(IEnumerable<string> tags, bool searchKey, string searchString, bool caseSensitive = false)
 	{
-		List<BibEntry> matches = [];
+		List<BibEntry> matches		= [];
+		StringComparison comparison	= caseSensitive ? StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase;
+
 		foreach (BibEntry entry in _bibEntries)
 		{
-			if (searchKey && entry.Key.Contains(searchString, caseSensitive ? StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase))
+			if (searchKey && entry.Key.Contains(searchString, comparison))
 			{
 				matches.Add(entry);
 				continue;
@@ -191,6 +222,42 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 		return matches;
 	}
 
+	/// <summary>
+	/// Searches the values of the specified tags for the search string.
+	/// </summary>
+	/// <param name="searchName">Whether to search the name of the string constant.</param>
+	/// <param name="searchString">The string to search for.</param>
+	/// <param name="caseSensitive">Whether the search should be case-sensitive.</param>
+	/// <returns>A list of matching string constants.</returns>
+	public List<StringConstant> SearchStringConstants(bool searchName, string searchString, bool caseSensitive = false)
+	{
+		List<StringConstant> matches	= [];
+		StringComparison comparison		= caseSensitive ? StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase;
+
+		foreach (StringConstant entry in _strings)
+		{
+			if (searchName && entry.Name.Contains(searchString, comparison))
+			{
+				matches.Add(entry);
+				continue;
+			}
+
+			if (entry.Value.Contains(searchString, comparison))
+			{
+				matches.Add(entry);
+			}
+		}
+
+		return matches;
+	}
+
+	/// <summary>
+	/// Finds the index at which the specified entry should be inserted based on the sorting method.
+	/// </summary>
+	/// <param name="entry">The entry to find the insert index for.</param>
+	/// <param name="sortBy">The sorting method to use.</param>
+	/// <returns>The index at which the entry should be inserted.</returns>
+	/// <exception cref="ArgumentException"></exception>
 	public int FindInsertIndex(BibEntry entry, SortBy sortBy)
 	{
 		return sortBy switch
@@ -198,6 +265,23 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 			SortBy.FirstAuthorLastName	=> BinarySearch(_bibEntries, entry, new CompareByFirstAuthorLastName(), false),
 			SortBy.Key					=> BinarySearch(_bibEntries, entry, new CompareByCiteKey(), false),
 			_							=> throw new ArgumentException("The specified method of sorting is not valid."),
+		};
+	}
+
+	/// <summary>
+	/// Finds the index at which the specified entry should be inserted based on the sorting method.
+	/// </summary>
+	/// <param name="entry">The entry to find the insert index for.</param>
+	/// <param name="sortBy">The sorting method to use.</param>
+	/// <returns>The index at which the entry should be inserted.</returns>
+	/// <exception cref="ArgumentException"></exception>
+	public int FindInsertIndex(StringConstant entry, SortStringsBy sortBy)
+	{
+		return sortBy switch
+		{
+			SortStringsBy.Name	=> BinarySearch(_strings, entry, new CompareByStringName(), false),
+			SortStringsBy.Value	=> BinarySearch(_strings, entry, new CompareByStringValue(), false),
+			_					=> throw new ArgumentException("The specified method of sorting is not valid."),
 		};
 	}
 

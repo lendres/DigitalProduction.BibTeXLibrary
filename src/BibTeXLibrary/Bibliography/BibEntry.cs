@@ -71,12 +71,7 @@ public class BibEntry : BibliographyPart
 	public string Address
 	{
 		get => this[GetFormattedName()];
-
-		set
-		{
-			this[GetFormattedName()] = value;
-			OnPropertyChanged();
-		}
+		set => SetProperty(GetFormattedName(), value);
 	}
 
 	/// <summary>
@@ -85,12 +80,7 @@ public class BibEntry : BibliographyPart
 	public string Annote
 	{
 		get => this[GetFormattedName()];
-
-		set
-		{
-			this[GetFormattedName()] = value;
-			OnPropertyChanged();
-		}
+		set => SetProperty(GetFormattedName(), value);
 	}
 
 	/// <summary>
@@ -99,12 +89,7 @@ public class BibEntry : BibliographyPart
 	public string Author
 	{
 		get => this[GetFormattedName()];
-
-		set
-		{
-			this[GetFormattedName()] = value;
-			OnPropertyChanged();
-		}
+		set => SetProperty(GetFormattedName(), value);
 	}
 
 	/// <summary>
@@ -113,12 +98,7 @@ public class BibEntry : BibliographyPart
 	public string BookTitle
 	{
 		get => this[GetFormattedName()];
-
-		set
-		{
-			this[GetFormattedName()] = value;
-			OnPropertyChanged();
-		}
+		set => SetProperty(GetFormattedName(), value);
 	}
 
 	/// <summary>
@@ -127,12 +107,7 @@ public class BibEntry : BibliographyPart
 	public string Chapter
 	{
 		get => this[GetFormattedName()];
-
-		set
-		{
-			this[GetFormattedName()] = value;
-			OnPropertyChanged();
-		}
+		set => SetProperty(GetFormattedName(), value);
 	}
 
 	/// <summary>
@@ -141,12 +116,7 @@ public class BibEntry : BibliographyPart
 	public string CrossRef
 	{
 		get => this[GetFormattedName()];
-
-		set
-		{
-			this[GetFormattedName()] = value;
-			OnPropertyChanged();
-		}
+		set => SetProperty(GetFormattedName(), value);
 	}
 
 	/// <summary>
@@ -155,12 +125,7 @@ public class BibEntry : BibliographyPart
 	public string Edition
 	{
 		get => this[GetFormattedName()];
-
-		set
-		{
-			this[GetFormattedName()] = value;
-			OnPropertyChanged();
-		}
+		set => SetProperty(GetFormattedName(), value);
 	}
 
 	/// <summary>
@@ -169,12 +134,7 @@ public class BibEntry : BibliographyPart
 	public string Editor
 	{
 		get => this[GetFormattedName()];
-
-		set
-		{
-			this[GetFormattedName()] = value;
-			OnPropertyChanged();
-		}
+		set => SetProperty(GetFormattedName(), value);
 	}
 
 	/// <summary>
@@ -183,12 +143,7 @@ public class BibEntry : BibliographyPart
 	public string HowPublished
 	{
 		get => this[GetFormattedName()];
-
-		set
-		{
-			this[GetFormattedName()] = value;
-			OnPropertyChanged();
-		}
+		set => SetProperty(GetFormattedName(), value);
 	}
 
 	/// <summary>
@@ -197,12 +152,7 @@ public class BibEntry : BibliographyPart
 	public string Institution
 	{
 		get => this[GetFormattedName()];
-
-		set
-		{
-			this[GetFormattedName()] = value;
-			OnPropertyChanged();
-		}
+		set => SetProperty(GetFormattedName(), value);
 	}
 
 	/// <summary>
@@ -211,12 +161,7 @@ public class BibEntry : BibliographyPart
 	public string Journal
 	{
 		get => this[GetFormattedName()];
-
-		set
-		{
-			this[GetFormattedName()] = value;
-			OnPropertyChanged();
-		}
+		set => SetProperty(GetFormattedName(), value);
 	}
 
 	/// <summary>
@@ -225,12 +170,7 @@ public class BibEntry : BibliographyPart
 	public string Note
 	{
 		get => this[GetFormattedName()];
-
-		set
-		{
-			this[GetFormattedName()] = value;
-			OnPropertyChanged();
-		}
+		set => SetProperty(GetFormattedName(), value);
 	}
 
 	/// <summary>
@@ -239,12 +179,7 @@ public class BibEntry : BibliographyPart
 	public string Number
 	{
 		get => this[GetFormattedName()];
-
-		set
-		{
-			this[GetFormattedName()] = value;
-			OnPropertyChanged();
-		}
+		set => SetProperty(GetFormattedName(), value);
 	}
 
 	/// <summary>
@@ -253,12 +188,7 @@ public class BibEntry : BibliographyPart
 	public string Organization
 	{
 		get => this[GetFormattedName()];
-
-		set
-		{
-			this[GetFormattedName()] = value;
-			OnPropertyChanged();
-		}
+		set => SetProperty(GetFormattedName(), value);
 	}
 
 	/// <summary>
@@ -267,12 +197,7 @@ public class BibEntry : BibliographyPart
 	public string Pages
 	{
 		get => this[GetFormattedName()];
-
-		set
-		{
-			this[GetFormattedName()] = value;
-			OnPropertyChanged();
-		}
+		set => SetProperty(GetFormattedName(), value);
 	}
 
 	/// <summary>
@@ -281,12 +206,7 @@ public class BibEntry : BibliographyPart
 	public string Publisher
 	{
 		get => this[GetFormattedName()];
-
-		set
-		{
-			this[GetFormattedName()] = value;
-			OnPropertyChanged();
-		}
+		set => SetProperty(GetFormattedName(), value);
 	}
 
 	/// <summary>
@@ -295,12 +215,7 @@ public class BibEntry : BibliographyPart
 	public string School
 	{
 		get => this[GetFormattedName()];
-
-		set
-		{
-			this[GetFormattedName()] = value;
-			OnPropertyChanged();
-		}
+		set => SetProperty(GetFormattedName(), value);
 	}
 
 	/// <summary>
@@ -309,12 +224,7 @@ public class BibEntry : BibliographyPart
 	public string Series
 	{
 		get => this[GetFormattedName()];
-
-		set
-		{
-			this[GetFormattedName()] = value;
-			OnPropertyChanged();
-		}
+		set => SetProperty(GetFormattedName(), value);
 	}
 
 	/// <summary>
@@ -323,12 +233,7 @@ public class BibEntry : BibliographyPart
 	public string Title
 	{
 		get => this[GetFormattedName()];
-
-		set
-		{
-			this[GetFormattedName()] = value;
-			OnPropertyChanged();
-		}
+		set => SetProperty(GetFormattedName(), value);
 	}
 
 	/// <summary>
@@ -337,12 +242,7 @@ public class BibEntry : BibliographyPart
 	public string Volume
 	{
 		get => this[GetFormattedName()];
-
-		set
-		{
-			this[GetFormattedName()] = value;
-			OnPropertyChanged();
-		}
+		set => SetProperty(GetFormattedName(), value);
 	}
 
 	/// <summary>
@@ -351,12 +251,7 @@ public class BibEntry : BibliographyPart
 	public string Year
 	{
 		get => this[GetFormattedName()];
-
-		set
-		{
-			this[GetFormattedName()] = value;
-			OnPropertyChanged();
-		}
+		set => SetProperty(GetFormattedName(), value);
 	}
 
 	/// <summary>
@@ -365,12 +260,7 @@ public class BibEntry : BibliographyPart
 	public string Month
 	{
 		get => this[GetFormattedName()];
-
-		set
-		{
-			this[GetFormattedName()] = value;
-			OnPropertyChanged();
-		}
+		set => SetProperty(GetFormattedName(), value);
 	}
 
 	/// <summary>
@@ -379,11 +269,21 @@ public class BibEntry : BibliographyPart
 	public string Abstract
 	{
 		get => this[GetFormattedName()];
+		set => SetProperty(GetFormattedName(), value);
+	}
 
-		set
+	/// <summary>
+	/// Reusable property setter.
+	/// </summary>
+	/// <param name="formattedPropertyName">Formatted property name used for storing and retrieving the value.</param>
+	/// <param name="value">Value to set.</param>
+	/// <param name="propertyName">The name of the property that changed.  Used for event notifications.</param>
+	private void SetProperty(string formattedPropertyName, string value, [CallerMemberName] string propertyName = null!)
+	{
+		if (this[formattedPropertyName] != value)
 		{
-			this[GetFormattedName()] = value;
-			OnPropertyChanged();
+			this[formattedPropertyName] = value;
+			OnPropertyChanged(propertyName);
 		}
 	}
 
@@ -455,8 +355,11 @@ public class BibEntry : BibliographyPart
 
 			if (_tags.TryGetValue(tagName, out TagValue? tagValue))
 			{
-				tagValue.Content = value;
-				Modified = true;
+				if (tagValue.Content != value)
+				{
+					tagValue.Content = value;
+					Modified = true;
+				}
 			}
 			else
 			{
@@ -510,10 +413,18 @@ public class BibEntry : BibliographyPart
 		}
 
 		bool exists = _tags.ContainsKey(tagName);
-		_tags[tagName] = tagValueObject;
-		Modified = true;
-		if (!exists)
+		if (exists)
 		{
+			if (_tags[tagName] != tagValueObject)
+			{
+				Modified = true;
+				_tags[tagName] = tagValueObject;
+			}
+		}
+		else
+		{
+			_tags[tagName] = tagValueObject;
+			Modified = true;
 			OnPropertyChanged(nameof(TagNames));
 		}
 	}

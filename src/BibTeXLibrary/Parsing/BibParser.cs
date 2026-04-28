@@ -342,7 +342,7 @@ public sealed class BibParser : IDisposable
 						{
 							SetTag(bibPart, ref tagName, tagValueType, tagValueBuilder);
 						}
-						bibliographyDOM.AddBibPart(bibPart);
+						bibliographyDOM.Add(bibPart);
 						break;
 					}
 				}

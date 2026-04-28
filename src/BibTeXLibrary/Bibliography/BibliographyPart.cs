@@ -1,7 +1,4 @@
 ﻿using DigitalProduction.ComponentModel;
-using System.Collections;
-using System.Collections.Specialized;
-using System.ComponentModel;
 
 namespace BibTeXLibrary;
 
@@ -17,6 +14,18 @@ public abstract class BibliographyPart(bool caseSensitivetags) : NotifyPropertyM
 
 	/// <summary>Specifies if the tags are case sensitive.</summary>
 	protected readonly bool		_caseSensitivetags		= caseSensitivetags;
+
+	#endregion
+
+	#region Public Methods
+
+	/// <summary>
+	/// Public interface to mark the bibliography part as saved.  This is used to reset the Modified property after saving.
+	/// </summary>
+	public void MarkSaved()
+	{
+		Modified = false;
+	}
 
 	#endregion
 

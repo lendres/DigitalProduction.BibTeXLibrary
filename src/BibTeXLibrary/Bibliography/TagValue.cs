@@ -16,7 +16,7 @@ public class TagValue
 	}
 
 	/// <summary>
-	/// Default constructor.
+	/// Content constructor.
 	/// </summary>
 	/// <param name="content">The tag content.</param>
 	public TagValue(string content)
@@ -25,7 +25,7 @@ public class TagValue
 	}
 
 	/// <summary>
-	/// Default constructor.
+	/// Populate constructor.
 	/// </summary>
 	/// <param name="content">The tag content.</param>
 	/// <param name="format">Specifies the format to write in.</param>
@@ -34,6 +34,18 @@ public class TagValue
 		Content	= content;
 		Format	= format;
 	}
+
+	/// <summary>
+	/// Copy constructor.
+	/// </summary>
+	/// <param name="tagValue">The tag content.</param>
+	/// <param name="format">Specifies the format to write in.</param>
+	public TagValue(TagValue tagValue)
+	{
+		Content	= tagValue.Content;
+		Format	= tagValue.Format;
+	}
+
 
 	#endregion
 

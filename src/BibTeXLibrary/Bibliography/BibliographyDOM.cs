@@ -1,7 +1,9 @@
 ﻿using DigitalProduction.ComponentModel;
+using DigitalProduction.Projects;
 using DigitalProduction.Strings;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 
 namespace BibTeXLibrary;
 
@@ -108,7 +110,7 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 	/// Add a bibliography entry or a string.
 	/// </summary>
 	/// <param name="part">BibliographyPart.</param>
-	public void AddBibPart(BibliographyPart part)
+	public void Add(BibliographyPart part)
 	{
 		part.PropertyChanged += OnPartPropertyChanged;
 		part.ModifiedChanged += OnPartModifiedChanged;
@@ -129,6 +131,88 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 	public void AddHeaderLine(string line)
 	{
 		_header.Add(line);
+	}
+
+	/// <summary>
+	/// Insert a bibliography entry 
+	/// </summary>
+	/// <param name="part">BibliographyPart.</param>
+	public void Insert(BibEntry bibEntry, SortBy sortBy)
+	{
+		int position = FindInsertIndex(bibEntry, sortBy);
+		Insert(bibEntry, position);
+	}
+
+	/// <summary>
+	/// Add a bibliography entry or a string.
+	/// </summary>
+	/// <param name="part">BibliographyPart.</param>
+	public void Insert(BibEntry bibEntry, int position)
+	{
+		bibEntry.PropertyChanged += OnPartPropertyChanged;
+		bibEntry.ModifiedChanged += OnPartModifiedChanged;
+
+		_bibEntries.Insert(position, bibEntry);
+	}
+
+	/// <summary>
+	/// Add a bibliography entry or a string.
+	/// </summary>
+	/// <param name="part">BibliographyPart.</param>
+	public void Insert(StringConstant stringConstant, SortStringsBy sortBy)
+	{
+		int position = FindInsertIndex(stringConstant, sortBy);
+		Insert(stringConstant, position);
+	}
+
+	/// <summary>
+	/// Add a bibliography entry or a string.
+	/// </summary>
+	/// <param name="part">BibliographyPart.</param>
+	public void Insert(StringConstant stringConstant, int position)
+	{
+		stringConstant.PropertyChanged += OnPartPropertyChanged;
+		stringConstant.ModifiedChanged += OnPartModifiedChanged;
+
+		_strings.Insert(position, stringConstant);
+	}
+
+	#endregion
+
+	#region Get Methods
+
+	/// <summary>
+	/// Returns an enumerable collection of string names contained in the current instance.
+	/// </summary>
+	/// <returns>
+	/// An enumerable collection of strings representing the names of all stored string constants. The collection will be
+	/// empty if no string constants are present.
+	/// </returns>
+	public IEnumerable<string> GetStringNames()
+	{
+		List<string> names = [];
+		foreach (StringConstant str in _strings)
+		{
+			names.Add(str.Name);
+		}
+		return names;
+	}
+
+	/// <summary>
+	/// Returns an enumerable collection of string values contained in the current instance.	
+	/// </summary>
+	/// <returns>
+	/// An enumerable collection of strings representing the values of all stored string constants. The collection will be
+	/// empty if no string constants are present.
+	/// </returns>
+	public IEnumerable<string> GetStringValues()
+	{
+		List<string> values = [];
+		foreach (StringConstant str in _strings)
+		{
+			values.Add(str.Value);
+		}
+		return values;
 	}
 
 	#endregion
@@ -190,6 +274,8 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 			_strings.Add(entry);
 		}
 	}
+
+	#endregion
 
 	#region Search Methods
 
@@ -325,8 +411,6 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 
 		return min;
 	}
-
-	#endregion
 
 	#endregion
 

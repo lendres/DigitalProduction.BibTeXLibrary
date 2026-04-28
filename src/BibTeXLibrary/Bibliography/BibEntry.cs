@@ -455,8 +455,11 @@ public class BibEntry : BibliographyPart
 
 			if (_tags.TryGetValue(tagName, out TagValue? tagValue))
 			{
-				tagValue.Content = value;
-				Modified = true;
+				if (tagValue.Content != value)
+				{
+					tagValue.Content = value;
+					Modified = true;
+				}
 			}
 			else
 			{

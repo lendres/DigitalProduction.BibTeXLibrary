@@ -1,6 +1,5 @@
 ﻿using BibTeXLibrary;
 using System.Collections.ObjectModel;
-using System.Text;
 
 namespace DigitalProduction.UnitTests;
 

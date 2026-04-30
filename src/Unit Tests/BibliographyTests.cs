@@ -1,4 +1,6 @@
 ﻿using BibTeXLibrary;
+using System.Collections.ObjectModel;
+using System.Text;
 
 namespace DigitalProduction.UnitTests;
 
@@ -24,6 +26,8 @@ public class BibliographyTests
 
 	#endregion
 
+	#region Cite Key Generation
+
 	[Fact]
 	public void TestHavingAndInName()
 	{
@@ -33,10 +37,53 @@ public class BibliographyTests
 		Assert.Equal("ref:menand2004a", result.Key);
 	}
 
+	#endregion
+
+	#region Reading from a File
+
+    [Fact]
+    public void TestReadingBibFile()
+    {
+		Bibliography bibliography = new();
+		bibliography.Read("TestData/BibParserTest1_In.bib");
+
+		ObservableCollection<BibEntry> entries = bibliography.Entries;
+		Assert.Equal(4,														entries.Count);
+		Assert.Equal("nobody",												entries[0].Publisher);
+		Assert.Equal("Apache hadoop yarn: Yet another resource negotiator",	entries[1].Title);
+		Assert.Equal("KalavriShang-797",									entries[2].Key);
+
+		ObservableCollection<StringConstant> stringConstants = bibliography.StringConstants;
+		Assert.Equal(2,														stringConstants.Count);
+		Assert.Equal("TRANSMATHSOFT",										stringConstants[0].Name);
+		Assert.Equal("ACM T Math Software",									stringConstants[0].Value);
+		Assert.Equal("CODEPROJ",											stringConstants[1].Name);
+		Assert.Equal("Code Project",										stringConstants[1].Value);
+    }
+
+	[Fact]
+	public void TestWritingBibFile()
+	{
+		Bibliography bibliography = new();
+		bibliography.Read("TestData/BibParserTest1_In.bib");
+		bibliography.Write("TestData/BibParserTest1_Out.bib");
+
+		bibliography = new();
+		bibliography.Read("TestData/BibParserTest1_Out.bib");
+		Assert.Equal(4, bibliography.Entries.Count);
+		Assert.Equal(2, bibliography.StringConstants.Count);
+	}
+
+	#endregion
+
+	#region Helper Methods
+
 	private Bibliography ParseBibEntry(string bibString)
 	{
 		BibParser parser = new(new StringReader(bibString));
 		return (Bibliography)parser.Parse(_bibliography);
 	}
+
+	#endregion
 
 } // End class.

@@ -7,7 +7,7 @@ using BibTeXLibrary;
 
 namespace DigitalProduction.UnitTests;
 
-public class BibEntryInitializationTest
+public class BibEntryInitializationTests
 {
 	#region Fields
 
@@ -17,7 +17,7 @@ public class BibEntryInitializationTest
 
 	#region Construction
 
-	public BibEntryInitializationTest()
+	public BibEntryInitializationTests()
 	{
 		_initializationFilePath = FindRepositoryFile("User Files", "Bib Entry Initialization.tagord");
 	}

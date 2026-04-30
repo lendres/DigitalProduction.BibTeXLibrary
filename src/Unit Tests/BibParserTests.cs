@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DigitalProduction.UnitTests;
 
-public class BibParserTest
+public class BibParserTests
 {
 	#region Basic BibEntry Parsing
 

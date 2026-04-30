@@ -39,7 +39,7 @@ public class BibliographyTests
 
 	#endregion
 
-	#region Reading from a File
+	#region Reading and Writing Files
 
     [Fact]
     public void TestReadingBibFile()

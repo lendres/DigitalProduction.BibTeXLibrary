@@ -289,9 +289,9 @@ public sealed class BibParser : IDisposable
 
 					case BibBuilderState.SetType:
 					{
-						if (token.Value == StringConstantPart.TypeString)
+						if (token.Value == StringConstant.TypeString)
 						{
-							bibPart = new StringConstantPart();
+							bibPart = new StringConstant();
 						}
 						else
 						{
@@ -342,7 +342,7 @@ public sealed class BibParser : IDisposable
 						{
 							SetTag(bibPart, ref tagName, tagValueType, tagValueBuilder);
 						}
-						bibliographyDOM.AddBibPart(bibPart);
+						bibliographyDOM.Add(bibPart);
 						break;
 					}
 				}
@@ -424,7 +424,7 @@ public sealed class BibParser : IDisposable
 				}
 
 				string valueString = value.ToString();
-				TokenType tokenType = valueString.ToLower().Trim() == StringConstantPart.TypeString ? TokenType.StringType : TokenType.Name;
+				TokenType tokenType = valueString.ToLower().Trim() == StringConstant.TypeString ? TokenType.StringType : TokenType.Name;
 
 				yield return new Token(tokenType, valueString);
 			}

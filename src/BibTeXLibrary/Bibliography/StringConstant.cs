@@ -6,7 +6,7 @@ namespace BibTeXLibrary;
 /// <summary>
 /// A bibliography string constant.
 /// </summary>
-public class StringConstantPart : BibliographyPart
+public class StringConstant : BibliographyPart
 {
 	#region Fields
 
@@ -19,9 +19,19 @@ public class StringConstantPart : BibliographyPart
 	/// <summary>
 	/// Default constructor.
 	/// </summary>
-	public StringConstantPart() :
+	public StringConstant() :
 		base(true)
 	{
+	}
+
+	/// <summary>
+	/// Copy constructor.
+	/// </summary>
+	public StringConstant(StringConstant stringConstant) :
+		base(true)
+	{
+		Name		= stringConstant.Name;
+		TagValue	= new TagValue(stringConstant.TagValue.Content, stringConstant.TagValue.Format);
 	}
 
 	#endregion
@@ -30,13 +40,27 @@ public class StringConstantPart : BibliographyPart
 
 	/// <summary>
 	/// Bibliography entry type, e.g. "book", "thesis", "string".  This is the name that follows the "@".
+	/// For a StringConstant, this is always "string".  This cannot be set, as it is determined by the class type.
 	/// </summary>
-	public override string Type { get => TypeString; set => throw new Exception("You cannot set the type of a StringConstantPart"); }
+	public override string Type
+	{
+		get => TypeString;
+		set => throw new Exception("You cannot set the type of a StringConstantPart");
+	}
 
 	/// <summary>
 	/// Name of the string constant.
 	/// </summary>
-	public string Name { get => GetValueOrDefault<string>(string.Empty); protected set => SetValue(value); }
+	public string Name
+	{
+		get => GetValueOrDefault<string>(string.Empty);
+		set
+		{
+			SetValue(value);
+			OnPropertyChanged();
+			OnPropertyChanged(nameof(Name));
+		}
+	}
 
 	/// <summary>
 	/// Value of the string constant.
@@ -56,7 +80,11 @@ public class StringConstantPart : BibliographyPart
 	/// <summary>
 	/// Value of the string constant.
 	/// </summary>
-	public TagValue TagValue { get => GetValueOrDefault<TagValue>(new TagValue(string.Empty, TagValueFormat.Quote)); protected set => SetValue(value); }
+	public TagValue TagValue
+	{
+		get				=> GetValueOrDefault<TagValue>(new TagValue(string.Empty, TagValueFormat.Quote));
+		protected set	=> SetValue(value);
+	}
 
 	#endregion
 

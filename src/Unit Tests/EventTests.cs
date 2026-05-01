@@ -1,5 +1,4 @@
 ﻿using BibTeXLibrary;
-using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 
 namespace DigitalProduction.UnitTests;
 

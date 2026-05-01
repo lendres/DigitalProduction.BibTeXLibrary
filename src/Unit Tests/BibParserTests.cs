@@ -1,12 +1,15 @@
 ﻿using BibTeXLibrary;
 using System.Collections.ObjectModel;
 using System.Text;
+using static System.Net.WebRequestMethods;
 
 namespace DigitalProduction.UnitTests;
 
-public class BibParserTest
+public class BibParserTests
 {
-    [Fact]
+	#region Basic BibEntry Parsing
+
+	[Fact]
     public void TestParserRegularBibEntry()
     {
 		BibParser parser = new(new StringReader("@Article{keyword, title = {\"0\"{123}456{789}}, year = 2012, address=\"PingLeYuan\"}"));
@@ -56,7 +59,83 @@ public class BibParserTest
 		parser.Dispose();
     }
 
-    [Fact]
+	#endregion
+
+	#region Basic String Constant Parsing
+
+	[Fact]
+    public void TestParserBasicStringConstant()
+    {
+		BibParser		parser	= new(new StringReader("@string(key = \"value\")"));
+		StringConstant	entry	= parser.Parse().StringConstants[0];
+
+		Assert.Equal(StringConstant.TypeString, entry.Type);
+		Assert.Equal("value", entry.Value);
+
+		parser.Dispose();
+    }
+
+	[Fact]
+    public void TestParserStringConstantSyntax()
+    {
+		BibParser		parser	= new(new StringReader("@string(key = {value})"));
+		StringConstant	entry	= parser.Parse().StringConstants[0];
+
+		Assert.Equal(StringConstant.TypeString, entry.Type);
+		Assert.Equal("value", entry.Value);
+
+		parser.Dispose();
+
+		parser	= new(new StringReader("@string{key = {value}}"));
+		entry	= parser.Parse().StringConstants[0];
+
+		Assert.Equal(StringConstant.TypeString, entry.Type);
+		Assert.Equal("value", entry.Value);
+
+		parser.Dispose();
+
+		parser	= new(new StringReader("@string{key = \"value\"}"));
+		entry	= parser.Parse().StringConstants[0];
+
+		Assert.Equal(StringConstant.TypeString, entry.Type);
+		Assert.Equal("value", entry.Value);
+
+		parser.Dispose();
+    }
+
+	[Fact]
+    public void TestParserStringConstantWithInternalBrackets()
+    {
+		BibParser		parser	= new(new StringReader("@string(key = {The {VALUE}})"));
+		StringConstant	entry	= parser.Parse().StringConstants[0];
+
+		Assert.Equal(StringConstant.TypeString, entry.Type);
+		Assert.Equal("The {VALUE}", entry.Value);
+
+		parser.Dispose();
+
+		parser	= new(new StringReader("@string{key = {The {VALUE}}}"));
+		entry	= parser.Parse().StringConstants[0];
+
+		Assert.Equal(StringConstant.TypeString, entry.Type);
+		Assert.Equal("The {VALUE}", entry.Value);
+
+		parser.Dispose();
+
+		parser	= new(new StringReader("@string{key = \"The {VALUE}\"}"));
+		entry	= parser.Parse().StringConstants[0];
+
+		Assert.Equal(StringConstant.TypeString, entry.Type);
+		Assert.Equal("The {VALUE}", entry.Value);
+
+		parser.Dispose();
+    }
+
+	#endregion
+
+	#region Exceptions
+
+	[Fact]
     public void TestParserWithBorkenBibEntry()
     {
 		using BibParser parser = new(new StringReader("@book{,"));
@@ -91,6 +170,10 @@ public class BibParserTest
 		Assert.Throws<UnrecognizableCharacterException>(() => parser.Parse());
 	}
 
+	#endregion
+
+	#region Reading from a File
+
     [Fact]
     public void TestParserWithBibFile()
     {
@@ -100,7 +183,7 @@ public class BibParserTest
 		Assert.Equal(4,														entries.Count);
 		Assert.Equal("nobody",												entries[0].Publisher);
 		Assert.Equal("Apache hadoop yarn: Yet another resource negotiator",	entries[1].Title);
-		Assert.Equal("KalavriShang-797",										entries[2].Key);
+		Assert.Equal("KalavriShang-797",									entries[2].Key);
 		parser.Dispose();
     }
 
@@ -118,16 +201,18 @@ public class BibParserTest
     [Fact]
     public void TestParserResult()
     {
-		BibParser parser = new(new StreamReader("TestData/BibParserTest1_In.bib", Encoding.Default));
-		BibEntry entry = parser.Parse().Entries[0];
-		string entryString = entry.ToString().TrimEnd('\n').TrimEnd('\r');
-
-		StreamReader sr = new("TestData/BibParserTest1_Out1.bib", Encoding.Default);
-		string expected = sr.ReadToEnd();
+		BibParser parser	= new(new StreamReader("TestData/BibParserTest1_In.bib", Encoding.Default));
+		BibEntry entry		= parser.Parse().Entries[0];
+		string entryString	= entry.ToString().TrimEnd('\n').TrimEnd('\r');
+		string expected		= "@Article{mrx05,\r\n  author = {Mr. X},\r\n  title = {Something Great},\r\n  publisher = {nobody},\r\n  year = 2005\r\n}";
 
 		Assert.Equal(expected, entryString);
 		parser.Dispose();
     }
+
+	#endregion
+
+	#region Syntax Variations
 
 	[Fact]
 	public void TestParserBibStringWithBrackets()
@@ -176,5 +261,7 @@ public class BibParserTest
 
 		parser.Dispose();
 	}
+
+	#endregion
 
 } // End class.

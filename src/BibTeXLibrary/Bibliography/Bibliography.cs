@@ -107,7 +107,7 @@ public class Bibliography : BibliographyDOM
 		}
 		foreach (StringConstant stringConstant in StringConstants)
 		{
-			streamWriter.Write(stringConstant.ToString());
+			streamWriter.Write(stringConstant.ToString(writeSettings));
 		}
 
 		// Write each entry with a blank line preceeding it.

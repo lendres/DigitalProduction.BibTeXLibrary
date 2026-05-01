@@ -2,7 +2,7 @@
 
 namespace DigitalProduction.UnitTests;
 
-public class UnexpectedTokenExceptionTest
+public class UnexpectedTokenExceptionTests
 {
     [Fact]
     public void TestConstructor()

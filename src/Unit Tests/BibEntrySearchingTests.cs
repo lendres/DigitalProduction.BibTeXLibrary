@@ -23,6 +23,8 @@ public class BibEntrySearchingTests
 
 	#endregion
 
+	#region Tests
+
 	[Fact]
     public void TestSearchInTagValues()
     {
@@ -64,10 +66,16 @@ public class BibEntrySearchingTests
 		Assert.Single(result);
 	}
 
+	#endregion
+
+	#region Helper Methods
+
 	private static BibliographyDOM ParseBibEntry(string bibString)
 	{
 		BibParser parser = new(new StringReader(bibString));
 		return parser.Parse();
 	}
+
+	#endregion
 
 } // End class.

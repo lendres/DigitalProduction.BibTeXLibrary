@@ -489,7 +489,7 @@ public class BibEntry : BibliographyPart
 		{
 			// Initial line indent and tag key.
 			bibliographyPart.Append(writeSettings.Indent);
-			//bib.Append(tag.Key);
+
 			bibliographyPart.Append(tagEnumerator.Key.ToString());
 
 			// Add the space between the key and equal sign.

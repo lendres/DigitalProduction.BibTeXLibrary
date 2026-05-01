@@ -2,7 +2,7 @@
 
 namespace DigitalProduction.UnitTests;
 
-public class UnrecognizableCharacterExceptionTest
+public class UnrecognizableCharacterExceptionTests
 {
     [Fact]
     public void TestConstructor()

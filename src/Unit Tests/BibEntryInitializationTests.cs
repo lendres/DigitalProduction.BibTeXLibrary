@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BibTeXLibrary;
+﻿using BibTeXLibrary;
 
 namespace DigitalProduction.UnitTests;
 
-public class BibEntryInitializationTest
+public class BibEntryInitializationTests
 {
 	#region Fields
 
@@ -17,7 +12,7 @@ public class BibEntryInitializationTest
 
 	#region Construction
 
-	public BibEntryInitializationTest()
+	public BibEntryInitializationTests()
 	{
 		_initializationFilePath = FindRepositoryFile("User Files", "Bib Entry Initialization.tagord");
 	}
@@ -132,4 +127,5 @@ public class BibEntryInitializationTest
 	}
 
 	#endregion
+
 } // End class.

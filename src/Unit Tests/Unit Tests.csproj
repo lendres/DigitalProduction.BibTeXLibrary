@@ -28,9 +28,6 @@
     <None Update="TestData\BibParserTest1_In.bib">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="TestData\BibParserTest1_Out1.bib">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

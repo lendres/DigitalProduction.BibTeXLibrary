@@ -9,8 +9,9 @@ public class StringConstantSearchingTests
 	private readonly BibliographyDOM _bibliographyDom;
 
 	private readonly string _stringConstants = 
-		"@book{ref:keyA1, booktitle = {Acme Journal of Science}, author = {John Smith}, year = {2023}, abstract = {Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.}} " +
-		"@book{ref:keyB2, booktitle = {Journal of {SCIENCE} Fiction}, author = {Jane Smith}, year = {2023}, abstract = {John lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.}}";
+		"@string{keyA1 = {Acme Journal of Science}}" +
+		"@string(keyB2 = {Journal of {SCIENCE} Fiction})" +
+		"@string(keyC3 = \"Commun {NUMER} Methods Eng\")";
 
 	#endregion
 
@@ -23,11 +24,41 @@ public class StringConstantSearchingTests
 
 	#endregion
 
+	#region Tests
+
+	[Fact]
+    public void TestSearchInValues()
+    {
+		List<StringConstant> result = _bibliographyDom.SearchStringConstants(false, "Fiction");
+		Assert.Single(result);
+		
+		result = _bibliographyDom.SearchStringConstants(false, "Journal");
+		Assert.Equal(2, result.Count);
+
+		result = _bibliographyDom.SearchStringConstants(false, "{NUMER}");
+		Assert.Single(result);
+	}
+
+	[Fact]
+    public void TestSearchInNames()
+    {
+		List<StringConstant> result = _bibliographyDom.SearchStringConstants(true, "A1");
+		Assert.Single(result);
+		
+		result = _bibliographyDom.SearchStringConstants(true, "key");
+		Assert.Equal(3, result.Count);
+	}
+
+	#endregion
+
+	#region Helper Methods
 
 	private static BibliographyDOM ParseBibEntry(string stringConstants)
 	{
 		BibParser parser = new(new StringReader(stringConstants));
 		return parser.Parse();
 	}
+
+	#endregion
 
 } // End class.

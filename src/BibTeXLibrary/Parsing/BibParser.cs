@@ -268,7 +268,7 @@ public sealed class BibParser : IDisposable
 			// Fetch token from Tokenizer and build BibEntry.
 			foreach (Token token in Tokenize())
 			{
-				// Transfer state
+				// Transfer state.
 				if (StateMap[curState].TryGetValue(token.Type, out Next? value))
 				{
 					nextState = value.Item1;
@@ -278,7 +278,7 @@ public sealed class BibParser : IDisposable
 					IEnumerable<TokenType> expected = from pair in StateMap[curState] select pair.Key;
 					throw new UnexpectedTokenException(_lineCount, _columnCount, token.Type, [.. expected]);
 				}
-				// Build BibEntry
+				// Build BibEntry.
 				switch (StateMap[curState][token.Type].Item2)
 				{
 					case BibBuilderState.SetHeader:

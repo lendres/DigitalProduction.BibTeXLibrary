@@ -293,8 +293,8 @@ public class BibEntry : BibliographyPart
 
 	public string FindTagValue(string value, bool caseSensitive = false)
 	{
-		string result = "";
-		string matchValue = caseSensitive ? value : value.ToLower();
+		string result		= "";
+		string matchValue	= caseSensitive ? value : value.ToLower();
 
 		IDictionaryEnumerator tagEnumerator = _tags.GetEnumerator();
 		while (tagEnumerator.MoveNext())

@@ -101,8 +101,8 @@ public class StringConstant : BibliographyPart
 			tagName = tagName.ToLower();
 		}
 
-		Name = tagName;
-		TagValue = new TagValue(tagValue, TagValueFormat.Quote);
+		Name		= tagName;
+		TagValue	= new TagValue(tagValue, TagValueFormat.Quote);
 	}
 
 	#endregion

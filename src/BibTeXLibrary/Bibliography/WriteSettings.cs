@@ -11,14 +11,18 @@ public class WriteSettings : NotifyModifiedChanged
 {
 	#region Fields
 
-	private WhiteSpace			_whiteSpace			= WhiteSpace.Tab;
-	private int					_tabSize			= 4;
-	private bool				_alignTagValues		= true;
-	private int					_alignAtColumn		= 24;
-	private int					_alignAtTabStop		= 5;
-	private bool				_removeLastComma	= true;
-	private string				_newLine			= Environment.NewLine;
-	private char				_tab				= '\t';
+	private WhiteSpace			_whiteSpace						= WhiteSpace.Tab;
+	private int					_tabSize						= 4;
+	private bool				_alignTagValues					= true;
+	private int					_stringEntryAlignAtColumn		= 28;
+	private int					_bibEntryAlignAtColumn			= 24;
+	private int					_stringEntryAlignAtTabStop		= 6;
+	private int					_bibEntryAlignAtTabStop			= 5;
+	private TagValueFormat		_stringConstantTagValueFormat	= TagValueFormat.Quote;
+	private TagValueFormat		_bibEntryTagValueFormat			= TagValueFormat.Bracket;
+	private bool				_removeLastComma				= true;
+	private string				_newLine						= Environment.NewLine;
+	private char				_tab							= '\t';
 
 	#endregion
 
@@ -39,8 +43,8 @@ public class WriteSettings : NotifyModifiedChanged
 		_whiteSpace			= writeSettings._whiteSpace;
 		_tabSize			= writeSettings._tabSize;
 		_alignTagValues		= writeSettings._alignTagValues;
-		_alignAtColumn		= writeSettings._alignAtColumn;
-		_alignAtTabStop		= writeSettings._alignAtTabStop;
+		_bibEntryAlignAtColumn		= writeSettings._bibEntryAlignAtColumn;
+		_bibEntryAlignAtTabStop		= writeSettings._bibEntryAlignAtTabStop;
 		_removeLastComma	= writeSettings._removeLastComma;
 		_newLine			= writeSettings._newLine;
 		_tab				= writeSettings._tab;
@@ -107,16 +111,34 @@ public class WriteSettings : NotifyModifiedChanged
 	/// <summary>
 	/// Specifies the column number to align tag values at when using spaces as the white space.
 	/// </summary>
-	[XmlAttribute("alignatcolumn")]
-	public int AlignAtColumn
+	[XmlAttribute("stringentryalignatcolumn")]
+	public int StringEntryAlignAtColumn
 	{
-		get => _alignAtColumn;
+		get => _stringEntryAlignAtColumn;
 
 		set
 		{
-			if (_alignAtColumn != value)
+			if (_stringEntryAlignAtColumn != value)
 			{
-				_alignAtColumn = value;
+				_stringEntryAlignAtColumn = value;
+				Modified = true;
+			}
+		}
+	}
+
+	/// <summary>
+	/// Specifies the column number to align tag values at when using spaces as the white space.
+	/// </summary>
+	[XmlAttribute("bibentryalignatcolumn")]
+	public int BibEntryAlignAtColumn
+	{
+		get => _bibEntryAlignAtColumn;
+
+		set
+		{
+			if (_bibEntryAlignAtColumn != value)
+			{
+				_bibEntryAlignAtColumn = value;
 				Modified = true;
 			}
 		}
@@ -125,16 +147,34 @@ public class WriteSettings : NotifyModifiedChanged
 	/// <summary>
 	/// Specifies the tab stop number to align tag values at when using spaces as the white space.
 	/// </summary>
-	[XmlAttribute("alignattabstop")]
-	public int AlignAtTabStop
+	[XmlAttribute("stringentryalignattabstop")]
+	public int StringEntryAlignAtTabStop
 	{
-		get => _alignAtTabStop;
+		get => _stringEntryAlignAtTabStop;
 
 		set
 		{
-			if (_alignAtTabStop != value)
+			if (_stringEntryAlignAtTabStop != value)
 			{
-				_alignAtTabStop = value;
+				_stringEntryAlignAtTabStop = value;
+				Modified = true;
+			}
+		}
+	}
+
+	/// <summary>
+	/// Specifies the tab stop number to align tag values at when using spaces as the white space.
+	/// </summary>
+	[XmlAttribute("bibentryalignattabstop")]
+	public int BibEntryAlignAtTabStop
+	{
+		get => _bibEntryAlignAtTabStop;
+
+		set
+		{
+			if (_bibEntryAlignAtTabStop != value)
+			{
+				_bibEntryAlignAtTabStop = value;
 				Modified = true;
 			}
 		}
@@ -209,9 +249,9 @@ public class WriteSettings : NotifyModifiedChanged
 		{
 			return WhiteSpace switch
 			{
-				WhiteSpace.Tab => new string(Tab, 1),
-				WhiteSpace.Space => TabAsSpaces,
-				_ => throw new InvalidEnumArgumentException("Invalid \"WhiteSpace\" value."),
+				WhiteSpace.Tab		=> new string(Tab, 1),
+				WhiteSpace.Space	=> TabAsSpaces,
+				_					=> throw new InvalidEnumArgumentException("Invalid \"WhiteSpace\" value."),
 			};
 		}
 	}
@@ -226,65 +266,6 @@ public class WriteSettings : NotifyModifiedChanged
 	public void MarkSaved()
 	{
 		Modified = false;
-	}
-
-	/// <summary>
-	/// Get the space between the tag "key" and the tag "value".
-	/// 
-	/// Examples:
-	/// % Use a space between the key and value (no alignment).
-	/// title = {Title of Work}
-	/// author = {John Q. Author}
-	/// year = {2000}
-	/// 
-	/// % Align the key and value.
-	/// title    = {Title of Work}
-	/// author   = {John Q. Author}
-	/// year     = {2000}
-	/// 
-	/// % Use a space between the key and value (no alignment).
-	/// </summary>
-	/// <param name="tagKey">The tag key as a string.</param>
-	public string GetInterTagSpacing(string tagKey)
-	{
-		if (AlignTagValues)
-		{
-			// To align the values is much more complicated.  First decide if spaces or tabs are going to be inserted.
-			switch (WhiteSpace)
-			{
-				case WhiteSpace.Tab:
-				{
-					// Subtract the initial line indent and the length of the key from the desired number of tabs.
-					int requiredTabs = AlignAtTabStop - 1 - (int)System.Math.Ceiling((double)(tagKey.Length / TabSize));
-					if (requiredTabs < 0)
-					{
-						throw new ArgumentOutOfRangeException(nameof(tagKey), "The key is too long for the space allocated for aligning tag values.");
-					}
-					//int tabs = (int)System.Math.Ceiling((double)requiredTabs / TabSize);
-					return new string(Tab, requiredTabs);
-				}
-				case WhiteSpace.Space:
-				{
-					// Subtract the initial line indent and the length of the key from the desired aligning column.
-					int requiredSpaces = AlignAtColumn - 1 - tagKey.Length - TabSize;
-					if (requiredSpaces < 0)
-					{
-						throw new ArgumentOutOfRangeException(nameof(tagKey), "The key is too long for the space allocated for aligning tag values.");
-					}
-					return new string(' ', requiredSpaces);
-				}
-				default:
-				{
-					throw new InvalidEnumArgumentException("Invalid \"WhiteSpace\" value.");
-				}
-			}
-		}
-		else
-		{
-			// If we are not aligning values, just return a space.
-			return " ";
-		}
-
 	}
 
 	#endregion

@@ -289,7 +289,7 @@ public sealed class BibParser : IDisposable
 
 					case BibBuilderState.SetType:
 					{
-						if (token.Value == StringConstant.TypeString)
+						if (token.Value.ToLower() == StringConstant.TypeString.ToLower())
 						{
 							bibPart = new StringConstant();
 						}

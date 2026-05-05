@@ -10,7 +10,7 @@ public class TagValueTests
 	[InlineData(FieldValueFormat.None, "Mapreduce")]
 	public void TestToStringWithFormat(FieldValueFormat format, string expected)
 	{
-		TagValue tagValue = new("Mapreduce");
+		FieldValue tagValue = new("Mapreduce");
 
 		string actual = tagValue.ToString(format);
 
@@ -20,7 +20,7 @@ public class TagValueTests
 	[Fact]
 	public void TestToStringWithFormatUsesCurrentContent()
 	{
-		TagValue tagValue = new("Original");
+		FieldValue tagValue = new("Original");
 
 		tagValue.Content = "Updated";
 
@@ -32,7 +32,7 @@ public class TagValueTests
 	[Fact]
 	public void TestDefaultConstructorInitializesEmptyContent()
 	{
-		TagValue tagValue = new();
+		FieldValue tagValue = new();
 
 		Assert.Equal("{}", tagValue.ToString(FieldValueFormat.Bracket));
 		Assert.Equal("\"\"", tagValue.ToString(FieldValueFormat.Quote));
@@ -42,7 +42,7 @@ public class TagValueTests
 	[Fact]
 	public void TestToStringWithInvalidFormatThrowsException()
 	{
-		TagValue tagValue = new("Mapreduce");
+		FieldValue tagValue = new("Mapreduce");
 
 		Exception exception = Assert.Throws<Exception>(() => tagValue.ToString((FieldValueFormat)999));
 

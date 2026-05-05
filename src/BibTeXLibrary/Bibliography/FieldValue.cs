@@ -4,14 +4,14 @@
 /// The tag value for a BibTeX library.  This is an object to allow more complex behavior.  Specifically,
 /// it allows different types of writing (ToString) for the value.
 /// </summary>
-public class TagValue
+public class FieldValue
 {
 	#region Construction
 
 	/// <summary>
 	/// Default constructor.
 	/// </summary>
-	public TagValue()
+	public FieldValue()
 	{
 	}
 
@@ -19,7 +19,7 @@ public class TagValue
 	/// Content constructor.
 	/// </summary>
 	/// <param name="content">The tag content.</param>
-	public TagValue(string content)
+	public FieldValue(string content)
 	{
 		Content = content;
 	}
@@ -28,7 +28,7 @@ public class TagValue
 	/// Copy constructor.
 	/// </summary>
 	/// <param name="tagValue">The tag content.</param>
-	public TagValue(TagValue tagValue)
+	public FieldValue(FieldValue tagValue)
 	{
 		Content			= tagValue.Content;
 		TagValueType	= tagValue.TagValueType;
@@ -39,7 +39,7 @@ public class TagValue
 	/// </summary>
 	/// <param name="content">The tag content.</param>
 	/// <param name="format">Specifies the format to write in.</param>
-	public TagValue(string content, FieldValueType tagValueType)
+	public FieldValue(string content, FieldValueType tagValueType)
 	{
 		Content			= content;
 		TagValueType	= tagValueType;

@@ -31,7 +31,7 @@ public class StringEntry : BibliographyPart
 		base(true)
 	{
 		Name		= stringConstant.Name;
-		TagValue	= new TagValue(stringConstant.TagValue);
+		TagValue	= new FieldValue(stringConstant.TagValue);
 	}
 
 	#endregion
@@ -78,9 +78,9 @@ public class StringEntry : BibliographyPart
 	/// <summary>
 	/// Value of the string constant.
 	/// </summary>
-	public TagValue TagValue
+	public FieldValue TagValue
 	{
-		get				=> GetValueOrDefault<TagValue>(new TagValue(string.Empty, FieldValueType.String));
+		get				=> GetValueOrDefault<FieldValue>(new FieldValue(string.Empty, FieldValueType.String));
 		protected set	=> SetValue(value);
 	}
 
@@ -100,7 +100,7 @@ public class StringEntry : BibliographyPart
 		}
 
 		Name		= tagName;
-		TagValue	= new TagValue(tagValue, FieldValueType.String);
+		TagValue	= new FieldValue(tagValue, FieldValueType.String);
 	}
 
 	#endregion

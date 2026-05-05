@@ -62,10 +62,13 @@ public class BibParserTests
 
 	#region Basic String Constant Parsing
 
-	[Fact]
-    public void TestParserBasicStringConstant()
+	[Theory]
+	[InlineData("@string(key = \"value\")")]
+	[InlineData("@String(key = \"value\")")]
+	[InlineData("@STRING(key = \"value\")")]
+	public void TestParserBasicStringConstant(string content)
     {
-		BibParser		parser	= new(new StringReader("@string(key = \"value\")"));
+		BibParser		parser	= new(new StringReader(content));
 		StringConstant	entry	= parser.Parse().StringConstants[0];
 
 		Assert.Equal(StringConstant.TypeString, entry.Type);
@@ -74,27 +77,14 @@ public class BibParserTests
 		parser.Dispose();
     }
 
-	[Fact]
-    public void TestParserStringConstantSyntax()
+	[Theory]
+	[InlineData("@string(key = {value})")]
+	[InlineData("@string{key = {value}}")]
+	[InlineData("@string{key = \"value\"}")]
+	public void TestParserStringConstantSyntax(string content)
     {
-		BibParser		parser	= new(new StringReader("@string(key = {value})"));
+		BibParser		parser	= new(new StringReader(content));
 		StringConstant	entry	= parser.Parse().StringConstants[0];
-
-		Assert.Equal(StringConstant.TypeString, entry.Type);
-		Assert.Equal("value", entry.Value);
-
-		parser.Dispose();
-
-		parser	= new(new StringReader("@string{key = {value}}"));
-		entry	= parser.Parse().StringConstants[0];
-
-		Assert.Equal(StringConstant.TypeString, entry.Type);
-		Assert.Equal("value", entry.Value);
-
-		parser.Dispose();
-
-		parser	= new(new StringReader("@string{key = \"value\"}"));
-		entry	= parser.Parse().StringConstants[0];
 
 		Assert.Equal(StringConstant.TypeString, entry.Type);
 		Assert.Equal("value", entry.Value);

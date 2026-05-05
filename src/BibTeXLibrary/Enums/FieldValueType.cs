@@ -7,7 +7,7 @@ namespace BibTeXLibrary;
 /// 
 /// The "Description" attribute can be accessed using Reflection to get a string representing the enumeration type.
 /// </summary>
-public enum TagValueType
+public enum FieldValueType
 {
 	/// <summary>Bracketed.</summary>
 	[Description("A regular string.")]

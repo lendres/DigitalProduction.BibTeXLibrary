@@ -80,7 +80,7 @@ public class StringEntry : BibliographyPart
 	/// </summary>
 	public TagValue TagValue
 	{
-		get				=> GetValueOrDefault<TagValue>(new TagValue(string.Empty, TagValueType.String));
+		get				=> GetValueOrDefault<TagValue>(new TagValue(string.Empty, FieldValueType.String));
 		protected set	=> SetValue(value);
 	}
 
@@ -92,7 +92,7 @@ public class StringEntry : BibliographyPart
 	/// Set a TagValue.
 	/// </summary>
 	/// <param name="tagName">Name of the tag to get.</param>
-	public override void SetTagValue(string tagName, string tagValue, TagValueType tagValueType)
+	public override void SetTagValue(string tagName, string tagValue, FieldValueType tagValueType)
 	{
 		if (!_caseSensitivetags)
 		{
@@ -100,7 +100,7 @@ public class StringEntry : BibliographyPart
 		}
 
 		Name		= tagName;
-		TagValue	= new TagValue(tagValue, TagValueType.String);
+		TagValue	= new TagValue(tagValue, FieldValueType.String);
 	}
 
 	#endregion

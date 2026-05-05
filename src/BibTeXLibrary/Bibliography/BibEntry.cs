@@ -391,7 +391,7 @@ public class BibEntry : BibliographyPart
 	/// Set a TagValue.
 	/// </summary>
 	/// <param name="tagName">Name of the tag to get.</param>
-	public override void SetTagValue(string tagName, string tagValue, TagValueType tagValueType)
+	public override void SetTagValue(string tagName, string tagValue, FieldValueType tagValueType)
 	{
 		if (!_caseSensitivetags)
 		{

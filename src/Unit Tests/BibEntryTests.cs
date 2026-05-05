@@ -43,11 +43,11 @@ public class BibEntryTests
         const string title	= "Mapreduce";
 		BibEntry entry		= new();
 
-		entry.SetTagValue("Title", title, TagValueType.StringConstant);
+		entry.SetTagValue("Title", title, FieldValueType.StringConstant);
 		Assert.Equal(title, entry.Title);
 		Assert.Equal(title, entry.GetTagValue("title").ToString(FieldValueFormat.Quote));
 
-		entry.SetTagValue("Title", title, TagValueType.String);
+		entry.SetTagValue("Title", title, FieldValueType.String);
         Assert.Equal(title, entry.Title);
         Assert.Equal("{"+title+"}", entry.GetTagValue("title").ToString(FieldValueFormat.Bracket));
     }

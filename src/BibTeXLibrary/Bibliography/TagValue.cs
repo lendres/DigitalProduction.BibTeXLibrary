@@ -39,7 +39,7 @@ public class TagValue
 	/// </summary>
 	/// <param name="content">The tag content.</param>
 	/// <param name="format">Specifies the format to write in.</param>
-	public TagValue(string content, TagValueType tagValueType)
+	public TagValue(string content, FieldValueType tagValueType)
 	{
 		Content			= content;
 		TagValueType	= tagValueType;
@@ -60,7 +60,7 @@ public class TagValue
 	/// the type is TagValueType.StringConstant, then the content will be written without brackets or quotes when ToString
 	/// regardless of the format specified.
 	/// </summary>
-	public TagValueType TagValueType { get; set; } = TagValueType.String;
+	public FieldValueType TagValueType { get; set; } = FieldValueType.String;
 
 	#endregion
 
@@ -82,7 +82,7 @@ public class TagValue
 	public string ToString(FieldValueFormat format)
 	{
 		// For string constants, we ignore the format and just return the content.
-		if (TagValueType == TagValueType.StringConstant)
+		if (TagValueType == FieldValueType.StringConstant)
 		{
 			return Content;
 		}

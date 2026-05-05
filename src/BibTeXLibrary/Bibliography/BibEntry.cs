@@ -488,7 +488,7 @@ public class BibEntry : BibliographyPart
 			bibliographyPart.Append(tagEnumerator.Current.Key.ToString());
 
 			// Add the space between the key and equal sign.
-			bibliographyPart.Append(writeSettings.GetInterTagSpacing(tagEnumerator.Current.Key.ToString()!));
+			bibliographyPart.Append(GetInterTagSpacing(tagEnumerator.Current.Key.ToString()!, writeSettings, writeSettings.BibEntryAlignAtTabStop, writeSettings.BibEntryAlignAtColumn));
 
 			// Add the tag value.
 			bibliographyPart.Append("= ");

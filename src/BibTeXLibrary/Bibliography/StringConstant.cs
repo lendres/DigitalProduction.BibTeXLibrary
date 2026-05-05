@@ -122,7 +122,7 @@ public class StringConstant : BibliographyPart
 		bibliographyPart.Append(Name);
 
 		// Add the space between the key and equal sign.
-		bibliographyPart.Append(writeSettings.GetInterTagSpacing(Name));
+		bibliographyPart.Append(GetInterTagSpacing(Name, writeSettings, writeSettings.StringEntryAlignAtTabStop, writeSettings.StringEntryAlignAtColumn));
 
 		// Add the string constant value.
 		bibliographyPart.Append("= ");

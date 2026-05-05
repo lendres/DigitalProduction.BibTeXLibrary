@@ -80,10 +80,10 @@ public class TagValue
 	{
 		return format switch
 		{
-			TagValueFormat.Bracket => "{"+Content+"}",
-			TagValueFormat.Quote => "\""+Content+"\"",
-			TagValueFormat.None => Content,
-			_ => throw new Exception("Invalid tag format."),
+			TagValueFormat.Bracket	=> "{"+Content+"}",
+			TagValueFormat.Quote	=> "\""+Content+"\"",
+			TagValueFormat.None		=> Content,
+			_						=> throw new Exception("Invalid tag format."),
 		};
 	}
 

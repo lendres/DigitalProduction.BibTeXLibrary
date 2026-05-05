@@ -429,6 +429,13 @@ public class BibEntry : BibliographyPart
 		}
 	}
 
+	/// <summary>
+	/// Determine if any of the specified tags contain the search string.
+	/// </summary>
+	/// <param name="tags">The tags to search within.</param>
+	/// <param name="searchString">The string to search for.</param>
+	/// <param name="caseSensitive">Whether the search should be case-sensitive.</param>
+	/// <returns>True if any tag contains the search string, false otherwise.</returns>
 	public bool DoTagsContainString(IEnumerable<string> tags, string searchString, bool caseSensitive = false)
 	{
 		StringComparison stringComparison = caseSensitive ? StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase;

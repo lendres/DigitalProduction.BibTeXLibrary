@@ -181,6 +181,42 @@ public class WriteSettings : NotifyModifiedChanged
 	}
 
 	/// <summary>
+	/// Specifies the format for writing the tag values of StringConstant when the tag value is a string.
+	/// </summary>
+	[XmlAttribute("stringentrytagvalueformat")]
+	public TagValueFormat StringConstantTagValueFormat
+	{
+		get => _stringConstantTagValueFormat;
+
+		set
+		{
+			if (_stringConstantTagValueFormat != value)
+			{
+				_stringConstantTagValueFormat = value;
+				Modified = true;
+			}
+		}
+	}
+
+	/// <summary>
+	/// Specifies the format for writing the tag values of BibEntries when the tag value is a string.
+	/// </summary>
+	[XmlAttribute("bibentrytagvalueformat")]
+	public TagValueFormat BibEntryTagValueFormat
+	{
+		get => _bibEntryTagValueFormat;
+
+		set
+		{
+			if (_bibEntryTagValueFormat != value)
+			{
+				_bibEntryTagValueFormat = value;
+				Modified = true;
+			}
+		}
+	}
+
+	/// <summary>
 	/// Remove the comma after the last tag in a BibEntry.
 	/// </summary>
 	[XmlAttribute("removelastcomma")]

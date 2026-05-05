@@ -1,7 +1,6 @@
 ﻿using BibTeXLibrary;
 using System.Collections.ObjectModel;
 using System.Text;
-using static System.Net.WebRequestMethods;
 
 namespace DigitalProduction.UnitTests;
 
@@ -63,10 +62,13 @@ public class BibParserTests
 
 	#region Basic String Constant Parsing
 
-	[Fact]
-    public void TestParserBasicStringConstant()
+	[Theory]
+	[InlineData("@string(key = \"value\")")]
+	[InlineData("@String(key = \"value\")")]
+	[InlineData("@STRING(key = \"value\")")]
+	public void TestParserBasicStringConstant(string content)
     {
-		BibParser		parser	= new(new StringReader("@string(key = \"value\")"));
+		BibParser		parser	= new(new StringReader(content));
 		StringConstant	entry	= parser.Parse().StringConstants[0];
 
 		Assert.Equal(StringConstant.TypeString, entry.Type);
@@ -75,27 +77,14 @@ public class BibParserTests
 		parser.Dispose();
     }
 
-	[Fact]
-    public void TestParserStringConstantSyntax()
+	[Theory]
+	[InlineData("@string(key = {value})")]
+	[InlineData("@string{key = {value}}")]
+	[InlineData("@string{key = \"value\"}")]
+	public void TestParserStringConstantSyntax(string content)
     {
-		BibParser		parser	= new(new StringReader("@string(key = {value})"));
+		BibParser		parser	= new(new StringReader(content));
 		StringConstant	entry	= parser.Parse().StringConstants[0];
-
-		Assert.Equal(StringConstant.TypeString, entry.Type);
-		Assert.Equal("value", entry.Value);
-
-		parser.Dispose();
-
-		parser	= new(new StringReader("@string{key = {value}}"));
-		entry	= parser.Parse().StringConstants[0];
-
-		Assert.Equal(StringConstant.TypeString, entry.Type);
-		Assert.Equal("value", entry.Value);
-
-		parser.Dispose();
-
-		parser	= new(new StringReader("@string{key = \"value\"}"));
-		entry	= parser.Parse().StringConstants[0];
 
 		Assert.Equal(StringConstant.TypeString, entry.Type);
 		Assert.Equal("value", entry.Value);
@@ -204,7 +193,7 @@ public class BibParserTests
 		BibParser parser	= new(new StreamReader("TestData/BibParserTest1_In.bib", Encoding.Default));
 		BibEntry entry		= parser.Parse().Entries[0];
 		string entryString	= entry.ToString().TrimEnd('\n').TrimEnd('\r');
-		string expected		= "@Article{mrx05,\r\n  author = {Mr. X},\r\n  title = {Something Great},\r\n  publisher = {nobody},\r\n  year = 2005\r\n}";
+		string expected		= "@Article{mrx05,\r\n  author = {Mr. X},\r\n  title = {Something Great},\r\n  publisher = {nobody},\r\n  year = {2005}\r\n}";
 
 		Assert.Equal(expected, entryString);
 		parser.Dispose();

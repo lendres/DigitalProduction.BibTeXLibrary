@@ -398,19 +398,7 @@ public class BibEntry : BibliographyPart
 			tagName = tagName.ToLower();
 		}
 
-		TagValue tagValueObject = new(tagValue);
-		switch (tagValueType)
-		{
-			case TagValueType.String:
-				// This is a regular string, so put brackets around it.
-				tagValueObject.Format = TagValueFormat.Bracket;
-				break;
-
-			case TagValueType.StringConstant:
-				// This is a string constant so we do not want brackets around it.
-				tagValueObject.Format = TagValueFormat.None;
-				break;
-		}
+		TagValue tagValueObject = new(tagValue, tagValueType);
 
 		bool exists = _tags.ContainsKey(tagName);
 		if (exists)
@@ -429,6 +417,13 @@ public class BibEntry : BibliographyPart
 		}
 	}
 
+	/// <summary>
+	/// Determine if any of the specified tags contain the search string.
+	/// </summary>
+	/// <param name="tags">The tags to search within.</param>
+	/// <param name="searchString">The string to search for.</param>
+	/// <param name="caseSensitive">Whether the search should be case-sensitive.</param>
+	/// <returns>True if any tag contains the search string, false otherwise.</returns>
 	public bool DoTagsContainString(IEnumerable<string> tags, string searchString, bool caseSensitive = false)
 	{
 		StringComparison stringComparison = caseSensitive ? StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase;
@@ -484,20 +479,20 @@ public class BibEntry : BibliographyPart
 		bibliographyPart.Append(writeSettings.NewLine);
 
 		// Write all the tags.
-		IDictionaryEnumerator tagEnumerator = _tags.GetEnumerator();
+		OrderedDictionary<string, TagValue>.Enumerator tagEnumerator = _tags.GetEnumerator();
 		while (tagEnumerator.MoveNext())
 		{
 			// Initial line indent and tag key.
 			bibliographyPart.Append(writeSettings.Indent);
 
-			bibliographyPart.Append(tagEnumerator.Key.ToString());
+			bibliographyPart.Append(tagEnumerator.Current.Key.ToString());
 
 			// Add the space between the key and equal sign.
 			bibliographyPart.Append(GetInterTagSpacing(tagEnumerator.Current.Key.ToString()!, writeSettings, writeSettings.BibEntryAlignAtTabStop, writeSettings.BibEntryAlignAtColumn));
 
 			// Add the tag value.
 			bibliographyPart.Append("= ");
-			bibliographyPart.Append(tagEnumerator.Value!.ToString());
+			bibliographyPart.Append(tagEnumerator.Current.Value!.ToString(writeSettings.BibEntryTagValueFormat));
 			bibliographyPart.Append(',');
 
 			// End the line.

@@ -4,11 +4,13 @@ namespace DigitalProduction.UnitTests;
 
 public class BibEntryTests
 {
-    [Fact]
+	#region Indexer and Property Tests
+
+	[Fact]
     public void TestIndexer()
     {
-        const string title = "Mapreduce";
-        BibEntry entry = new() {["Title"] = title};
+        const string title	= "Mapreduce";
+        BibEntry entry		= new() {["Title"] = title};
 
         Assert.Equal(title, entry["title"]);
         Assert.Equal(title, entry["Title"]);
@@ -18,8 +20,8 @@ public class BibEntryTests
     [Fact]
     public void TestProperty()
     {
-        const string title = "Mapreduce";
-        BibEntry entry = new() {["Title"] = title};
+        const string title	= "Mapreduce";
+        BibEntry entry		= new() {["Title"] = title};
 
         Assert.Equal(title, entry.Title);
     }
@@ -38,40 +40,126 @@ public class BibEntryTests
     [Fact]
     public void TestSettingTagType()
     {
-        const string title = "Mapreduce";
-		BibEntry entry = new();
+        const string title	= "Mapreduce";
+		BibEntry entry		= new();
+
 		entry.SetTagValue("Title", title, TagValueType.StringConstant);
 		Assert.Equal(title, entry.Title);
-		Assert.Equal(title, entry.GetTagValue("title").ToString());
+		Assert.Equal(title, entry.GetTagValue("title").ToString(TagValueFormat.Quote));
 
 		entry.SetTagValue("Title", title, TagValueType.String);
         Assert.Equal(title, entry.Title);
-        Assert.Equal("{"+title+"}", entry.GetTagValue("title").ToString());
+        Assert.Equal("{"+title+"}", entry.GetTagValue("title").ToString(TagValueFormat.Bracket));
     }
 
-    [Fact]
+	#endregion
+
+	#region Find and Search Tests
+
+	/// <summary>
+	/// Find key of a tag value by searching through the tag values.
+	/// </summary>
+	[Fact]
     public void TestFindTagValue()
 	{
+		// Test with quotes.
 		string tagValue		= "SPE Drilling Conference and Exhibition";
 		string bibString	= "@book{ref:key, booktitle = \"" + tagValue + "\", author = {Author}, year = {2023}}";
 		string key			= ParseAndGetKey(tagValue, bibString);
 		Assert.Equal("booktitle", key);
 
-		bibString	= "@book{ref:key, booktitle = {" + tagValue + "}, author = {Author}, year = {2023}}";
+		// Test with braces.
+		bibString = "@book{ref:key, booktitle = {" + tagValue + "}, author = {Author}, year = {2023}}";
 		key			= ParseAndGetKey(tagValue, bibString);
 		Assert.Equal("booktitle", key);
 	}
 
-    [Fact]
+	/// <summary>
+	/// Verifies that the DoTagsContainString method correctly identifies when a specified string is present in the values
+	/// of given BibTeX entry tags.
+	/// </summary>
+	/// <remarks>
+	/// This test ensures that searching for a substring within multiple tag values returns the expected
+	/// result. It demonstrates usage with a typical BibTeX entry and a list of common tag names.
+	/// </remarks>
+	[Fact]
     public void TestSearchInTagValues()
     {
 		string tagValue		= "Acme Journal of Science";
 		string bibString	= "@book{ref:key, booktitle = \"" + tagValue + "\", author = {John Smith}, year = {2023}, abstract = {Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.}}";
 
-		List<string> tagNames = ["booktitle", "author", "year", "abstract"];
-		BibEntry entry = ParseBibEntry(bibString);
+		List<string> tagNames	= ["booktitle", "author", "year", "abstract"];
+		BibEntry entry			= ParseBibEntry(bibString);
+
+		// Case insensitive search should find "acme" in the booktitle tag.
 		Assert.True(entry.DoTagsContainString(tagNames, "acme"));
+
+		// Case sensitive search should not find "acme" in the booktitle tag.
+		Assert.False(entry.DoTagsContainString(tagNames, "acme", true));
 	}
+
+	#endregion
+
+	#region String Writing Tests
+
+	[Theory]
+	[InlineData(TagValueFormat.Bracket, "title = {Mapreduce}")]
+	[InlineData(TagValueFormat.Quote, "title = \"Mapreduce\"")]
+	[InlineData(TagValueFormat.None, "title = Mapreduce")]
+	public void TestToStringWithWriteSettingsFormatsTagValues(TagValueFormat tagValueFormat, string expectedTagLine)
+	{
+		BibEntry entry = new()
+		{
+			Type	= "article",
+			Key		= "Dean2008"
+		};
+
+		entry["title"] = "Mapreduce";
+
+		WriteSettings writeSettings = new()
+		{
+			AlignTagValues = false,
+			WhiteSpace = WhiteSpace.Space,
+			BibEntryTagValueFormat = tagValueFormat
+		};
+
+		string result = entry.ToString(writeSettings);
+
+		Assert.Contains("@article{Dean2008,", result);
+		Assert.Contains(expectedTagLine, result);
+		Assert.Contains("}", result);
+	}
+
+	[Fact]
+	public void TestToStringWithWriteSettingsFormatsMultipleTagValues()
+	{
+		BibEntry entry = new()
+		{
+			Type	= "article",
+			Key		= "Dean2008"
+		};
+
+		entry["title"] = "Mapreduce";
+		entry["author"] = "Jeffrey Dean and Sanjay Ghemawat";
+		entry["year"] = "2008";
+
+		WriteSettings writeSettings = new()
+		{
+			AlignTagValues			= false,
+			WhiteSpace				= WhiteSpace.Space,
+			BibEntryTagValueFormat	= TagValueFormat.Bracket
+		};
+
+		string result = entry.ToString(writeSettings);
+
+		Assert.Contains("title = {Mapreduce}", result);
+		Assert.Contains("author = {Jeffrey Dean and Sanjay Ghemawat}", result);
+		Assert.Contains("year = {2008}", result);
+	}
+
+	#endregion
+
+	#region Helper Methods
 
 	private static string ParseAndGetKey(string tagValue, string bibString)
 	{
@@ -84,5 +172,7 @@ public class BibEntryTests
 		BibParser parser = new(new StringReader(bibString));
 		return parser.Parse().Entries[0];
 	}
+
+	#endregion
 
 } // End class.

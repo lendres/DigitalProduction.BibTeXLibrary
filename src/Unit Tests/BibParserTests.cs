@@ -1,7 +1,6 @@
 ﻿using BibTeXLibrary;
 using System.Collections.ObjectModel;
 using System.Text;
-using static System.Net.WebRequestMethods;
 
 namespace DigitalProduction.UnitTests;
 
@@ -204,7 +203,7 @@ public class BibParserTests
 		BibParser parser	= new(new StreamReader("TestData/BibParserTest1_In.bib", Encoding.Default));
 		BibEntry entry		= parser.Parse().Entries[0];
 		string entryString	= entry.ToString().TrimEnd('\n').TrimEnd('\r');
-		string expected		= "@Article{mrx05,\r\n  author = {Mr. X},\r\n  title = {Something Great},\r\n  publisher = {nobody},\r\n  year = 2005\r\n}";
+		string expected		= "@Article{mrx05,\r\n  author = {Mr. X},\r\n  title = {Something Great},\r\n  publisher = {nobody},\r\n  year = {2005}\r\n}";
 
 		Assert.Equal(expected, entryString);
 		parser.Dispose();

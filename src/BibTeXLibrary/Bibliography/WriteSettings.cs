@@ -11,14 +11,16 @@ public class WriteSettings : NotifyModifiedChanged
 {
 	#region Fields
 
-	private WhiteSpace			_whiteSpace			= WhiteSpace.Tab;
-	private int					_tabSize			= 4;
-	private bool				_alignTagValues		= true;
-	private int					_alignAtColumn		= 24;
-	private int					_alignAtTabStop		= 5;
-	private bool				_removeLastComma	= true;
-	private string				_newLine			= Environment.NewLine;
-	private char				_tab				= '\t';
+	private WhiteSpace			_whiteSpace						= WhiteSpace.Tab;
+	private int					_tabSize						= 4;
+	private bool				_alignTagValues					= true;
+	private int					_alignAtColumn					= 24;
+	private int					_alignAtTabStop					= 5;
+	private TagValueFormat		_stringConstantTagValueFormat	= TagValueFormat.Quote;
+	private TagValueFormat		_bibEntryTagValueFormat			= TagValueFormat.Bracket;
+	private bool				_removeLastComma				= true;
+	private string				_newLine						= Environment.NewLine;
+	private char				_tab							= '\t';
 
 	#endregion
 
@@ -135,6 +137,42 @@ public class WriteSettings : NotifyModifiedChanged
 			if (_alignAtTabStop != value)
 			{
 				_alignAtTabStop = value;
+				Modified = true;
+			}
+		}
+	}
+
+	/// <summary>
+	/// Specifies the format for writing the tag values of StringConstant when the tag value is a string.
+	/// </summary>
+	[XmlAttribute("stringentrytagvalueformat")]
+	public TagValueFormat StringConstantTagValueFormat
+	{
+		get => _stringConstantTagValueFormat;
+
+		set
+		{
+			if (_stringConstantTagValueFormat != value)
+			{
+				_stringConstantTagValueFormat = value;
+				Modified = true;
+			}
+		}
+	}
+
+	/// <summary>
+	/// Specifies the format for writing the tag values of BibEntries when the tag value is a string.
+	/// </summary>
+	[XmlAttribute("bibentrytagvalueformat")]
+	public TagValueFormat BibEntryTagValueFormat
+	{
+		get => _bibEntryTagValueFormat;
+
+		set
+		{
+			if (_bibEntryTagValueFormat != value)
+			{
+				_bibEntryTagValueFormat = value;
 				Modified = true;
 			}
 		}

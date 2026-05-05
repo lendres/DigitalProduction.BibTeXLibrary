@@ -18,8 +18,8 @@ public class WriteSettings : NotifyModifiedChanged
 	private int					_bibEntryAlignAtColumn			= 24;
 	private int					_stringEntryAlignAtTabStop		= 6;
 	private int					_bibEntryAlignAtTabStop			= 5;
-	private TagValueFormat		_stringConstantTagValueFormat	= TagValueFormat.Quote;
-	private TagValueFormat		_bibEntryTagValueFormat			= TagValueFormat.Bracket;
+	private FieldValueFormat		_stringConstantTagValueFormat	= FieldValueFormat.Quote;
+	private FieldValueFormat		_bibEntryTagValueFormat			= FieldValueFormat.Bracket;
 	private bool				_removeLastComma				= true;
 	private string				_newLine						= Environment.NewLine;
 	private char				_tab							= '\t';
@@ -184,7 +184,7 @@ public class WriteSettings : NotifyModifiedChanged
 	/// Specifies the format for writing the tag values of StringConstant when the tag value is a string.
 	/// </summary>
 	[XmlAttribute("stringentrytagvalueformat")]
-	public TagValueFormat StringConstantTagValueFormat
+	public FieldValueFormat StringConstantTagValueFormat
 	{
 		get => _stringConstantTagValueFormat;
 
@@ -202,7 +202,7 @@ public class WriteSettings : NotifyModifiedChanged
 	/// Specifies the format for writing the tag values of BibEntries when the tag value is a string.
 	/// </summary>
 	[XmlAttribute("bibentrytagvalueformat")]
-	public TagValueFormat BibEntryTagValueFormat
+	public FieldValueFormat BibEntryTagValueFormat
 	{
 		get => _bibEntryTagValueFormat;
 

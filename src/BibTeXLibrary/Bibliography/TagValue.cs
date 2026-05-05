@@ -79,7 +79,7 @@ public class TagValue
 	/// <summary>
 	/// Get a string representation.
 	/// </summary>
-	public string ToString(TagValueFormat format)
+	public string ToString(FieldValueFormat format)
 	{
 		// For string constants, we ignore the format and just return the content.
 		if (TagValueType == TagValueType.StringConstant)
@@ -89,9 +89,9 @@ public class TagValue
 
 		return format switch
 		{
-			TagValueFormat.Bracket	=> "{"+Content+"}",
-			TagValueFormat.Quote	=> "\""+Content+"\"",
-			TagValueFormat.None		=> Content,
+			FieldValueFormat.Bracket	=> "{"+Content+"}",
+			FieldValueFormat.Quote	=> "\""+Content+"\"",
+			FieldValueFormat.None		=> Content,
 			_						=> throw new Exception("Invalid tag format."),
 		};
 	}

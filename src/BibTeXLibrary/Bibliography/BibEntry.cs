@@ -300,7 +300,7 @@ public class BibEntry : BibliographyPart
 		while (tagEnumerator.MoveNext())
 		{
 			TagValue tagValue		= (TagValue)tagEnumerator.Value!;
-			string tagValueString	= tagValue.ToString(TagValueFormat.None)!;
+			string tagValueString	= tagValue.ToString(FieldValueFormat.None)!;
 
 			if (!caseSensitive)
 			{

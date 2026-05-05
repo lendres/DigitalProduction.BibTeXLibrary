@@ -45,11 +45,11 @@ public class BibEntryTests
 
 		entry.SetTagValue("Title", title, TagValueType.StringConstant);
 		Assert.Equal(title, entry.Title);
-		Assert.Equal(title, entry.GetTagValue("title").ToString(TagValueFormat.Quote));
+		Assert.Equal(title, entry.GetTagValue("title").ToString(FieldValueFormat.Quote));
 
 		entry.SetTagValue("Title", title, TagValueType.String);
         Assert.Equal(title, entry.Title);
-        Assert.Equal("{"+title+"}", entry.GetTagValue("title").ToString(TagValueFormat.Bracket));
+        Assert.Equal("{"+title+"}", entry.GetTagValue("title").ToString(FieldValueFormat.Bracket));
     }
 
 	#endregion
@@ -103,10 +103,10 @@ public class BibEntryTests
 	#region String Writing Tests
 
 	[Theory]
-	[InlineData(TagValueFormat.Bracket, "title = {Mapreduce}")]
-	[InlineData(TagValueFormat.Quote, "title = \"Mapreduce\"")]
-	[InlineData(TagValueFormat.None, "title = Mapreduce")]
-	public void TestToStringWithWriteSettingsFormatsTagValues(TagValueFormat tagValueFormat, string expectedTagLine)
+	[InlineData(FieldValueFormat.Bracket, "title = {Mapreduce}")]
+	[InlineData(FieldValueFormat.Quote, "title = \"Mapreduce\"")]
+	[InlineData(FieldValueFormat.None, "title = Mapreduce")]
+	public void TestToStringWithWriteSettingsFormatsTagValues(FieldValueFormat tagValueFormat, string expectedTagLine)
 	{
 		BibEntry entry = new()
 		{
@@ -147,7 +147,7 @@ public class BibEntryTests
 		{
 			AlignTagValues			= false,
 			WhiteSpace				= WhiteSpace.Space,
-			BibEntryTagValueFormat	= TagValueFormat.Bracket
+			BibEntryTagValueFormat	= FieldValueFormat.Bracket
 		};
 
 		string result = entry.ToString(writeSettings);

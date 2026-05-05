@@ -289,9 +289,9 @@ public sealed class BibParser : IDisposable
 
 					case BibBuilderState.SetType:
 					{
-						if (token.Value.ToLower() == StringConstant.TypeString.ToLower())
+						if (token.Value.ToLower() == StringEntry.TypeString.ToLower())
 						{
-							bibPart = new StringConstant();
+							bibPart = new StringEntry();
 						}
 						else
 						{
@@ -424,7 +424,7 @@ public sealed class BibParser : IDisposable
 				}
 
 				string valueString = value.ToString();
-				TokenType tokenType = valueString.ToLower().Trim() == StringConstant.TypeString ? TokenType.StringType : TokenType.Name;
+				TokenType tokenType = valueString.ToLower().Trim() == StringEntry.TypeString ? TokenType.StringType : TokenType.Name;
 
 				yield return new Token(tokenType, valueString);
 			}

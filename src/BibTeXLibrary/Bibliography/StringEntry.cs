@@ -6,7 +6,7 @@ namespace BibTeXLibrary;
 /// <summary>
 /// A bibliography string constant.
 /// </summary>
-public class StringConstant : BibliographyPart
+public class StringEntry : BibliographyPart
 {
 	#region Fields
 
@@ -19,7 +19,7 @@ public class StringConstant : BibliographyPart
 	/// <summary>
 	/// Default constructor.
 	/// </summary>
-	public StringConstant() :
+	public StringEntry() :
 		base(true)
 	{
 	}
@@ -27,7 +27,7 @@ public class StringConstant : BibliographyPart
 	/// <summary>
 	/// Copy constructor.
 	/// </summary>
-	public StringConstant(StringConstant stringConstant) :
+	public StringEntry(StringEntry stringConstant) :
 		base(true)
 	{
 		Name		= stringConstant.Name;

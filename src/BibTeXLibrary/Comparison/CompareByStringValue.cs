@@ -3,7 +3,7 @@
 /// <summary>
 /// 
 /// </summary>
-public class CompareByStringValue : IComparer<StringConstant>
+public class CompareByStringValue : IComparer<StringEntry>
 {
 	#region Construction
 
@@ -23,7 +23,7 @@ public class CompareByStringValue : IComparer<StringConstant>
 	/// </summary>
 	/// <param name="entry1">The first StringConstant.</param>
 	/// <param name="entry2">The second StringConstant.</param>
-	public int Compare(StringConstant? entry1, StringConstant? entry2)
+	public int Compare(StringEntry? entry1, StringEntry? entry2)
 	{
 		if (entry1 == null && entry2 == null) return 0;
 		if (entry1 == null) return -1;

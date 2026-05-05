@@ -69,9 +69,9 @@ public class BibParserTests
 	public void TestParserBasicStringConstant(string content)
     {
 		BibParser		parser	= new(new StringReader(content));
-		StringConstant	entry	= parser.Parse().StringConstants[0];
+		StringEntry	entry	= parser.Parse().StringConstants[0];
 
-		Assert.Equal(StringConstant.TypeString, entry.Type);
+		Assert.Equal(StringEntry.TypeString, entry.Type);
 		Assert.Equal("value", entry.Value);
 
 		parser.Dispose();
@@ -84,9 +84,9 @@ public class BibParserTests
 	public void TestParserStringConstantSyntax(string content)
     {
 		BibParser		parser	= new(new StringReader(content));
-		StringConstant	entry	= parser.Parse().StringConstants[0];
+		StringEntry	entry	= parser.Parse().StringConstants[0];
 
-		Assert.Equal(StringConstant.TypeString, entry.Type);
+		Assert.Equal(StringEntry.TypeString, entry.Type);
 		Assert.Equal("value", entry.Value);
 
 		parser.Dispose();
@@ -96,9 +96,9 @@ public class BibParserTests
     public void TestParserStringConstantWithInternalBrackets()
     {
 		BibParser		parser	= new(new StringReader("@string(key = {The {VALUE}})"));
-		StringConstant	entry	= parser.Parse().StringConstants[0];
+		StringEntry	entry	= parser.Parse().StringConstants[0];
 
-		Assert.Equal(StringConstant.TypeString, entry.Type);
+		Assert.Equal(StringEntry.TypeString, entry.Type);
 		Assert.Equal("The {VALUE}", entry.Value);
 
 		parser.Dispose();
@@ -106,7 +106,7 @@ public class BibParserTests
 		parser	= new(new StringReader("@string{key = {The {VALUE}}}"));
 		entry	= parser.Parse().StringConstants[0];
 
-		Assert.Equal(StringConstant.TypeString, entry.Type);
+		Assert.Equal(StringEntry.TypeString, entry.Type);
 		Assert.Equal("The {VALUE}", entry.Value);
 
 		parser.Dispose();
@@ -114,7 +114,7 @@ public class BibParserTests
 		parser	= new(new StringReader("@string{key = \"The {VALUE}\"}"));
 		entry	= parser.Parse().StringConstants[0];
 
-		Assert.Equal(StringConstant.TypeString, entry.Type);
+		Assert.Equal(StringEntry.TypeString, entry.Type);
 		Assert.Equal("The {VALUE}", entry.Value);
 
 		parser.Dispose();
@@ -207,9 +207,9 @@ public class BibParserTests
 	public void TestParserBibStringWithBrackets()
 	{
 		BibParser parser = new(new StringReader("@string{NAME = {Title of Conference}}"));
-		StringConstant entry = parser.Parse().StringConstants[0];
+		StringEntry entry = parser.Parse().StringConstants[0];
 
-		Assert.Equal(StringConstant.TypeString, entry.Type);
+		Assert.Equal(StringEntry.TypeString, entry.Type);
 		Assert.Equal("Title of Conference", entry.Value);
 
 		parser.Dispose();
@@ -219,9 +219,9 @@ public class BibParserTests
 	public void TestParserBibStringWithParentheses()
 	{
 		BibParser parser = new(new StringReader("@string(NAME = {Title of Conference})"));
-		StringConstant entry = parser.Parse().StringConstants[0];
+		StringEntry entry = parser.Parse().StringConstants[0];
 
-		Assert.Equal(StringConstant.TypeString, entry.Type);
+		Assert.Equal(StringEntry.TypeString, entry.Type);
 		Assert.Equal("Title of Conference", entry.Value);
 
 		parser.Dispose();
@@ -231,9 +231,9 @@ public class BibParserTests
 	public void TestParserBibStringWithBracketsAndQuotes()
 	{
 		BibParser parser = new(new StringReader("@string{NAME = \"Title of Conference\"}"));
-		StringConstant entry = parser.Parse().StringConstants[0];
+		StringEntry entry = parser.Parse().StringConstants[0];
 
-		Assert.Equal(StringConstant.TypeString, entry.Type);
+		Assert.Equal(StringEntry.TypeString, entry.Type);
 		Assert.Equal("Title of Conference", entry.Value);
 
 		parser.Dispose();
@@ -243,9 +243,9 @@ public class BibParserTests
 	public void TestParserBibStringWithParenthesisAndQuotes()
 	{
 		BibParser parser = new(new StringReader("@string(NAME = \"Title of Conference\")"));
-		StringConstant entry = parser.Parse().StringConstants[0];
+		StringEntry entry = parser.Parse().StringConstants[0];
 
-		Assert.Equal(StringConstant.TypeString, entry.Type);
+		Assert.Equal(StringEntry.TypeString, entry.Type);
 		Assert.Equal("Title of Conference", entry.Value);
 
 		parser.Dispose();

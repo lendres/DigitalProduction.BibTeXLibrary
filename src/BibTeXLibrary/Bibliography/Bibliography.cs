@@ -105,7 +105,7 @@ public class Bibliography : BibliographyDOM
 		{
 			streamWriter.WriteLine();
 		}
-		foreach (StringConstant stringConstant in StringConstants)
+		foreach (StringEntry stringConstant in StringConstants)
 		{
 			streamWriter.Write(stringConstant.ToString(writeSettings));
 		}
@@ -127,7 +127,7 @@ public class Bibliography : BibliographyDOM
 		{
 			entry.MarkSaved();
 		}
-		foreach (StringConstant stringConstant in StringConstants)
+		foreach (StringEntry stringConstant in StringConstants)
 		{
 			stringConstant.MarkSaved();
 		}

@@ -45,11 +45,11 @@ public class BibEntryTests
 
 		entry.SetTagValue("Title", title, TagValueType.StringConstant);
 		Assert.Equal(title, entry.Title);
-		Assert.Equal(title, entry.GetTagValue("title").ToString());
+		Assert.Equal(title, entry.GetTagValue("title").ToString(TagValueFormat.Quote));
 
 		entry.SetTagValue("Title", title, TagValueType.String);
         Assert.Equal(title, entry.Title);
-        Assert.Equal("{"+title+"}", entry.GetTagValue("title").ToString());
+        Assert.Equal("{"+title+"}", entry.GetTagValue("title").ToString(TagValueFormat.Bracket));
     }
 
 	#endregion
@@ -96,6 +96,65 @@ public class BibEntryTests
 
 		// Case sensitive search should not find "acme" in the booktitle tag.
 		Assert.False(entry.DoTagsContainString(tagNames, "acme", true));
+	}
+
+	#endregion
+
+	#region String Writing Tests
+
+	[Theory]
+	[InlineData(TagValueFormat.Bracket, "title = {Mapreduce}")]
+	[InlineData(TagValueFormat.Quote, "title = \"Mapreduce\"")]
+	[InlineData(TagValueFormat.None, "title = Mapreduce")]
+	public void TestToStringWithWriteSettingsFormatsTagValues(TagValueFormat tagValueFormat, string expectedTagLine)
+	{
+		BibEntry entry = new()
+		{
+			Type	= "article",
+			Key		= "Dean2008"
+		};
+
+		entry["title"] = "Mapreduce";
+
+		WriteSettings writeSettings = new()
+		{
+			AlignTagValues = false,
+			WhiteSpace = WhiteSpace.Space,
+			BibEntryTagValueFormat = tagValueFormat
+		};
+
+		string result = entry.ToString(writeSettings);
+
+		Assert.Contains("@article{Dean2008,", result);
+		Assert.Contains(expectedTagLine, result);
+		Assert.Contains("}", result);
+	}
+
+	[Fact]
+	public void TestToStringWithWriteSettingsFormatsMultipleTagValues()
+	{
+		BibEntry entry = new()
+		{
+			Type	= "article",
+			Key		= "Dean2008"
+		};
+
+		entry["title"] = "Mapreduce";
+		entry["author"] = "Jeffrey Dean and Sanjay Ghemawat";
+		entry["year"] = "2008";
+
+		WriteSettings writeSettings = new()
+		{
+			AlignTagValues			= false,
+			WhiteSpace				= WhiteSpace.Space,
+			BibEntryTagValueFormat	= TagValueFormat.Bracket
+		};
+
+		string result = entry.ToString(writeSettings);
+
+		Assert.Contains("title = {Mapreduce}", result);
+		Assert.Contains("author = {Jeffrey Dean and Sanjay Ghemawat}", result);
+		Assert.Contains("year = {2008}", result);
 	}
 
 	#endregion

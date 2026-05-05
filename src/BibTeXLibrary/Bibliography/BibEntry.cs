@@ -398,19 +398,7 @@ public class BibEntry : BibliographyPart
 			tagName = tagName.ToLower();
 		}
 
-		TagValue tagValueObject = new(tagValue);
-		switch (tagValueType)
-		{
-			case TagValueType.String:
-				// This is a regular string, so put brackets around it.
-				tagValueObject.Format = TagValueFormat.Bracket;
-				break;
-
-			case TagValueType.StringConstant:
-				// This is a string constant so we do not want brackets around it.
-				tagValueObject.Format = TagValueFormat.None;
-				break;
-		}
+		TagValue tagValueObject = new(tagValue, tagValueType);
 
 		bool exists = _tags.ContainsKey(tagName);
 		if (exists)
@@ -491,20 +479,20 @@ public class BibEntry : BibliographyPart
 		bibliographyPart.Append(writeSettings.NewLine);
 
 		// Write all the tags.
-		IDictionaryEnumerator tagEnumerator = _tags.GetEnumerator();
+		OrderedDictionary<string, TagValue>.Enumerator tagEnumerator = _tags.GetEnumerator();
 		while (tagEnumerator.MoveNext())
 		{
 			// Initial line indent and tag key.
 			bibliographyPart.Append(writeSettings.Indent);
 
-			bibliographyPart.Append(tagEnumerator.Key.ToString());
+			bibliographyPart.Append(tagEnumerator.Current.Key.ToString());
 
 			// Add the space between the key and equal sign.
-			bibliographyPart.Append(writeSettings.GetInterTagSpacing(tagEnumerator.Key.ToString()!));
+			bibliographyPart.Append(writeSettings.GetInterTagSpacing(tagEnumerator.Current.Key.ToString()!));
 
 			// Add the tag value.
 			bibliographyPart.Append("= ");
-			bibliographyPart.Append(tagEnumerator.Value!.ToString());
+			bibliographyPart.Append(tagEnumerator.Current.Value!.ToString(writeSettings.BibEntryTagValueFormat));
 			bibliographyPart.Append(',');
 
 			// End the line.

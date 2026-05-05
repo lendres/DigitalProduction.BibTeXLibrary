@@ -12,7 +12,7 @@ public class BibEntry : BibliographyPart
 {
 	#region Fields
 
-	private static readonly string[]                            _nameSuffixes           = ["jr", "jr.", "sr", "sr.", "ii", "iii", "iv", "v", @"p\`{e}re", "fils"];
+	private static readonly string[]							  _nameSuffixes           = ["jr", "jr.", "sr", "sr.", "ii", "iii", "iv", "v", @"p\`{e}re", "fils"];
 
 	/// <summary>Store all tags.</summary>
 	protected readonly OrderedDictionary<string, FieldValue>      _tags                   = [];

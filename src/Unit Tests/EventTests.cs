@@ -26,7 +26,7 @@ public class EventTests
 		Assert.Equal("True", GetAndResetMessage());
 
 		// Writing should mark the bibliography as unmodified.
-		CleanUp(bibliography);
+		SaveBibliography(bibliography);
 
 		// Test removing an entry.  This should cause it to be marked as modified again.
 		bibliography.Entries.Remove(entry);
@@ -43,6 +43,7 @@ public class EventTests
 		Bibliography bibliography = new();
 		bibliography.ModifiedChanged += OnModifiedChanged;
 
+		// Test that after a read, the bibliography is not marked as modified.
 		bibliography.Read("TestData/BibParserTest1_In.bib");
 		Assert.False(bibliography.Modified);
 		Assert.Equal("False", GetAndResetMessage());
@@ -52,17 +53,17 @@ public class EventTests
 
 		entry.Title = "Changed Title";
 		Assert.Equal("True", GetAndResetMessage());
-		CleanUp(bibliography);
+		SaveBibliography(bibliography);
 
 		// Test changing the entry using bracket notation. This should cause it to be marked as modified again.
 		entry["Title"] = "Changed Again";
 		Assert.Equal("True", GetAndResetMessage());
-		CleanUp(bibliography);
+		SaveBibliography(bibliography);
 
 		// Test adding an entry using bracket notation. This should cause it to be marked as modified again.
 		entry["NewTag"] = "New tag added using bracket notation.";
 		Assert.Equal("True", GetAndResetMessage());
-		CleanUp(bibliography);
+		SaveBibliography(bibliography);
 
 		// Test adding the same value. This should NOT cause it to be marked as modified again.
 		entry["NewTag"] = "New tag added using bracket notation.";
@@ -75,7 +76,7 @@ public class EventTests
 		_message = modified.ToString();
 	}
 
-	private void CleanUp(Bibliography bibliography)
+	private void SaveBibliography(Bibliography bibliography)
 	{
 		bibliography.Write(_file);
 		System.IO.File.Delete(_file);

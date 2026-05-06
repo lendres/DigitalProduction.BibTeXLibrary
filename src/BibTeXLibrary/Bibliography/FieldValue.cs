@@ -1,10 +1,12 @@
-﻿namespace BibTeXLibrary;
+﻿using System.ComponentModel;
+
+namespace BibTeXLibrary;
 
 /// <summary>
 /// The tag value for a BibTeX library.  This is an object to allow more complex behavior.  Specifically,
 /// it allows different types of writing (ToString) for the value.
 /// </summary>
-public class FieldValue
+public class FieldValue : IEquatable<FieldValue>, IComparable<FieldValue>
 {
 	#region Construction
 
@@ -27,11 +29,11 @@ public class FieldValue
 	/// <summary>
 	/// Copy constructor.
 	/// </summary>
-	/// <param name="tagValue">The tag content.</param>
-	public FieldValue(FieldValue tagValue)
+	/// <param name="fieldValue">The FieldValue to copy.</param>
+	public FieldValue(FieldValue fieldValue)
 	{
-		Content			= tagValue.Content;
-		TagValueType	= tagValue.TagValueType;
+		Content			= fieldValue.Content;
+		TagValueType	= fieldValue.TagValueType;
 	}
 
 	/// <summary>
@@ -70,9 +72,8 @@ public class FieldValue
 	/// <returns>A string that represents the current object.</returns>
 	public override string? ToString()
 	{
-		// Prevent accidently calling a version where the format is not specified.
-		// All objects have a public "ToString()" function that it inherits. We need to turn this of so it does
-		// not accidently get called.
+		// Prevent accidently calling a version where the format is not specified. All objects have a public "ToString()"
+		// function that it inherits. We need to turn this of so it does not accidently get called.
 		throw new NotSupportedException("This method is disabled.");
 	}
 
@@ -89,11 +90,104 @@ public class FieldValue
 
 		return format switch
 		{
-			FieldValueFormat.Bracket	=> "{"+Content+"}",
-			FieldValueFormat.Quote	=> "\""+Content+"\"",
+			FieldValueFormat.CurlyBraces	=> "{"+Content+"}",
+			FieldValueFormat.Quotes		=> "\""+Content+"\"",
 			FieldValueFormat.None		=> Content,
-			_						=> throw new Exception("Invalid tag format."),
+			_							=> throw new Exception("Invalid tag format."),
 		};
+	}
+
+	#endregion
+
+	#region Comparison
+
+	/// <summary>
+	/// Compare this FieldValue to another FieldValue.
+	/// </summary>
+	public int CompareTo(FieldValue? other)
+	{
+		if (other is null)
+		{
+			return 1;
+		}
+
+		int contentComparison = string.Compare(Content, other.Content, StringComparison.Ordinal);
+
+		if (contentComparison != 0)
+		{
+			return contentComparison;
+		}
+
+		return TagValueType.CompareTo(other.TagValueType);
+	}
+
+	/// <summary>
+	/// Determine if this FieldValue is equal to another FieldValue.
+	/// </summary>
+	public bool Equals(FieldValue? other)
+	{
+		if (other is null)
+		{
+			return false;
+		}
+
+		return Content == other.Content && TagValueType == other.TagValueType;
+	}
+
+	/// <summary>
+	/// Determine if this FieldValue is equal to another object.
+	/// </summary>
+	public override bool Equals(object? obj)
+	{
+		return Equals(obj as FieldValue);
+	}
+
+	/// <summary>
+	/// Get the hash code.
+	/// </summary>
+	public override int GetHashCode()
+	{
+		return HashCode.Combine(Content, TagValueType);
+	}
+
+	public static bool operator ==(FieldValue? left, FieldValue? right)
+	{
+		return EqualityComparer<FieldValue>.Default.Equals(left, right);
+	}
+
+	public static bool operator !=(FieldValue? left, FieldValue? right)
+	{
+		return !(left == right);
+	}
+
+	public static bool operator <(FieldValue? left, FieldValue? right)
+	{
+		if (left is null)
+		{
+			return right is not null;
+		}
+
+		return left.CompareTo(right) < 0;
+	}
+
+	public static bool operator >(FieldValue? left, FieldValue? right)
+	{
+		if (left is null)
+		{
+			return false;
+		}
+
+		return left.CompareTo(right) > 0;
+	}
+
+	public static bool operator <=(FieldValue? left, FieldValue? right)
+	{
+		return !(left > right);
+	}
+
+	public static bool operator >=(FieldValue? left, FieldValue? right)
+	{
+		return !(left < right);
 	}
 
 	#endregion

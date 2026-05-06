@@ -1,9 +1,7 @@
 ﻿using DigitalProduction.ComponentModel;
-using DigitalProduction.Projects;
 using DigitalProduction.Strings;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Globalization;
 
 namespace BibTeXLibrary;
 
@@ -14,8 +12,8 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 {
 	#region Fields
 
-	private readonly List<string>								_header				= [];
-	private readonly ObservableCollection<BibEntry>				_bibEntries			= [];
+	private readonly List<string>							_header				= [];
+	private readonly ObservableCollection<BibEntry>			_bibEntries			= [];
 	private readonly ObservableCollection<StringEntry>		_strings			= [];
 
 	#endregion

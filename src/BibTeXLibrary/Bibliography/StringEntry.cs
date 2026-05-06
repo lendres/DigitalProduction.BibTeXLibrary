@@ -31,7 +31,7 @@ public class StringEntry : BibliographyPart
 		base(true)
 	{
 		Name		= stringConstant.Name;
-		TagValue	= new FieldValue(stringConstant.TagValue);
+		FieldValue	= new FieldValue(stringConstant.FieldValue);
 	}
 
 	#endregion
@@ -62,15 +62,15 @@ public class StringEntry : BibliographyPart
 	/// </summary>
 	public string Value
 	{
-		get => TagValue.Content;
+		get => FieldValue.Content;
 
 		set
 		{
-			if (TagValue.Content != value)
+			if (FieldValue.Content != value)
 			{
-				TagValue.Content = value;
+				FieldValue.Content = value;
 				OnPropertyChanged();
-				OnPropertyChanged(nameof(TagValue));
+				OnPropertyChanged(nameof(FieldValue));
 			}
 		}
 	}
@@ -78,7 +78,7 @@ public class StringEntry : BibliographyPart
 	/// <summary>
 	/// Value of the string constant.
 	/// </summary>
-	public FieldValue TagValue
+	public FieldValue FieldValue
 	{
 		get				=> GetValueOrDefault<FieldValue>(new FieldValue(string.Empty, FieldValueType.String));
 		protected set	=> SetValue(value);
@@ -100,7 +100,7 @@ public class StringEntry : BibliographyPart
 		}
 
 		Name		= tagName;
-		TagValue	= new FieldValue(tagValue, FieldValueType.String);
+		FieldValue	= new FieldValue(tagValue, FieldValueType.String);
 	}
 
 	#endregion
@@ -126,7 +126,7 @@ public class StringEntry : BibliographyPart
 
 		// Add the string constant value.
 		bibliographyPart.Append("= ");
-		bibliographyPart.Append(TagValue.ToString(writeSettings.StringConstantTagValueFormat));
+		bibliographyPart.Append(FieldValue.ToString(writeSettings.StringConstantTagValueFormat));
 		bibliographyPart.Append(")");
 
 		bibliographyPart.Append(writeSettings.NewLine);

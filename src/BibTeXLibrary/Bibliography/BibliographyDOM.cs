@@ -137,7 +137,7 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 	/// Insert a bibliography entry 
 	/// </summary>
 	/// <param name="part">BibliographyPart.</param>
-	public void Insert(BibEntry bibEntry, SortBy sortBy)
+	public void Insert(BibEntry bibEntry, SortBibliographyBy sortBy)
 	{
 		int position = FindInsertIndex(bibEntry, sortBy);
 		Insert(bibEntry, position);
@@ -224,7 +224,7 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 	/// </summary>
 	/// <param name="sortBy">Method to sort the bibliography entries by.</param>
 	/// <exception cref="ArgumentException">The SortBy method is not valid.</exception>
-	public void SortBibEntries(SortBy sortBy)
+	public void SortBibEntries(SortBibliographyBy sortBy)
 	{
 		// The copy constructor doesn't work, it points to the _bibEntry list and when that list is cleared, both are cleared (and the enumerators).
 		BindingList<BibEntry> copy = [];
@@ -235,8 +235,8 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 
 		IOrderedEnumerable<BibEntry> sorted = sortBy switch
 		{
-			SortBy.FirstAuthorLastName	=> copy.OrderBy(entry => entry.GetFirstAuthorsName(NameFormat.Last, StringCase.LowerCase)),
-			SortBy.Key					=> copy.OrderBy(entry => entry.Key),
+			SortBibliographyBy.FirstAuthorLastName	=> copy.OrderBy(entry => entry.GetFirstAuthorsName(NameFormat.Last, StringCase.LowerCase)),
+			SortBibliographyBy.Key					=> copy.OrderBy(entry => entry.Key),
 			_							=> throw new ArgumentException("The specified method of sorting is not valid.")
 		};
 
@@ -344,12 +344,12 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 	/// <param name="sortBy">The sorting method to use.</param>
 	/// <returns>The index at which the entry should be inserted.</returns>
 	/// <exception cref="ArgumentException"></exception>
-	public int FindInsertIndex(BibEntry entry, SortBy sortBy)
+	public int FindInsertIndex(BibEntry entry, SortBibliographyBy sortBy)
 	{
 		return sortBy switch
 		{
-			SortBy.FirstAuthorLastName	=> BinarySearch(_bibEntries, entry, new CompareByFirstAuthorLastName(), false),
-			SortBy.Key					=> BinarySearch(_bibEntries, entry, new CompareByCiteKey(), false),
+			SortBibliographyBy.FirstAuthorLastName	=> BinarySearch(_bibEntries, entry, new CompareByFirstAuthorLastName(), false),
+			SortBibliographyBy.Key					=> BinarySearch(_bibEntries, entry, new CompareByCiteKey(), false),
 			_							=> throw new ArgumentException("The specified method of sorting is not valid."),
 		};
 	}

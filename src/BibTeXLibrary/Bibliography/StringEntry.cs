@@ -6,7 +6,7 @@ namespace BibTeXLibrary;
 /// <summary>
 /// A bibliography string constant.
 /// </summary>
-public class StringConstant : BibliographyPart
+public class StringEntry : BibliographyPart
 {
 	#region Fields
 
@@ -19,7 +19,7 @@ public class StringConstant : BibliographyPart
 	/// <summary>
 	/// Default constructor.
 	/// </summary>
-	public StringConstant() :
+	public StringEntry() :
 		base(true)
 	{
 	}
@@ -27,11 +27,11 @@ public class StringConstant : BibliographyPart
 	/// <summary>
 	/// Copy constructor.
 	/// </summary>
-	public StringConstant(StringConstant stringConstant) :
+	public StringEntry(StringEntry stringConstant) :
 		base(true)
 	{
 		Name		= stringConstant.Name;
-		TagValue	= new TagValue(stringConstant.TagValue);
+		TagValue	= new FieldValue(stringConstant.TagValue);
 	}
 
 	#endregion
@@ -78,9 +78,9 @@ public class StringConstant : BibliographyPart
 	/// <summary>
 	/// Value of the string constant.
 	/// </summary>
-	public TagValue TagValue
+	public FieldValue TagValue
 	{
-		get				=> GetValueOrDefault<TagValue>(new TagValue(string.Empty, TagValueType.String));
+		get				=> GetValueOrDefault<FieldValue>(new FieldValue(string.Empty, FieldValueType.String));
 		protected set	=> SetValue(value);
 	}
 
@@ -92,7 +92,7 @@ public class StringConstant : BibliographyPart
 	/// Set a TagValue.
 	/// </summary>
 	/// <param name="tagName">Name of the tag to get.</param>
-	public override void SetTagValue(string tagName, string tagValue, TagValueType tagValueType)
+	public override void SetTagValue(string tagName, string tagValue, FieldValueType tagValueType)
 	{
 		if (!_caseSensitivetags)
 		{
@@ -100,7 +100,7 @@ public class StringConstant : BibliographyPart
 		}
 
 		Name		= tagName;
-		TagValue	= new TagValue(tagValue, TagValueType.String);
+		TagValue	= new FieldValue(tagValue, FieldValueType.String);
 	}
 
 	#endregion

@@ -12,10 +12,10 @@ public class BibEntry : BibliographyPart
 {
 	#region Fields
 
-	private static readonly string[]                            _nameSuffixes           = ["jr", "jr.", "sr", "sr.", "ii", "iii", "iv", "v", @"p\`{e}re", "fils"];
+	private static readonly string[]							  _nameSuffixes           = ["jr", "jr.", "sr", "sr.", "ii", "iii", "iv", "v", @"p\`{e}re", "fils"];
 
 	/// <summary>Store all tags.</summary>
-	protected readonly OrderedDictionary<string, TagValue>      _tags                   = [];
+	protected readonly OrderedDictionary<string, FieldValue>      _tags                   = [];
 
 	#endregion
 
@@ -299,8 +299,8 @@ public class BibEntry : BibliographyPart
 		IDictionaryEnumerator tagEnumerator = _tags.GetEnumerator();
 		while (tagEnumerator.MoveNext())
 		{
-			TagValue tagValue		= (TagValue)tagEnumerator.Value!;
-			string tagValueString	= tagValue.ToString(TagValueFormat.None)!;
+			FieldValue tagValue		= (FieldValue)tagEnumerator.Value!;
+			string tagValueString	= tagValue.ToString(FieldValueFormat.None)!;
 
 			if (!caseSensitive)
 			{
@@ -343,7 +343,7 @@ public class BibEntry : BibliographyPart
 			{
 				tagName = tagName.ToLower();
 			}
-			return _tags.TryGetValue(tagName, out TagValue? value) ? value.Content : "";
+			return _tags.TryGetValue(tagName, out FieldValue? value) ? value.Content : "";
 		}
 
 		set
@@ -353,7 +353,7 @@ public class BibEntry : BibliographyPart
 				tagName = tagName.ToLower();
 			}
 
-			if (_tags.TryGetValue(tagName, out TagValue? tagValue))
+			if (_tags.TryGetValue(tagName, out FieldValue? tagValue))
 			{
 				if (tagValue.Content != value)
 				{
@@ -363,7 +363,7 @@ public class BibEntry : BibliographyPart
 			}
 			else
 			{
-				_tags[tagName] = new TagValue(value);
+				_tags[tagName] = new FieldValue(value);
 				OnPropertyChanged(nameof(TagNames));
 				Modified = true;
 			}
@@ -374,13 +374,13 @@ public class BibEntry : BibliographyPart
 	/// Get a TagValue.
 	/// </summary>
 	/// <param name="tagName">Name of the tag to get.</param>
-	public TagValue GetTagValue(string tagName)
+	public FieldValue GetTagValue(string tagName)
 	{
 		if (!_caseSensitivetags)
 		{
 			tagName = tagName.ToLower();
 		}
-		if (_tags.TryGetValue(tagName, out TagValue? tagValue))
+		if (_tags.TryGetValue(tagName, out FieldValue? tagValue))
 		{
 			return tagValue;
 		}
@@ -391,14 +391,14 @@ public class BibEntry : BibliographyPart
 	/// Set a TagValue.
 	/// </summary>
 	/// <param name="tagName">Name of the tag to get.</param>
-	public override void SetTagValue(string tagName, string tagValue, TagValueType tagValueType)
+	public override void SetTagValue(string tagName, string tagValue, FieldValueType tagValueType)
 	{
 		if (!_caseSensitivetags)
 		{
 			tagName = tagName.ToLower();
 		}
 
-		TagValue tagValueObject = new(tagValue, tagValueType);
+		FieldValue tagValueObject = new(tagValue, tagValueType);
 
 		bool exists = _tags.ContainsKey(tagName);
 		if (exists)
@@ -479,7 +479,7 @@ public class BibEntry : BibliographyPart
 		bibliographyPart.Append(writeSettings.NewLine);
 
 		// Write all the tags.
-		OrderedDictionary<string, TagValue>.Enumerator tagEnumerator = _tags.GetEnumerator();
+		OrderedDictionary<string, FieldValue>.Enumerator tagEnumerator = _tags.GetEnumerator();
 		while (tagEnumerator.MoveNext())
 		{
 			// Initial line indent and tag key.
@@ -542,7 +542,7 @@ public class BibEntry : BibliographyPart
 		// It should have already been checked that the key is contained before getting here.
 		System.Diagnostics.Debug.Assert(tagNames.Contains(tagKey));
 
-		TagValue value = GetTagValue(tagKey);
+		FieldValue value = GetTagValue(tagKey);
 
 		_tags.Remove(tagKey);
 

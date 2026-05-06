@@ -52,7 +52,7 @@ public class BibliographyTests
 		Assert.Equal("Apache hadoop yarn: Yet another resource negotiator",	entries[1].Title);
 		Assert.Equal("KalavriShang-797",									entries[2].Key);
 
-		ObservableCollection<StringConstant> stringConstants = bibliography.StringConstants;
+		ObservableCollection<StringEntry> stringConstants = bibliography.StringConstants;
 		Assert.Equal(2,														stringConstants.Count);
 		Assert.Equal("TRANSMATHSOFT",										stringConstants[0].Name);
 		Assert.Equal("ACM T Math Software",									stringConstants[0].Value);

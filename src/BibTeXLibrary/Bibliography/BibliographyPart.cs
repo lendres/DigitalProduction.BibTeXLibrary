@@ -45,7 +45,7 @@ public abstract class BibliographyPart(bool caseSensitivetags) : NotifyPropertyM
 	/// Set a TagValue.
 	/// </summary>
 	/// <param name="tagName">Name of the tag to get.</param>
-	public abstract void SetTagValue(string tagName, string tagValue, TagValueType tagValueType);
+	public abstract void SetTagValue(string tagName, string tagValue, FieldValueType tagValueType);
 
 	#endregion
 

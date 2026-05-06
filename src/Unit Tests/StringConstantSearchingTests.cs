@@ -29,7 +29,7 @@ public class StringConstantSearchingTests
 	[Fact]
     public void TestSearchInValues()
     {
-		List<StringConstant> result = _bibliographyDom.SearchStringConstants(false, "Fiction");
+		List<StringEntry> result = _bibliographyDom.SearchStringConstants(false, "Fiction");
 		Assert.Single(result);
 		
 		result = _bibliographyDom.SearchStringConstants(false, "Journal");
@@ -42,7 +42,7 @@ public class StringConstantSearchingTests
 	[Fact]
     public void TestSearchInNames()
     {
-		List<StringConstant> result = _bibliographyDom.SearchStringConstants(true, "A1");
+		List<StringEntry> result = _bibliographyDom.SearchStringConstants(true, "A1");
 		Assert.Single(result);
 		
 		result = _bibliographyDom.SearchStringConstants(true, "key");

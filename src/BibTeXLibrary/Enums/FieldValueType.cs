@@ -7,18 +7,14 @@ namespace BibTeXLibrary;
 /// 
 /// The "Description" attribute can be accessed using Reflection to get a string representing the enumeration type.
 /// </summary>
-public enum TagValueFormat
+public enum FieldValueType
 {
 	/// <summary>Bracketed.</summary>
-	[Description("Add brackets around the value.")]
-	Bracket,
+	[Description("A regular string.")]
+	String,
 
-	/// <summary>Quoted.</summary>
-	[Description("Add quotes the value.")]
-	Quote,
-
-	/// <summary>None.</summary>
-	[Description("Do not apply formating to the value.")]
-	None
+	/// <summary>String constant.</summary>
+	[Description("A constant/variable that represents a string.")]
+	StringConstant
 
 } // End enum.

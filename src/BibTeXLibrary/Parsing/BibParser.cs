@@ -262,7 +262,7 @@ public sealed class BibParser : IDisposable
 
 			BibliographyPart?		bibPart				= null;
 			string					tagName				= "";
-			TagValueType			tagValueType		= TagValueType.String;
+			FieldValueType			tagValueType		= FieldValueType.String;
 			StringBuilder			tagValueBuilder		= new();
 
 			// Fetch token from Tokenizer and build BibEntry.
@@ -289,9 +289,9 @@ public sealed class BibParser : IDisposable
 
 					case BibBuilderState.SetType:
 					{
-						if (token.Value.ToLower() == StringConstant.TypeString.ToLower())
+						if (token.Value.ToLower() == StringEntry.TypeString.ToLower())
 						{
-							bibPart = new StringConstant();
+							bibPart = new StringEntry();
 						}
 						else
 						{
@@ -322,7 +322,7 @@ public sealed class BibParser : IDisposable
 					{
 						if (token.Type != TokenType.Concatenation)
 						{
-							tagValueType = token.Type == TokenType.String ? TagValueType.String : TagValueType.StringConstant;
+							tagValueType = token.Type == TokenType.String ? FieldValueType.String : FieldValueType.StringConstant;
 						}
 						tagValueBuilder.Append(token.Value);
 						break;
@@ -374,7 +374,7 @@ public sealed class BibParser : IDisposable
 	/// <param name="tagName">The name of the tag.</param>
 	/// <param name="tagValueIsString">A boolean to indicate if the value of the tag is a name (string constant) or an ordinary string.</param>
 	/// <param name="tagValueBuilder">String builder used to build the tag value.</param>
-	private static void SetTag(BibliographyPart bibPart, ref string tagName, TagValueType tagValueType, StringBuilder tagValueBuilder)
+	private static void SetTag(BibliographyPart bibPart, ref string tagName, FieldValueType tagValueType, StringBuilder tagValueBuilder)
 	{
 		Debug.Assert(bibPart != null, "bib != null");
 		bibPart.SetTagValue(tagName, tagValueBuilder.ToString(), tagValueType);
@@ -424,7 +424,7 @@ public sealed class BibParser : IDisposable
 				}
 
 				string valueString = value.ToString();
-				TokenType tokenType = valueString.ToLower().Trim() == StringConstant.TypeString ? TokenType.StringType : TokenType.Name;
+				TokenType tokenType = valueString.ToLower().Trim() == StringEntry.TypeString ? TokenType.StringType : TokenType.Name;
 
 				yield return new Token(tokenType, valueString);
 			}

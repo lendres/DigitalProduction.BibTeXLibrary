@@ -16,7 +16,7 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 
 	private readonly List<string>								_header				= [];
 	private readonly ObservableCollection<BibEntry>				_bibEntries			= [];
-	private readonly ObservableCollection<StringConstant>		_strings			= [];
+	private readonly ObservableCollection<StringEntry>		_strings			= [];
 
 	#endregion
 
@@ -53,7 +53,7 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 	/// <summary>
 	/// String constants.
 	/// </summary>
-	public ObservableCollection<StringConstant> StringConstants { get => _strings; }
+	public ObservableCollection<StringEntry> StringConstants { get => _strings; }
 
 	/// <summary>
 	/// The number of string constants.
@@ -116,7 +116,7 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 		part.ModifiedChanged += OnPartModifiedChanged;
 		if (part.Type.Equals("string", StringComparison.CurrentCultureIgnoreCase))
 		{
-			_strings.Add((StringConstant)part);
+			_strings.Add((StringEntry)part);
 		}
 		else
 		{
@@ -159,7 +159,7 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 	/// Add a bibliography entry or a string.
 	/// </summary>
 	/// <param name="part">BibliographyPart.</param>
-	public void Insert(StringConstant stringConstant, SortStringsBy sortBy)
+	public void Insert(StringEntry stringConstant, SortStringsBy sortBy)
 	{
 		int position = FindInsertIndex(stringConstant, sortBy);
 		Insert(stringConstant, position);
@@ -169,7 +169,7 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 	/// Add a bibliography entry or a string.
 	/// </summary>
 	/// <param name="part">BibliographyPart.</param>
-	public void Insert(StringConstant stringConstant, int position)
+	public void Insert(StringEntry stringConstant, int position)
 	{
 		stringConstant.PropertyChanged += OnPartPropertyChanged;
 		stringConstant.ModifiedChanged += OnPartModifiedChanged;
@@ -191,7 +191,7 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 	public IEnumerable<string> GetStringNames()
 	{
 		List<string> names = [];
-		foreach (StringConstant str in _strings)
+		foreach (StringEntry str in _strings)
 		{
 			names.Add(str.Name);
 		}
@@ -208,7 +208,7 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 	public IEnumerable<string> GetStringValues()
 	{
 		List<string> values = [];
-		foreach (StringConstant str in _strings)
+		foreach (StringEntry str in _strings)
 		{
 			values.Add(str.Value);
 		}
@@ -255,13 +255,13 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 	public void SortStringConstants(SortStringsBy sortBy)
 	{
 		// The copy constructor doesn't work, it points to the _bibEntry list and when that list is cleared, both are cleared (and the enumerators).
-		BindingList<StringConstant> copy = [];
-		foreach (StringConstant entry in _strings)
+		BindingList<StringEntry> copy = [];
+		foreach (StringEntry entry in _strings)
 		{
 			copy.Add(entry);
 		}
 
-		IOrderedEnumerable<StringConstant> sorted = sortBy switch
+		IOrderedEnumerable<StringEntry> sorted = sortBy switch
 		{
 			SortStringsBy.Name	=> copy.OrderBy(entry => entry.Name),
 			SortStringsBy.Value	=> copy.OrderBy(entry => entry.Value),
@@ -269,7 +269,7 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 		};
 
 		_strings.Clear();
-		foreach (StringConstant entry in sorted)
+		foreach (StringEntry entry in sorted)
 		{
 			_strings.Add(entry);
 		}
@@ -315,12 +315,12 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 	/// <param name="searchString">The string to search for.</param>
 	/// <param name="caseSensitive">Whether the search should be case-sensitive.</param>
 	/// <returns>A list of matching string constants.</returns>
-	public List<StringConstant> SearchStringConstants(bool searchName, string searchString, bool caseSensitive = false)
+	public List<StringEntry> SearchStringConstants(bool searchName, string searchString, bool caseSensitive = false)
 	{
-		List<StringConstant> matches	= [];
+		List<StringEntry> matches	= [];
 		StringComparison comparison		= caseSensitive ? StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase;
 
-		foreach (StringConstant entry in _strings)
+		foreach (StringEntry entry in _strings)
 		{
 			if (searchName && entry.Name.Contains(searchString, comparison))
 			{
@@ -361,7 +361,7 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 	/// <param name="sortBy">The sorting method to use.</param>
 	/// <returns>The index at which the entry should be inserted.</returns>
 	/// <exception cref="ArgumentException"></exception>
-	public int FindInsertIndex(StringConstant entry, SortStringsBy sortBy)
+	public int FindInsertIndex(StringEntry entry, SortStringsBy sortBy)
 	{
 		return sortBy switch
 		{

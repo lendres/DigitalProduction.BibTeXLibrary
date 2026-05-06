@@ -12,10 +12,10 @@ public class BibEntry : BibliographyPart
 {
 	#region Fields
 
-	private static readonly string[]							  _nameSuffixes           = ["jr", "jr.", "sr", "sr.", "ii", "iii", "iv", "v", @"p\`{e}re", "fils"];
+	private static readonly string[]							  _nameSuffixes		= ["jr", "jr.", "sr", "sr.", "ii", "iii", "iv", "v", @"p\`{e}re", "fils"];
 
 	/// <summary>Store all tags.</summary>
-	protected readonly OrderedDictionary<string, FieldValue>      _tags                   = [];
+	protected readonly OrderedDictionary<string, FieldValue>      _fields			= [];
 
 	#endregion
 
@@ -63,7 +63,9 @@ public class BibEntry : BibliographyPart
 	/// <summary>
 	/// Get the names of the tags.
 	/// </summary>
-	public List<string> TagNames { get => [.. (from string item in _tags.Keys select item)]; }
+	public List<string> FieldNames { get => [.. (from string item in _fields.Keys select item)]; }
+
+	#region Common Fields
 
 	/// <summary>
 	/// The address entry or an empty string if the address was not specified.
@@ -272,20 +274,7 @@ public class BibEntry : BibliographyPart
 		set => SetProperty(GetFormattedName(), value);
 	}
 
-	/// <summary>
-	/// Reusable property setter.
-	/// </summary>
-	/// <param name="formattedPropertyName">Formatted property name used for storing and retrieving the value.</param>
-	/// <param name="value">Value to set.</param>
-	/// <param name="propertyName">The name of the property that changed.  Used for event notifications.</param>
-	private void SetProperty(string formattedPropertyName, string value, [CallerMemberName] string propertyName = null!)
-	{
-		if (this[formattedPropertyName] != value)
-		{
-			this[formattedPropertyName] = value;
-			OnPropertyChanged(propertyName);
-		}
-	}
+	#endregion
 
 	#endregion
 
@@ -296,7 +285,7 @@ public class BibEntry : BibliographyPart
 		string result		= "";
 		string matchValue	= caseSensitive ? value : value.ToLower();
 
-		IDictionaryEnumerator tagEnumerator = _tags.GetEnumerator();
+		IDictionaryEnumerator tagEnumerator = _fields.GetEnumerator();
 		while (tagEnumerator.MoveNext())
 		{
 			FieldValue tagValue		= (FieldValue)tagEnumerator.Value!;
@@ -328,7 +317,7 @@ public class BibEntry : BibliographyPart
 		{
 			tagName = tagName.ToLower();
 		}
-		return _tags.ContainsKey(tagName);
+		return _fields.ContainsKey(tagName);
 	}
 
 	/// <summary>
@@ -343,7 +332,7 @@ public class BibEntry : BibliographyPart
 			{
 				tagName = tagName.ToLower();
 			}
-			return _tags.TryGetValue(tagName, out FieldValue? value) ? value.Content : "";
+			return _fields.TryGetValue(tagName, out FieldValue? value) ? value.Content : "";
 		}
 
 		set
@@ -353,7 +342,7 @@ public class BibEntry : BibliographyPart
 				tagName = tagName.ToLower();
 			}
 
-			if (_tags.TryGetValue(tagName, out FieldValue? tagValue))
+			if (_fields.TryGetValue(tagName, out FieldValue? tagValue))
 			{
 				if (tagValue.Content != value)
 				{
@@ -363,8 +352,8 @@ public class BibEntry : BibliographyPart
 			}
 			else
 			{
-				_tags[tagName] = new FieldValue(value);
-				OnPropertyChanged(nameof(TagNames));
+				_fields[tagName] = new FieldValue(value);
+				OnPropertyChanged(nameof(FieldNames));
 				Modified = true;
 			}
 		}
@@ -380,7 +369,7 @@ public class BibEntry : BibliographyPart
 		{
 			tagName = tagName.ToLower();
 		}
-		if (_tags.TryGetValue(tagName, out FieldValue? tagValue))
+		if (_fields.TryGetValue(tagName, out FieldValue? tagValue))
 		{
 			return tagValue;
 		}
@@ -400,20 +389,20 @@ public class BibEntry : BibliographyPart
 
 		FieldValue tagValueObject = new(tagValue, tagValueType);
 
-		bool exists = _tags.ContainsKey(tagName);
+		bool exists = _fields.ContainsKey(tagName);
 		if (exists)
 		{
-			if (_tags[tagName] != tagValueObject)
+			if (_fields[tagName] != tagValueObject)
 			{
 				Modified = true;
-				_tags[tagName] = tagValueObject;
+				_fields[tagName] = tagValueObject;
 			}
 		}
 		else
 		{
-			_tags[tagName] = tagValueObject;
+			_fields[tagName] = tagValueObject;
 			Modified = true;
-			OnPropertyChanged(nameof(TagNames));
+			OnPropertyChanged(nameof(FieldNames));
 		}
 	}
 
@@ -460,6 +449,22 @@ public class BibEntry : BibliographyPart
 		return propertyName;
 	}
 
+	/// <summary>
+	/// Reusable property setter. Used for common fields such as Author, Title, Year, etc.  This will set the value
+	/// and raise the PropertyChanged event if the value is different than the current value.
+	/// </summary>
+	/// <param name="formattedPropertyName">Formatted property name used for storing and retrieving the value.</param>
+	/// <param name="value">Value to set.</param>
+	/// <param name="propertyName">The name of the property that changed.  Used for event notifications.</param>
+	private void SetProperty(string formattedPropertyName, string value, [CallerMemberName] string propertyName = null!)
+	{
+		if (this[formattedPropertyName] != value)
+		{
+			this[formattedPropertyName] = value;
+			OnPropertyChanged(propertyName);
+		}
+	}
+
 	#endregion
 
 	#region Public String Writing Methods
@@ -479,7 +484,7 @@ public class BibEntry : BibliographyPart
 		bibliographyPart.Append(writeSettings.NewLine);
 
 		// Write all the tags.
-		OrderedDictionary<string, FieldValue>.Enumerator tagEnumerator = _tags.GetEnumerator();
+		OrderedDictionary<string, FieldValue>.Enumerator tagEnumerator = _fields.GetEnumerator();
 		while (tagEnumerator.MoveNext())
 		{
 			// Initial line indent and tag key.
@@ -537,14 +542,14 @@ public class BibEntry : BibliographyPart
 	/// <exception cref="ArgumentException">Thrown if the new tag Key already exists.</exception>
 	public void RenameTagKey(string tagKey, string newTagKey)
 	{
-		List<string> tagNames = TagNames;
+		List<string> tagNames = FieldNames;
 
 		// It should have already been checked that the key is contained before getting here.
 		System.Diagnostics.Debug.Assert(tagNames.Contains(tagKey));
 
 		FieldValue value = GetTagValue(tagKey);
 
-		_tags.Remove(tagKey);
+		_fields.Remove(tagKey);
 
 		if (tagNames.Contains(newTagKey))
 		{
@@ -554,11 +559,11 @@ public class BibEntry : BibliographyPart
 				throw new ArgumentException("The tag key \"" + newTagKey + "\" already exists.");
 			}
 
-			_tags[newTagKey] = value;
+			_fields[newTagKey] = value;
 		}
 		else
 		{
-			_tags.Add(newTagKey, value);
+			_fields.Add(newTagKey, value);
 		}
 	}
 

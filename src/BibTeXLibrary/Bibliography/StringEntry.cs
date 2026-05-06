@@ -68,9 +68,9 @@ public class StringEntry : BibliographyPart
 		{
 			if (FieldValue.Content != value)
 			{
-				FieldValue.Content = value;
+				FieldValue.Content	= value;
+				Modified			= true;
 				OnPropertyChanged();
-				OnPropertyChanged(nameof(FieldValue));
 			}
 		}
 	}

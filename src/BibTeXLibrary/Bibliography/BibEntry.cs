@@ -537,7 +537,7 @@ public class BibEntry : BibliographyPart
 		{
 			// Write the initial line indent, Field, line ending comma, and a new line.
 			bibliographyPart.Append(writeSettings.Indent);
-			bibliographyPart.Append(fieldEnumerator.Current.Value.ToString(writeSettings, writeSettings.BibEntryTagValueFormat, writeSettings.BibEntryAlignAtTabStop, writeSettings.BibEntryAlignAtColumn));
+			bibliographyPart.Append(fieldEnumerator.Current.Value.ToString(writeSettings, writeSettings.BibEntryFieldValueFormat, writeSettings.BibEntryAlignAtTabStop, writeSettings.BibEntryAlignAtColumn));
 			bibliographyPart.Append(',');
 			bibliographyPart.Append(writeSettings.NewLine);
 		}

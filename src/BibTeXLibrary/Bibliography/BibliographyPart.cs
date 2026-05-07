@@ -67,7 +67,7 @@ public abstract class BibliographyPart(bool caseSensitivetags) : NotifyPropertyM
 	/// </summary>
 	public override string ToString()
 	{
-		return ToString(new WriteSettings() { WhiteSpace = WhiteSpace.Space, TabSize = 2, AlignTagValues = false });
+		return ToString(new WriteSettings() { WhiteSpace = WhiteSpace.Space, TabSize = 2, AlignFieldValues = false });
 	}
 
 	/// <summary>

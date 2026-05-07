@@ -9,25 +9,6 @@ namespace BibTeXLibrary;
 /// </summary>
 public class WriteSettings : NotifyModifiedChanged
 {
-	#region Fields
-
-	private WhiteSpace			_whiteSpace						= WhiteSpace.Tab;
-	private int					_tabSize						= 4;
-	private bool				_alignTagValues					= true;
-	private EntryBracketType	_stringEntryBracketType			= EntryBracketType.Parentheses;
-	private EntryBracketType	_bibEntryBracketType			= EntryBracketType.CurlyBraces;
-	private int					_stringEntryAlignAtColumn		= 28;
-	private int					_bibEntryAlignAtColumn			= 24;
-	private int					_stringEntryAlignAtTabStop		= 6;
-	private int					_bibEntryAlignAtTabStop			= 5;
-	private FieldValueFormat	_stringConstantTagValueFormat	= FieldValueFormat.Quotes;
-	private FieldValueFormat	_bibEntryTagValueFormat			= FieldValueFormat.CurlyBraces;
-	private bool				_removeLastComma				= true;
-	private string				_newLine						= Environment.NewLine;
-	private char				_tab							= '\t';
-
-	#endregion
-
 	#region Construction
 
 	/// <summary>
@@ -42,14 +23,20 @@ public class WriteSettings : NotifyModifiedChanged
 	/// </summary>
 	public WriteSettings(WriteSettings writeSettings)
 	{
-		_whiteSpace			= writeSettings._whiteSpace;
-		_tabSize			= writeSettings._tabSize;
-		_alignTagValues		= writeSettings._alignTagValues;
-		_bibEntryAlignAtColumn		= writeSettings._bibEntryAlignAtColumn;
-		_bibEntryAlignAtTabStop		= writeSettings._bibEntryAlignAtTabStop;
-		_removeLastComma	= writeSettings._removeLastComma;
-		_newLine			= writeSettings._newLine;
-		_tab				= writeSettings._tab;
+		WhiteSpace					= writeSettings.WhiteSpace;
+		TabSize						= writeSettings.TabSize;
+		AlignFieldValues				= writeSettings.AlignFieldValues;
+		StringEntryBracketType		= writeSettings.StringEntryBracketType;
+		BibEntryBracketType			= writeSettings.BibEntryBracketType;
+		StringEntryAlignAtColumn	= writeSettings.StringEntryAlignAtColumn;
+		BibEntryAlignAtColumn		= writeSettings.BibEntryAlignAtColumn;
+		StringEntryAlignAtTabStop	= writeSettings.StringEntryAlignAtTabStop;
+		BibEntryAlignAtTabStop		= writeSettings.BibEntryAlignAtTabStop;
+		StringEntryFieldValueFormat	= writeSettings.StringEntryFieldValueFormat;
+		BibEntryFieldValueFormat	= writeSettings.BibEntryFieldValueFormat;
+		RemoveLastComma				= writeSettings.RemoveLastComma;
+		NewLine						= writeSettings.NewLine;
+		Tab							= writeSettings.Tab;
 	}
 
 	#endregion
@@ -62,16 +49,8 @@ public class WriteSettings : NotifyModifiedChanged
 	[XmlAttribute("whitespace")]
 	public WhiteSpace WhiteSpace
 	{
-		get => _whiteSpace;
-
-		set
-		{
-			if (_whiteSpace != value)
-			{
-				_whiteSpace = value;
-				Modified = true;
-			}
-		}
+		get => GetValueOrDefault(WhiteSpace.Tab);
+		set => SetValue(value);
 	}
 
 	/// <summary>
@@ -80,34 +59,18 @@ public class WriteSettings : NotifyModifiedChanged
 	[XmlAttribute("spacespertab")]
 	public int TabSize
 	{
-		get => _tabSize;
-
-		set
-		{
-			if (_tabSize != value)
-			{
-				_tabSize = value;
-				Modified = true;
-			}
-		}
+		get => GetValueOrDefault(4);
+		set => SetValue(value);
 	}
 
 	/// <summary>
 	/// Specifies if the tag values should be aligned at the equal sign.
 	/// </summary>
 	[XmlAttribute("alignatequals")]
-	public bool AlignTagValues
+	public bool AlignFieldValues
 	{
-		get => _alignTagValues;
-
-		set
-		{
-			if (_alignTagValues != value)
-			{
-				_alignTagValues = value;
-				Modified = true;
-			}
-		}
+		get => GetValueOrDefault(true);
+		set => SetValue(value);
 	}
 
 	/// <summary>
@@ -116,16 +79,8 @@ public class WriteSettings : NotifyModifiedChanged
 	[XmlAttribute("stringentrybrackettype")]
 	public EntryBracketType StringEntryBracketType
 	{
-		get => _stringEntryBracketType;
-
-		set
-		{
-			if (_stringEntryBracketType != value)
-			{
-				_stringEntryBracketType = value;
-				Modified = true;
-			}
-		}
+		get => GetValueOrDefault(EntryBracketType.Parentheses);
+		set => SetValue(value);
 	}
 
 	/// <summary>
@@ -134,16 +89,8 @@ public class WriteSettings : NotifyModifiedChanged
 	[XmlAttribute("bibentrybrackettype")]
 	public EntryBracketType BibEntryBracketType
 	{
-		get => _bibEntryBracketType;
-
-		set
-		{
-			if (_bibEntryBracketType != value)
-			{
-				_bibEntryBracketType = value;
-				Modified = true;
-			}
-		}
+		get => GetValueOrDefault(EntryBracketType.CurlyBraces);
+		set => SetValue(value);
 	}
 
 	/// <summary>
@@ -152,16 +99,8 @@ public class WriteSettings : NotifyModifiedChanged
 	[XmlAttribute("stringentryalignatcolumn")]
 	public int StringEntryAlignAtColumn
 	{
-		get => _stringEntryAlignAtColumn;
-
-		set
-		{
-			if (_stringEntryAlignAtColumn != value)
-			{
-				_stringEntryAlignAtColumn = value;
-				Modified = true;
-			}
-		}
+		get => GetValueOrDefault(28);
+		set => SetValue(value);
 	}
 
 	/// <summary>
@@ -170,16 +109,8 @@ public class WriteSettings : NotifyModifiedChanged
 	[XmlAttribute("bibentryalignatcolumn")]
 	public int BibEntryAlignAtColumn
 	{
-		get => _bibEntryAlignAtColumn;
-
-		set
-		{
-			if (_bibEntryAlignAtColumn != value)
-			{
-				_bibEntryAlignAtColumn = value;
-				Modified = true;
-			}
-		}
+		get => GetValueOrDefault(24);
+		set => SetValue(value);
 	}
 
 	/// <summary>
@@ -188,16 +119,8 @@ public class WriteSettings : NotifyModifiedChanged
 	[XmlAttribute("stringentryalignattabstop")]
 	public int StringEntryAlignAtTabStop
 	{
-		get => _stringEntryAlignAtTabStop;
-
-		set
-		{
-			if (_stringEntryAlignAtTabStop != value)
-			{
-				_stringEntryAlignAtTabStop = value;
-				Modified = true;
-			}
-		}
+		get => GetValueOrDefault(6);
+		set => SetValue(value);
 	}
 
 	/// <summary>
@@ -206,52 +129,28 @@ public class WriteSettings : NotifyModifiedChanged
 	[XmlAttribute("bibentryalignattabstop")]
 	public int BibEntryAlignAtTabStop
 	{
-		get => _bibEntryAlignAtTabStop;
-
-		set
-		{
-			if (_bibEntryAlignAtTabStop != value)
-			{
-				_bibEntryAlignAtTabStop = value;
-				Modified = true;
-			}
-		}
+		get => GetValueOrDefault(5);
+		set => SetValue(value);
 	}
 
 	/// <summary>
 	/// Specifies the format for writing the tag values of StringConstant when the tag value is a string.
 	/// </summary>
 	[XmlAttribute("stringentrytagvalueformat")]
-	public FieldValueFormat StringEntryTagValueFormat
+	public FieldValueFormat StringEntryFieldValueFormat
 	{
-		get => _stringConstantTagValueFormat;
-
-		set
-		{
-			if (_stringConstantTagValueFormat != value)
-			{
-				_stringConstantTagValueFormat = value;
-				Modified = true;
-			}
-		}
+		get => GetValueOrDefault(FieldValueFormat.Quotes);
+		set => SetValue(value);
 	}
 
 	/// <summary>
 	/// Specifies the format for writing the tag values of BibEntries when the tag value is a string.
 	/// </summary>
 	[XmlAttribute("bibentrytagvalueformat")]
-	public FieldValueFormat BibEntryTagValueFormat
+	public FieldValueFormat BibEntryFieldValueFormat
 	{
-		get => _bibEntryTagValueFormat;
-
-		set
-		{
-			if (_bibEntryTagValueFormat != value)
-			{
-				_bibEntryTagValueFormat = value;
-				Modified = true;
-			}
-		}
+		get => GetValueOrDefault(FieldValueFormat.CurlyBraces);
+		set => SetValue(value);
 	}
 
 	/// <summary>
@@ -260,16 +159,8 @@ public class WriteSettings : NotifyModifiedChanged
 	[XmlAttribute("removelastcomma")]
 	public bool RemoveLastComma
 	{
-		get => _removeLastComma;
-
-		set
-		{
-			if (_removeLastComma != value)
-			{
-				_removeLastComma = value;
-				Modified = true;
-			}
-		}
+		get => GetValueOrDefault(true);
+		set => SetValue(value);
 	}
 
 	/// <summary>
@@ -278,16 +169,8 @@ public class WriteSettings : NotifyModifiedChanged
 	[XmlIgnore()]
 	public string NewLine
 	{
-		get => _newLine;
-
-		set
-		{
-			if (_newLine != value)
-			{
-				_newLine = value;
-				Modified = true;
-			}
-		}
+		get => GetValueOrDefault(Environment.NewLine);
+		set => SetValue(value);
 	}
 
 	/// <summary>
@@ -296,16 +179,8 @@ public class WriteSettings : NotifyModifiedChanged
 	[XmlIgnore()]
 	public char Tab
 	{
-		get => _tab;
-
-		set
-		{
-			if (_tab != value)
-			{
-				_tab = value;
-				Modified = true;
-			}
-		}
+		get => GetValueOrDefault('\t');
+		set => SetValue(value);
 	}
 
 	/// <summary>
@@ -328,18 +203,6 @@ public class WriteSettings : NotifyModifiedChanged
 				_					=> throw new InvalidEnumArgumentException("Invalid \"WhiteSpace\" value."),
 			};
 		}
-	}
-
-	#endregion
-
-	#region Methods
-
-	/// <summary>
-	/// The WriteSettings do not save/serialize themselves.  Therefore, we provide a method for to indicate the object was saved.
-	/// </summary>
-	public void MarkSaved()
-	{
-		Modified = false;
 	}
 
 	#endregion

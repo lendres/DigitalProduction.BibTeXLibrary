@@ -116,7 +116,7 @@ public class BibEntryTests
 
 		WriteSettings writeSettings = new()
 		{
-			BibEntryTagValueFormat	= FieldValueFormat.Quotes,
+			BibEntryFieldValueFormat	= FieldValueFormat.Quotes,
 			BibEntryBracketType		= bracketType
 		};
 
@@ -136,9 +136,9 @@ public class BibEntryTests
 
 		WriteSettings writeSettings = new()
 		{
-			AlignTagValues			= false,
+			AlignFieldValues			= false,
 			WhiteSpace				= WhiteSpace.Space,
-			BibEntryTagValueFormat	= fieldValueFormat,
+			BibEntryFieldValueFormat	= fieldValueFormat,
 			BibEntryBracketType		= EntryBracketType.CurlyBraces
 		};
 
@@ -164,9 +164,9 @@ public class BibEntryTests
 
 		WriteSettings writeSettings = new()
 		{
-			AlignTagValues			= false,
+			AlignFieldValues			= false,
 			WhiteSpace				= WhiteSpace.Space,
-			BibEntryTagValueFormat	= FieldValueFormat.CurlyBraces
+			BibEntryFieldValueFormat	= FieldValueFormat.CurlyBraces
 		};
 
 		string result = entry.ToString(writeSettings);

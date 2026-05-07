@@ -123,7 +123,7 @@ public class StringEntry : BibliographyPart
 		bibliographyPart.Append(bracketCharacter);
 
 		// Write the name of the string constant.
-		bibliographyPart.Append(_field.ToString(writeSettings, writeSettings.StringEntryTagValueFormat, writeSettings.StringEntryAlignAtTabStop, writeSettings.StringEntryAlignAtColumn));
+		bibliographyPart.Append(_field.ToString(writeSettings, writeSettings.StringEntryFieldValueFormat, writeSettings.StringEntryAlignAtTabStop, writeSettings.StringEntryAlignAtColumn));
 
 		// Write the closing character.
 		bracketCharacter = writeSettings.StringEntryBracketType == EntryBracketType.CurlyBraces ? '}' : ')';

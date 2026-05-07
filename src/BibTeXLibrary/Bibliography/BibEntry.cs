@@ -1,5 +1,7 @@
 ﻿using DigitalProduction.Strings;
+using Google.Apis.CustomSearchAPI.v1.Data;
 using System.Collections;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -12,10 +14,10 @@ public class BibEntry : BibliographyPart
 {
 	#region Fields
 
-	private static readonly string[]							  _nameSuffixes           = ["jr", "jr.", "sr", "sr.", "ii", "iii", "iv", "v", @"p\`{e}re", "fils"];
+	private static readonly string[]						_nameSuffixes		= ["jr", "jr.", "sr", "sr.", "ii", "iii", "iv", "v", @"p\`{e}re", "fils"];
 
 	/// <summary>Store all tags.</summary>
-	protected readonly OrderedDictionary<string, FieldValue>      _tags                   = [];
+	protected readonly OrderedDictionary<string, Field>		_fields				= [];
 
 	#endregion
 
@@ -53,17 +55,19 @@ public class BibEntry : BibliographyPart
 	/// <summary>
 	/// Bibliography entry type, e.g. "book", "thesis", "string".  This is the name that follows the "@".
 	/// </summary>
-	public override string Type { get => GetValueOrDefault<string>(string.Empty); set => SetValue(value); }
+	public override string Type { get => GetValueOrDefault(string.Empty); set => SetValue(value); }
 
 	/// <summary>
 	/// Entry's key.
 	/// </summary>
-	public string Key { get => GetValueOrDefault<string>(string.Empty); set => SetValue(value); }
+	public string Key { get => GetValueOrDefault(string.Empty); set => SetValue(value); }
 
 	/// <summary>
 	/// Get the names of the tags.
 	/// </summary>
-	public List<string> TagNames { get => [.. (from string item in _tags.Keys select item)]; }
+	public List<string> FieldNames { get => _fields.Keys.ToList(); }
+
+	#region Common Fields
 
 	/// <summary>
 	/// The address entry or an empty string if the address was not specified.
@@ -272,44 +276,65 @@ public class BibEntry : BibliographyPart
 		set => SetProperty(GetFormattedName(), value);
 	}
 
-	/// <summary>
-	/// Reusable property setter.
-	/// </summary>
-	/// <param name="formattedPropertyName">Formatted property name used for storing and retrieving the value.</param>
-	/// <param name="value">Value to set.</param>
-	/// <param name="propertyName">The name of the property that changed.  Used for event notifications.</param>
-	private void SetProperty(string formattedPropertyName, string value, [CallerMemberName] string propertyName = null!)
-	{
-		if (this[formattedPropertyName] != value)
-		{
-			this[formattedPropertyName] = value;
-			OnPropertyChanged(propertyName);
-		}
-	}
+	#endregion
+
+	#endregion
+
+	#region Events
+
+	//private void OnollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+	//{
+	//	Modified = true;
+	//	OnPropertyChanged(nameof(FieldNames));
+	//}
 
 	#endregion
 
 	#region Public Methods
 
-	public string FindTagValue(string value, bool caseSensitive = false)
+	/// <summary>
+	/// Public interface to mark the bibliography part as saved.  This is used to reset the Modified property after saving.
+	/// </summary>
+	public override void MarkSaved()
+	{
+		IDictionaryEnumerator fieldEnumerator = _fields.GetEnumerator();
+		while (fieldEnumerator.MoveNext())
+		{
+			Field field = (Field)fieldEnumerator.Value!;
+			field.MarkSaved();
+		}
+		Modified = false;
+	}
+
+	/// <summary>
+	/// Searches for the first key in the collection whose associated value matches the specified value.	
+	/// </summary>
+	/// <remarks>
+	/// If multiple keys have the same value, only the first matching key is returned. The comparison uses
+	/// the string representation of each field value.
+	/// </remarks>
+	/// <param name="value">The value to search for among the field values.</param>
+	/// <param name="caseSensitive">true to perform a case-sensitive comparison; otherwise, false. The default is false.</param>
+	/// <returns>The key associated with the first matching value, or an empty string if no match is found.</returns>
+	public string FindNameByValue(string value, bool caseSensitive = false)
 	{
 		string result		= "";
 		string matchValue	= caseSensitive ? value : value.ToLower();
 
-		IDictionaryEnumerator tagEnumerator = _tags.GetEnumerator();
-		while (tagEnumerator.MoveNext())
+		IDictionaryEnumerator fieldEnumerator = _fields.GetEnumerator();
+		while (fieldEnumerator.MoveNext())
 		{
-			FieldValue tagValue		= (FieldValue)tagEnumerator.Value!;
-			string tagValueString	= tagValue.ToString(FieldValueFormat.None)!;
+			Field field				= (Field)fieldEnumerator.Value!;
+			string fieldValueString	= field.Value;
 
 			if (!caseSensitive)
 			{
-				tagValueString = tagValueString.ToLower();
+				fieldValueString = fieldValueString.ToLower();
 			}
 
-			if (tagValueString == matchValue)
+			if (fieldValueString == matchValue)
 			{
-				result = tagEnumerator.Key.ToString()!;
+				result = field.Name;
 				break;
 			}
 		}
@@ -320,52 +345,50 @@ public class BibEntry : BibliographyPart
 	/// <summary>
 	/// Check if the BibEntry contains a tag with the given name.
 	/// </summary>
-	/// <param name="tagName">Name to check for.</param>
+	/// <param name="fieldName">Name to check for.</param>
 	/// <returns>True if the tag name exists, false otherwise.</returns>
-	public bool ContainsTag(string tagName)
+	public bool ContainsFieldName(string fieldName)
 	{
 		if (!_caseSensitivetags)
 		{
-			tagName = tagName.ToLower();
+			fieldName = fieldName.ToLower();
 		}
-		return _tags.ContainsKey(tagName);
+		return _fields.ContainsKey(fieldName);
 	}
 
 	/// <summary>
 	/// Get value by given tag name (index) or create new tag by index and value.
 	/// </summary>
-	/// <param name="tagName">Tag name.</param>
-	public string this[string tagName]
+	/// <param name="fieldName">Tag name.</param>
+	public string this[string fieldName]
 	{
 		get
 		{
 			if (!_caseSensitivetags)
 			{
-				tagName = tagName.ToLower();
+				fieldName = fieldName.ToLower();
 			}
-			return _tags.TryGetValue(tagName, out FieldValue? value) ? value.Content : "";
+			return _fields.TryGetValue(fieldName, out Field? field) ? field.Value : "";
 		}
 
 		set
 		{
 			if (!_caseSensitivetags)
 			{
-				tagName = tagName.ToLower();
+				fieldName = fieldName.ToLower();
 			}
 
-			if (_tags.TryGetValue(tagName, out FieldValue? tagValue))
+			if (_fields.TryGetValue(fieldName, out Field? field))
 			{
-				if (tagValue.Content != value)
+				if (field.Value != value)
 				{
-					tagValue.Content = value;
+					field.Value = value;
 					Modified = true;
 				}
 			}
 			else
 			{
-				_tags[tagName] = new FieldValue(value);
-				OnPropertyChanged(nameof(TagNames));
-				Modified = true;
+				AddNewField(new Field() { Name = fieldName, FieldValue = new FieldValue(value) });
 			}
 		}
 	}
@@ -373,47 +396,46 @@ public class BibEntry : BibliographyPart
 	/// <summary>
 	/// Get a TagValue.
 	/// </summary>
-	/// <param name="tagName">Name of the tag to get.</param>
-	public FieldValue GetTagValue(string tagName)
+	/// <param name="fieldName">Name of the tag to get.</param>
+	public Field GetField(string fieldName)
 	{
 		if (!_caseSensitivetags)
 		{
-			tagName = tagName.ToLower();
+			fieldName = fieldName.ToLower();
 		}
-		if (_tags.TryGetValue(tagName, out FieldValue? tagValue))
+		if (_fields.TryGetValue(fieldName, out Field? field))
 		{
-			return tagValue;
+			return field;
 		}
-		throw new Exception("Invalid tag name: "+tagName);
+		throw new Exception("Invalid tag name: "+fieldName);
 	}
 
 	/// <summary>
 	/// Set a TagValue.
 	/// </summary>
-	/// <param name="tagName">Name of the tag to get.</param>
-	public override void SetTagValue(string tagName, string tagValue, FieldValueType tagValueType)
+	/// <param name="fieldName">Name of the tag to get.</param>
+	public override void SetField(string fieldName, string fieldValue, FieldValueType fieldValueType)
 	{
 		if (!_caseSensitivetags)
 		{
-			tagName = tagName.ToLower();
+			fieldName = fieldName.ToLower();
 		}
 
-		FieldValue tagValueObject = new(tagValue, tagValueType);
+		FieldValue newFieldValueObject = new(fieldValue, fieldValueType);
 
-		bool exists = _tags.ContainsKey(tagName);
+		bool exists = _fields.ContainsKey(fieldName);
 		if (exists)
 		{
-			if (_tags[tagName] != tagValueObject)
+			Field existing = _fields[fieldName]!;
+			if (existing.FieldValue != newFieldValueObject)
 			{
+				_fields[fieldName].FieldValue = newFieldValueObject;
 				Modified = true;
-				_tags[tagName] = tagValueObject;
 			}
 		}
 		else
 		{
-			_tags[tagName] = tagValueObject;
-			Modified = true;
-			OnPropertyChanged(nameof(TagNames));
+			AddNewField(new Field() { Name = fieldName, FieldValue = newFieldValueObject });
 		}
 	}
 
@@ -427,13 +449,13 @@ public class BibEntry : BibliographyPart
 	public bool DoTagsContainString(IEnumerable<string> tags, string searchString, bool caseSensitive = false)
 	{
 		StringComparison stringComparison = caseSensitive ? StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase;
-		foreach (string tagName in tags)
+		foreach (string fieldName in tags)
 		{
-			if (ContainsTag(tagName))
+			if (ContainsFieldName(fieldName))
 			{
 				// Some tags may contain brackets "{}" to indicate that the value should not be changed by BibTeX.  We do not want the search to include the brackets.
-				string tagValue = this[tagName].Replace("{", string.Empty).Replace("}", string.Empty);
-				if (tagValue.Contains(searchString, stringComparison))
+				string fieldValue = this[fieldName].Replace("{", string.Empty).Replace("}", string.Empty);
+				if (fieldValue.Contains(searchString, stringComparison))
 				{
 					return true;
 				}
@@ -460,6 +482,36 @@ public class BibEntry : BibliographyPart
 		return propertyName;
 	}
 
+	/// <summary>
+	/// Reusable property setter. Used for common fields such as Author, Title, Year, etc. This will set the value
+	/// and raise the PropertyChanged event if the value is different than the current value.
+	/// </summary>
+	/// <param name="formattedPropertyName">Formatted property name used for storing and retrieving the value.</param>
+	/// <param name="value">Value to set.</param>
+	/// <param name="propertyName">The name of the property that changed.  Used for event notifications.</param>
+	private void SetProperty(string formattedPropertyName, string value, [CallerMemberName] string propertyName = null!)
+	{
+		if (this[formattedPropertyName] != value)
+		{
+			this[formattedPropertyName] = value;
+			OnPropertyChanged(propertyName);
+		}
+	}
+
+	/// <summary>
+	/// Add a new Field. This will add the Field to the collection and subscribe to the events. It will also raise
+	/// the PropertyChanged event for the FieldNames property, as well as set Modified to true.
+	/// </summary>
+	/// <param name="field">Field to add.</param>
+	private void AddNewField(Field field)
+	{
+		field.ModifiedChanged += OnFieldModifiedChanged;
+		field.PropertyChanged += OnFieldPropertyChanged;
+		_fields[field.Name] = field;
+		OnPropertyChanged(nameof(FieldNames));
+		Modified = true;
+	}
+
 	#endregion
 
 	#region Public String Writing Methods
@@ -473,31 +525,23 @@ public class BibEntry : BibliographyPart
 		// Build the entry opening and key.
 		StringBuilder bibliographyPart = new("@");
 		bibliographyPart.Append(Type);
-		bibliographyPart.Append('{');
+		char bracketCharacter = writeSettings.BibEntryBracketType == EntryBracketType.CurlyBraces ? '{' : '(';
+		bibliographyPart.Append(bracketCharacter);
 		bibliographyPart.Append(Key);
 		bibliographyPart.Append(',');
 		bibliographyPart.Append(writeSettings.NewLine);
 
-		// Write all the tags.
-		OrderedDictionary<string, FieldValue>.Enumerator tagEnumerator = _tags.GetEnumerator();
-		while (tagEnumerator.MoveNext())
+		// Write all the Fields.
+		OrderedDictionary<string, Field>.Enumerator fieldEnumerator = _fields.GetEnumerator();
+		while (fieldEnumerator.MoveNext())
 		{
-			// Initial line indent and tag key.
+			// Write the initial line indent, Field, line ending comma, and a new line.
 			bibliographyPart.Append(writeSettings.Indent);
-
-			bibliographyPart.Append(tagEnumerator.Current.Key.ToString());
-
-			// Add the space between the key and equal sign.
-			bibliographyPart.Append(GetInterTagSpacing(tagEnumerator.Current.Key.ToString()!, writeSettings, writeSettings.BibEntryAlignAtTabStop, writeSettings.BibEntryAlignAtColumn));
-
-			// Add the tag value.
-			bibliographyPart.Append("= ");
-			bibliographyPart.Append(tagEnumerator.Current.Value!.ToString(writeSettings.BibEntryTagValueFormat));
+			bibliographyPart.Append(fieldEnumerator.Current.Value.ToString(writeSettings, writeSettings.BibEntryTagValueFormat, writeSettings.BibEntryAlignAtTabStop, writeSettings.BibEntryAlignAtColumn));
 			bibliographyPart.Append(',');
-
-			// End the line.
 			bibliographyPart.Append(writeSettings.NewLine);
 		}
+
 		// Option to remove comma after last tag.
 		if (writeSettings.RemoveLastComma)
 		{
@@ -508,7 +552,8 @@ public class BibEntry : BibliographyPart
 		}
 
 		// Closing bracket and end of entry.
-		bibliographyPart.Append('}');
+		bracketCharacter = writeSettings.BibEntryBracketType == EntryBracketType.CurlyBraces ? '}' : ')';
+		bibliographyPart.Append(bracketCharacter);
 		bibliographyPart.Append(writeSettings.NewLine);
 
 		return bibliographyPart.ToString();
@@ -516,55 +561,42 @@ public class BibEntry : BibliographyPart
 
 	#endregion
 
-	#region Public Tag Keys
+	#region Public Methods for Names
 
 	/// <summary>
 	/// Initialize with a set of (ordered) tags.
 	/// </summary>
-	public void Initialize(List<string> tags)
+	public void Initialize(List<string> names)
 	{
-		foreach (string tag in tags)
+		foreach (string name in names)
 		{
-			this[tag] = "";
+			this[name] = "";
 		}
 	}
 
 	/// <summary>
 	/// Change the Key of a tag.
 	/// </summary>
-	/// <param name="tagKey">Tag Key to change.</param>
-	/// <param name="newTagKey">New tag Key.</param>
+	/// <param name="fieldName">Tag Key to change.</param>
+	/// <param name="newFieldName">New tag Key.</param>
 	/// <exception cref="ArgumentException">Thrown if the new tag Key already exists.</exception>
-	public void RenameTagKey(string tagKey, string newTagKey)
+	public void RenameField(string fieldName, string newFieldName)
 	{
-		List<string> tagNames = TagNames;
+		List<string> fieldNames = FieldNames;
 
 		// It should have already been checked that the key is contained before getting here.
-		System.Diagnostics.Debug.Assert(tagNames.Contains(tagKey));
+		System.Diagnostics.Trace.Assert(fieldNames.Contains(fieldName));
 
-		FieldValue value = GetTagValue(tagKey);
+		Field existingField	= GetField(fieldName);
+		existingField.Name	= newFieldName;
 
-		_tags.Remove(tagKey);
-
-		if (tagNames.Contains(newTagKey))
-		{
-			// The new tag key can exist, but it must be empty.  Don't overwrite existing content.
-			if (GetTagValue(newTagKey).Content != "")
-			{
-				throw new ArgumentException("The tag key \"" + newTagKey + "\" already exists.");
-			}
-
-			_tags[newTagKey] = value;
-		}
-		else
-		{
-			_tags.Add(newTagKey, value);
-		}
+		_fields.Remove(fieldName);
+		_fields[newFieldName] = existingField;
 	}
 
 	#endregion
 
-	#region Public Tag Values
+	#region Public Methods for Values
 
 	/// <summary>
 	/// Gets the first author's name.

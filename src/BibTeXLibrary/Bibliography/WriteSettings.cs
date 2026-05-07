@@ -14,12 +14,14 @@ public class WriteSettings : NotifyModifiedChanged
 	private WhiteSpace			_whiteSpace						= WhiteSpace.Tab;
 	private int					_tabSize						= 4;
 	private bool				_alignTagValues					= true;
+	private EntryBracketType	_stringEntryBracketType			= EntryBracketType.Parentheses;
+	private EntryBracketType	_bibEntryBracketType			= EntryBracketType.CurlyBraces;
 	private int					_stringEntryAlignAtColumn		= 28;
 	private int					_bibEntryAlignAtColumn			= 24;
 	private int					_stringEntryAlignAtTabStop		= 6;
 	private int					_bibEntryAlignAtTabStop			= 5;
-	private FieldValueFormat		_stringConstantTagValueFormat	= FieldValueFormat.Quote;
-	private FieldValueFormat		_bibEntryTagValueFormat			= FieldValueFormat.Bracket;
+	private FieldValueFormat	_stringConstantTagValueFormat	= FieldValueFormat.Quotes;
+	private FieldValueFormat	_bibEntryTagValueFormat			= FieldValueFormat.CurlyBraces;
 	private bool				_removeLastComma				= true;
 	private string				_newLine						= Environment.NewLine;
 	private char				_tab							= '\t';
@@ -111,6 +113,42 @@ public class WriteSettings : NotifyModifiedChanged
 	/// <summary>
 	/// Specifies the column number to align tag values at when using spaces as the white space.
 	/// </summary>
+	[XmlAttribute("stringentrybrackettype")]
+	public EntryBracketType StringEntryBracketType
+	{
+		get => _stringEntryBracketType;
+
+		set
+		{
+			if (_stringEntryBracketType != value)
+			{
+				_stringEntryBracketType = value;
+				Modified = true;
+			}
+		}
+	}
+
+	/// <summary>
+	/// Specifies the column number to align tag values at when using spaces as the white space.
+	/// </summary>
+	[XmlAttribute("bibentrybrackettype")]
+	public EntryBracketType BibEntryBracketType
+	{
+		get => _bibEntryBracketType;
+
+		set
+		{
+			if (_bibEntryBracketType != value)
+			{
+				_bibEntryBracketType = value;
+				Modified = true;
+			}
+		}
+	}
+
+	/// <summary>
+	/// Specifies the column number to align tag values at when using spaces as the white space.
+	/// </summary>
 	[XmlAttribute("stringentryalignatcolumn")]
 	public int StringEntryAlignAtColumn
 	{
@@ -184,7 +222,7 @@ public class WriteSettings : NotifyModifiedChanged
 	/// Specifies the format for writing the tag values of StringConstant when the tag value is a string.
 	/// </summary>
 	[XmlAttribute("stringentrytagvalueformat")]
-	public FieldValueFormat StringConstantTagValueFormat
+	public FieldValueFormat StringEntryTagValueFormat
 	{
 		get => _stringConstantTagValueFormat;
 

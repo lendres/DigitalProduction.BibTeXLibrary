@@ -3,7 +3,7 @@
 namespace BibTeXLibrary;
 
 /// <summary>
-/// Method for sorting StringConstants.
+/// Method for sorting StringEntrys.
 /// 
 /// The "Description" attribute can be accessed using Reflection to get a string representing the enumeration type.
 /// </summary>

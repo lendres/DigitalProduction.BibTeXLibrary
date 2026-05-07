@@ -36,20 +36,22 @@ public class BibEntryTests
         Assert.Equal("inBoOK", entry.Type);
     }
 
-
     [Fact]
     public void TestSettingTagType()
     {
         const string title	= "Mapreduce";
 		BibEntry entry		= new();
 
-		entry.SetTagValue("Title", title, FieldValueType.StringConstant);
+		// Test setting as a string constant. In this case, it should not matter what we pass in for the field value type, as the
+		// property should always be set to a string constant.
+		entry.SetField("Title", title, FieldValueType.StringConstant);
 		Assert.Equal(title, entry.Title);
-		Assert.Equal(title, entry.GetTagValue("title").ToString(FieldValueFormat.Quote));
+		Assert.Equal(title, entry.GetField("title").FieldValue.ToString(FieldValueFormat.Quotes));
 
-		entry.SetTagValue("Title", title, FieldValueType.String);
+		// Test setting as a standard string. In this case, the field value type should be set to what we pass in.
+		entry.SetField("Title", title, FieldValueType.String);
         Assert.Equal(title, entry.Title);
-        Assert.Equal("{"+title+"}", entry.GetTagValue("title").ToString(FieldValueFormat.Bracket));
+        Assert.Equal("{"+title+"}", entry.GetField("title").FieldValue.ToString(FieldValueFormat.CurlyBraces));
     }
 
 	#endregion
@@ -103,24 +105,41 @@ public class BibEntryTests
 	#region String Writing Tests
 
 	[Theory]
-	[InlineData(FieldValueFormat.Bracket, "title = {Mapreduce}")]
-	[InlineData(FieldValueFormat.Quote, "title = \"Mapreduce\"")]
-	[InlineData(FieldValueFormat.None, "title = Mapreduce")]
-	public void TestToStringWithWriteSettingsFormatsTagValues(FieldValueFormat tagValueFormat, string expectedTagLine)
+	[InlineData(EntryBracketType.CurlyBraces, "@article{Dean2008,")]
+	[InlineData(EntryBracketType.CurlyBraces, "}")]
+	[InlineData(EntryBracketType.Parentheses, "@article(Dean2008,")]
+	[InlineData(EntryBracketType.Parentheses, ")")]
+	public void TestToStringWithWriteSettingsBracketType(EntryBracketType bracketType, string expected)
 	{
-		BibEntry entry = new()
-		{
-			Type	= "article",
-			Key		= "Dean2008"
-		};
-
+		BibEntry entry = new() { Type = "article", Key = "Dean2008" };
 		entry["title"] = "Mapreduce";
 
 		WriteSettings writeSettings = new()
 		{
-			AlignTagValues = false,
-			WhiteSpace = WhiteSpace.Space,
-			BibEntryTagValueFormat = tagValueFormat
+			BibEntryTagValueFormat	= FieldValueFormat.Quotes,
+			BibEntryBracketType		= bracketType
+		};
+
+		string result = entry.ToString(writeSettings);
+
+		Assert.Contains(expected, result);
+	}
+
+	[Theory]
+	[InlineData(FieldValueFormat.CurlyBraces, "title = {Mapreduce}")]
+	[InlineData(FieldValueFormat.Quotes, "title = \"Mapreduce\"")]
+	[InlineData(FieldValueFormat.None, "title = Mapreduce")]
+	public void TestToStringWithWriteSettingsFormatsFieldValues(FieldValueFormat fieldValueFormat, string expectedTagLine)
+	{
+		BibEntry entry = new() { Type = "article", Key = "Dean2008" };
+		entry["title"] = "Mapreduce";
+
+		WriteSettings writeSettings = new()
+		{
+			AlignTagValues			= false,
+			WhiteSpace				= WhiteSpace.Space,
+			BibEntryTagValueFormat	= fieldValueFormat,
+			BibEntryBracketType		= EntryBracketType.CurlyBraces
 		};
 
 		string result = entry.ToString(writeSettings);
@@ -139,15 +158,15 @@ public class BibEntryTests
 			Key		= "Dean2008"
 		};
 
-		entry["title"] = "Mapreduce";
-		entry["author"] = "Jeffrey Dean and Sanjay Ghemawat";
-		entry["year"] = "2008";
+		entry["title"]	= "Mapreduce";
+		entry["author"]	= "Jeffrey Dean and Sanjay Ghemawat";
+		entry["year"]	= "2008";
 
 		WriteSettings writeSettings = new()
 		{
 			AlignTagValues			= false,
 			WhiteSpace				= WhiteSpace.Space,
-			BibEntryTagValueFormat	= FieldValueFormat.Bracket
+			BibEntryTagValueFormat	= FieldValueFormat.CurlyBraces
 		};
 
 		string result = entry.ToString(writeSettings);
@@ -164,7 +183,7 @@ public class BibEntryTests
 	private static string ParseAndGetKey(string tagValue, string bibString)
 	{
 		BibEntry entry = ParseBibEntry(bibString);
-		return entry.FindTagValue(tagValue);
+		return entry.FindNameByValue(tagValue);
 	}
 
 	private static BibEntry ParseBibEntry(string bibString)

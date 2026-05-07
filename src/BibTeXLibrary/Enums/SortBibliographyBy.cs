@@ -3,11 +3,11 @@
 namespace BibTeXLibrary;
 
 /// <summary>
-/// Add summary here.
+/// Method for sorting BibEntrys.
 /// 
 /// The "Description" attribute can be accessed using Reflection to get a string representing the enumeration type.
 /// </summary>
-public enum SortBy
+public enum SortBibliographyBy
 {
 	/// <summary>Last name of the first author.</summary>
 	[Description("First Author Last Name")]

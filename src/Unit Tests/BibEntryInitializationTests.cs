@@ -82,7 +82,7 @@ public class BibEntryInitializationTests
 
 		BibEntry entry = BibEntry.NewBibEntryFromTemplate(initialization!, "inproceedings");
 
-		List<string> tags = entry.TagNames;
+		List<string> tags = entry.FieldNames;
 
 		Assert.Equal("author", tags[0]);
 		Assert.Equal("affiliation", tags[1]);

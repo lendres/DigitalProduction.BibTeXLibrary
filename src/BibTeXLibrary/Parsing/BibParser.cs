@@ -377,7 +377,7 @@ public sealed class BibParser : IDisposable
 	private static void SetTag(BibliographyPart bibPart, ref string tagName, FieldValueType tagValueType, StringBuilder tagValueBuilder)
 	{
 		Debug.Assert(bibPart != null, "bib != null");
-		bibPart.SetTagValue(tagName, tagValueBuilder.ToString(), tagValueType);
+		bibPart.SetField(tagName, tagValueBuilder.ToString(), tagValueType);
 		tagValueBuilder.Clear();
 		tagName = string.Empty;
 	}

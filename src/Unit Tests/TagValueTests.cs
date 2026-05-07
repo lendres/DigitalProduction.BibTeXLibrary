@@ -5,8 +5,8 @@ namespace DigitalProduction.UnitTests;
 public class TagValueTests
 {
 	[Theory]
-	[InlineData(FieldValueFormat.Bracket, "{Mapreduce}")]
-	[InlineData(FieldValueFormat.Quote, "\"Mapreduce\"")]
+	[InlineData(FieldValueFormat.CurlyBraces, "{Mapreduce}")]
+	[InlineData(FieldValueFormat.Quotes, "\"Mapreduce\"")]
 	[InlineData(FieldValueFormat.None, "Mapreduce")]
 	public void TestToStringWithFormat(FieldValueFormat format, string expected)
 	{
@@ -24,8 +24,8 @@ public class TagValueTests
 
 		tagValue.Content = "Updated";
 
-		Assert.Equal("{Updated}", tagValue.ToString(FieldValueFormat.Bracket));
-		Assert.Equal("\"Updated\"", tagValue.ToString(FieldValueFormat.Quote));
+		Assert.Equal("{Updated}", tagValue.ToString(FieldValueFormat.CurlyBraces));
+		Assert.Equal("\"Updated\"", tagValue.ToString(FieldValueFormat.Quotes));
 		Assert.Equal("Updated", tagValue.ToString(FieldValueFormat.None));
 	}
 
@@ -34,8 +34,8 @@ public class TagValueTests
 	{
 		FieldValue tagValue = new();
 
-		Assert.Equal("{}", tagValue.ToString(FieldValueFormat.Bracket));
-		Assert.Equal("\"\"", tagValue.ToString(FieldValueFormat.Quote));
+		Assert.Equal("{}", tagValue.ToString(FieldValueFormat.CurlyBraces));
+		Assert.Equal("\"\"", tagValue.ToString(FieldValueFormat.Quotes));
 		Assert.Equal(string.Empty, tagValue.ToString(FieldValueFormat.None));
 	}
 

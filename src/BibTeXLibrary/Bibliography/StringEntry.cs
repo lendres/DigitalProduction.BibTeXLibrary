@@ -10,7 +10,8 @@ public class StringEntry : BibliographyPart
 {
 	#region Fields
 
-	public static readonly string TypeString = "string";
+	public static readonly string	TypeString	= "string";
+	private Field					_field		= new();
 
 	#endregion
 
@@ -22,16 +23,17 @@ public class StringEntry : BibliographyPart
 	public StringEntry() :
 		base(true)
 	{
+		_field.ModifiedChanged += OnFieldModifiedChanged;
+		_field.PropertyChanged += OnFieldPropertyChanged;
 	}
 
 	/// <summary>
 	/// Copy constructor.
 	/// </summary>
-	public StringEntry(StringEntry stringConstant) :
-		base(true)
+	public StringEntry(StringEntry stringEntry) :
+		this()
 	{
-		Name		= stringConstant.Name;
-		FieldValue	= new FieldValue(stringConstant.FieldValue);
+		_field = new Field(stringEntry._field);
 	}
 
 	#endregion
@@ -53,8 +55,8 @@ public class StringEntry : BibliographyPart
 	/// </summary>
 	public string Name
 	{
-		get => GetValueOrDefault<string>(string.Empty);
-		set => SetValue(value);
+		get => _field.Name;
+		set => _field.Name = value;
 	}
 
 	/// <summary>
@@ -62,17 +64,8 @@ public class StringEntry : BibliographyPart
 	/// </summary>
 	public string Value
 	{
-		get => FieldValue.Content;
-
-		set
-		{
-			if (FieldValue.Content != value)
-			{
-				FieldValue.Content = value;
-				OnPropertyChanged();
-				OnPropertyChanged(nameof(FieldValue));
-			}
-		}
+		get => _field.Value;
+		set => _field.Value = value;
 	}
 
 	/// <summary>
@@ -80,27 +73,36 @@ public class StringEntry : BibliographyPart
 	/// </summary>
 	public FieldValue FieldValue
 	{
-		get				=> GetValueOrDefault<FieldValue>(new FieldValue(string.Empty, FieldValueType.String));
-		protected set	=> SetValue(value);
+		get				=> _field.FieldValue;
+		protected set	=> _field.FieldValue = value;
 	}
 
 	#endregion
 
-	#region Public Tag Value Methods
+	#region Methods
+
+	/// <summary>
+	/// Public interface to mark the bibliography part as saved.  This is used to reset the Modified property after saving.
+	/// </summary>
+	public override void MarkSaved()
+	{
+		_field.MarkSaved();
+		Modified = false;
+	}
 
 	/// <summary>
 	/// Set a TagValue.
 	/// </summary>
-	/// <param name="tagName">Name of the tag to get.</param>
-	public override void SetTagValue(string tagName, string tagValue, FieldValueType tagValueType)
+	/// <param name="fieldName">Name of the tag to get.</param>
+	public override void SetField(string fieldName, string fieldValue, FieldValueType fieldValueType)
 	{
 		if (!_caseSensitivetags)
 		{
-			tagName = tagName.ToLower();
+			fieldName = fieldName.ToLower();
 		}
 
-		Name		= tagName;
-		FieldValue	= new FieldValue(tagValue, FieldValueType.String);
+		Name		= fieldName;
+		FieldValue	= new FieldValue(fieldValue, FieldValueType.String);
 	}
 
 	#endregion
@@ -116,18 +118,16 @@ public class StringEntry : BibliographyPart
 		// Build the entry opening and key.
 		StringBuilder bibliographyPart = new("@");
 		bibliographyPart.Append(Type);
-		bibliographyPart.Append('(');
+
+		char bracketCharacter = writeSettings.StringEntryBracketType == EntryBracketType.CurlyBraces ? '{' : '(';
+		bibliographyPart.Append(bracketCharacter);
 
 		// Write the name of the string constant.
-		bibliographyPart.Append(Name);
+		bibliographyPart.Append(_field.ToString(writeSettings, writeSettings.StringEntryTagValueFormat, writeSettings.StringEntryAlignAtTabStop, writeSettings.StringEntryAlignAtColumn));
 
-		// Add the space between the key and equal sign.
-		bibliographyPart.Append(GetInterTagSpacing(Name, writeSettings, writeSettings.StringEntryAlignAtTabStop, writeSettings.StringEntryAlignAtColumn));
-
-		// Add the string constant value.
-		bibliographyPart.Append("= ");
-		bibliographyPart.Append(FieldValue.ToString(writeSettings.StringConstantTagValueFormat));
-		bibliographyPart.Append(")");
+		// Write the closing character.
+		bracketCharacter = writeSettings.StringEntryBracketType == EntryBracketType.CurlyBraces ? '}' : ')';
+		bibliographyPart.Append(bracketCharacter);
 
 		bibliographyPart.Append(writeSettings.NewLine);
 

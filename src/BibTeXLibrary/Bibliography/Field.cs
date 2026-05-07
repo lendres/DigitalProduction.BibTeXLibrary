@@ -130,7 +130,7 @@ public class Field : NotifyPropertyModifiedChanged
 	protected string GetSpacing(string tagKey, WriteSettings writeSettings, int alignAtTabStop, int alignAtColumn)
 	{
 		// If we are not aligning values, just return a space.
-		if (!writeSettings.AlignTagValues)
+		if (!writeSettings.AlignFieldValues)
 		{
 			return " ";
 		}

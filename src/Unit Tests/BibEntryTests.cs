@@ -136,7 +136,7 @@ public class BibEntryTests
 
 		WriteSettings writeSettings = new()
 		{
-			AlignTagValues			= false,
+			AlignFieldValues			= false,
 			WhiteSpace				= WhiteSpace.Space,
 			BibEntryFieldValueFormat	= fieldValueFormat,
 			BibEntryBracketType		= EntryBracketType.CurlyBraces
@@ -164,7 +164,7 @@ public class BibEntryTests
 
 		WriteSettings writeSettings = new()
 		{
-			AlignTagValues			= false,
+			AlignFieldValues			= false,
 			WhiteSpace				= WhiteSpace.Space,
 			BibEntryFieldValueFormat	= FieldValueFormat.CurlyBraces
 		};

@@ -25,7 +25,7 @@ public class WriteSettings : NotifyModifiedChanged
 	{
 		WhiteSpace					= writeSettings.WhiteSpace;
 		TabSize						= writeSettings.TabSize;
-		AlignTagValues				= writeSettings.AlignTagValues;
+		AlignFieldValues				= writeSettings.AlignFieldValues;
 		StringEntryBracketType		= writeSettings.StringEntryBracketType;
 		BibEntryBracketType			= writeSettings.BibEntryBracketType;
 		StringEntryAlignAtColumn	= writeSettings.StringEntryAlignAtColumn;
@@ -67,7 +67,7 @@ public class WriteSettings : NotifyModifiedChanged
 	/// Specifies if the tag values should be aligned at the equal sign.
 	/// </summary>
 	[XmlAttribute("alignatequals")]
-	public bool AlignTagValues
+	public bool AlignFieldValues
 	{
 		get => GetValueOrDefault(true);
 		set => SetValue(value);

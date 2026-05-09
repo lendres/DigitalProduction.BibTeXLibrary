@@ -65,14 +65,14 @@ public class BibEntryTests
     public void TestFindTagValue()
 	{
 		// Test with quotes.
-		string tagValue		= "SPE Drilling Conference and Exhibition";
-		string bibString	= "@book{ref:key, booktitle = \"" + tagValue + "\", author = {Author}, year = {2023}}";
-		string key			= ParseAndGetKey(tagValue, bibString);
+		string fieldValue	= "SPE Drilling Conference and Exhibition";
+		string bibString	= "@book{ref:key, booktitle = \"" + fieldValue + "\", author = {Author}, year = {2023}}";
+		string key			= ParseAndGetKey(fieldValue, bibString);
 		Assert.Equal("booktitle", key);
 
 		// Test with braces.
-		bibString = "@book{ref:key, booktitle = {" + tagValue + "}, author = {Author}, year = {2023}}";
-		key			= ParseAndGetKey(tagValue, bibString);
+		bibString	= "@book{ref:key, booktitle = {" + fieldValue + "}, author = {Author}, year = {2023}}";
+		key			= ParseAndGetKey(fieldValue, bibString);
 		Assert.Equal("booktitle", key);
 	}
 
@@ -180,10 +180,10 @@ public class BibEntryTests
 
 	#region Helper Methods
 
-	private static string ParseAndGetKey(string tagValue, string bibString)
+	private static string ParseAndGetKey(string fieldValue, string bibString)
 	{
 		BibEntry entry = ParseBibEntry(bibString);
-		return entry.FindNameByValue(tagValue);
+		return entry.FindNameByValue(fieldValue);
 	}
 
 	private static BibEntry ParseBibEntry(string bibString)

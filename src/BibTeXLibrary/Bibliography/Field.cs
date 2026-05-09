@@ -13,6 +13,7 @@ public class Field : NotifyPropertyModifiedChanged
 	/// </summary>
 	public Field()
 	{
+		FieldValue = new FieldValue();
 	}
 
 	/// <summary>

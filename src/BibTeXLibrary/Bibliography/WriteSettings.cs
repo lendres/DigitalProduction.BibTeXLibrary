@@ -25,7 +25,7 @@ public class WriteSettings : NotifyPropertyModifiedChanged
 	{
 		WhiteSpace					= writeSettings.WhiteSpace;
 		TabSize						= writeSettings.TabSize;
-		AlignFieldValues				= writeSettings.AlignFieldValues;
+		AlignFieldValues			= writeSettings.AlignFieldValues;
 		StringEntryBracketType		= writeSettings.StringEntryBracketType;
 		BibEntryBracketType			= writeSettings.BibEntryBracketType;
 		StringEntryAlignAtColumn	= writeSettings.StringEntryAlignAtColumn;
@@ -37,6 +37,7 @@ public class WriteSettings : NotifyPropertyModifiedChanged
 		RemoveLastComma				= writeSettings.RemoveLastComma;
 		NewLine						= writeSettings.NewLine;
 		Tab							= writeSettings.Tab;
+		Modified					= false;
 	}
 
 	#endregion

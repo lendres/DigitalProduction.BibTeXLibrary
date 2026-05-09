@@ -7,7 +7,7 @@ namespace BibTeXLibrary;
 /// <summary>
 /// Settings to use when writing a bib file.
 /// </summary>
-public class WriteSettings : NotifyModifiedChanged
+public class WriteSettings : NotifyPropertyModifiedChanged
 {
 	#region Construction
 

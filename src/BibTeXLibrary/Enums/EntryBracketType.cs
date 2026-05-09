@@ -10,11 +10,11 @@ namespace BibTeXLibrary;
 public enum EntryBracketType
 {
 	/// <summary>Bracketed.</summary>
-	[Description("Add brackets around the value.")]
+	[Description("Curly Braces \"{...}\"")]
 	CurlyBraces,
 
 	/// <summary>Quoted.</summary>
-	[Description("Use parentheses for the open and closing characters.")]
+	[Description("Parentheses \"(...)\"")]
 	Parentheses
 
 } // End enum.

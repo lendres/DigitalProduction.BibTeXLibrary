@@ -19,13 +19,11 @@ public class FieldTests
 	[Fact]
 	public void TestCopyConstructor()
 	{
-		Field originalField = new();
-		//{
-			//Name = "title",
-			//FieldValue = new FieldValue("My Title Content", FieldValueType.String)
-		//};
-originalField.Name = "title";
-originalField.FieldValue = new FieldValue("My Title Content", FieldValueType.String);
+		Field originalField = new()
+		{
+			Name = "title",
+			FieldValue = new FieldValue("My Title Content", FieldValueType.String)
+		};
 
 		Field copiedField = new(originalField);
 
@@ -136,19 +134,26 @@ originalField.FieldValue = new FieldValue("My Title Content", FieldValueType.Str
 
 		WriteSettings writeSettings = new()
 		{
-			AlignFieldValues = true,
-			WhiteSpace = WhiteSpace.Space,
-			TabSize = 4
+			AlignFieldValues	= true,
+			WhiteSpace			= WhiteSpace.Space,
+			TabSize				= 4
 		};
 
-		ArgumentOutOfRangeException exception = Assert.Throws<ArgumentOutOfRangeException>(
-			() => field.TestGetSpacing("averyverylongfieldname", writeSettings, 5, 10));
+		string fieldName		= "averyverylongfieldname";
+		int alignAtTabStop		= 3;
+		int alignAtColumn		= 10;
+		int maxLegnthForSpaces	=  alignAtColumn - 1 - writeSettings.TabSize;
+		BibliographyWriteException exception = Assert.Throws<BibliographyWriteException>(
+			() => field.TestGetSpacing(fieldName, writeSettings, alignAtTabStop, alignAtColumn));
 
-		Assert.Equal("fieldName", exception.ParamName);
-		Assert.Contains("The name is too long for the space allocated for aligning the field values.", exception.Message);
-		Assert.Contains("Name: averyverylongfieldname", exception.Message);
-		Assert.Contains("Overage length:", exception.Message);
-		Assert.Contains("spaces", exception.Message);
+		Assert.Contains("The field name is too long", exception.Message);
+		Assert.Contains($"Field name: {fieldName}", exception.Message);
+		Assert.Contains($"Maximum length: {maxLegnthForSpaces}", exception.Message);
+
+		writeSettings.WhiteSpace = WhiteSpace.Tab;
+		exception = Assert.Throws<BibliographyWriteException>(
+			() => field.TestGetSpacing(fieldName, writeSettings, alignAtTabStop, alignAtColumn));
+		Assert.Contains($"Maximum length: {maxLegnthForSpaces+2}", exception.Message);
 	}
 
 	[Fact]
@@ -158,8 +163,8 @@ originalField.FieldValue = new FieldValue("My Title Content", FieldValueType.Str
 
 		WriteSettings writeSettings = new()
 		{
-			AlignFieldValues = true,
-			WhiteSpace = (WhiteSpace)999
+			AlignFieldValues	= true,
+			WhiteSpace			= (WhiteSpace)999
 		};
 
 		InvalidEnumArgumentException exception = Assert.Throws<InvalidEnumArgumentException>(

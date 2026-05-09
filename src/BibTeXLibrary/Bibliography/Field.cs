@@ -139,7 +139,7 @@ public class Field : NotifyPropertyModifiedChanged
 		// To align the values is much more complicated.  First decide if spaces or tabs are going to be inserted.
 		int requiredCharacters	= 0;
 		char whiteSpacechar		= ' ';
-		string message			= string.Empty;
+		int maxLength			= 0;
 
 		switch (writeSettings.WhiteSpace)
 		{
@@ -148,7 +148,7 @@ public class Field : NotifyPropertyModifiedChanged
 				// Subtract the initial line indent and the length of the key from the desired number of tabs.
 				requiredCharacters	= alignAtTabStop - 1 - (int)System.Math.Ceiling((double)(fieldName.Length / writeSettings.TabSize));
 				whiteSpacechar		= writeSettings.Tab;
-				message				= "tabs";
+				maxLength			= (alignAtTabStop - 1) * writeSettings.TabSize - 1;
 				break;
 			}
 			case WhiteSpace.Space:
@@ -156,9 +156,9 @@ public class Field : NotifyPropertyModifiedChanged
 				// Subtract the initial line indent and the length of the key from the desired aligning column.
 				requiredCharacters	= alignAtColumn - 1 - fieldName.Length - writeSettings.TabSize;
 				whiteSpacechar		= ' ';
-				message				= "spaces";
+				maxLength			= alignAtColumn - 1 - writeSettings.TabSize;
 				break;
-				}
+			}
 			default:
 			{
 				throw new InvalidEnumArgumentException("Invalid \"WhiteSpace\" value.");
@@ -167,11 +167,11 @@ public class Field : NotifyPropertyModifiedChanged
 
 		if (requiredCharacters < 0)
 		{
-			message = "The name is too long for the space allocated for aligning the field values." +
-				"\nName: " + fieldName +
-				"\nOverage length: " + Math.Abs(requiredCharacters).ToString() + message;
-
-			throw new ArgumentOutOfRangeException(nameof(fieldName), message);
+			throw new BibliographyWriteException(
+				$"The field name is too long for the space allocated for aligning field values.\n" +
+				$"Field name: {fieldName}\n" +
+				$"Field name length: {fieldName.Length}\n" +
+				$"Maximum length: {maxLength}");
 		}
 		return new string(whiteSpacechar, requiredCharacters);
 	}

@@ -13,6 +13,7 @@ public class Field : NotifyPropertyModifiedChanged
 	/// </summary>
 	public Field()
 	{
+		FieldValue = new FieldValue();
 	}
 
 	/// <summary>
@@ -126,8 +127,8 @@ public class Field : NotifyPropertyModifiedChanged
 	/// 
 	/// % Use a space between the key and value (no alignment).
 	/// </summary>
-	/// <param name="tagKey">The tag key as a string.</param>
-	protected string GetSpacing(string tagKey, WriteSettings writeSettings, int alignAtTabStop, int alignAtColumn)
+	/// <param name="fieldName">The tag key as a string.</param>
+	protected string GetSpacing(string fieldName, WriteSettings writeSettings, int alignAtTabStop, int alignAtColumn)
 	{
 		// If we are not aligning values, just return a space.
 		if (!writeSettings.AlignFieldValues)
@@ -138,32 +139,39 @@ public class Field : NotifyPropertyModifiedChanged
 		// To align the values is much more complicated.  First decide if spaces or tabs are going to be inserted.
 		int requiredCharacters	= 0;
 		char whiteSpacechar		= ' ';
+		int maxLength			= 0;
 
 		switch (writeSettings.WhiteSpace)
 		{
 			case WhiteSpace.Tab:
-				{
-					// Subtract the initial line indent and the length of the key from the desired number of tabs.
-					requiredCharacters = alignAtTabStop - 1 - (int)System.Math.Ceiling((double)(tagKey.Length / writeSettings.TabSize));
-					whiteSpacechar = writeSettings.Tab;
-					break;
-				}
+			{
+				// Subtract the initial line indent and the length of the key from the desired number of tabs.
+				requiredCharacters	= alignAtTabStop - 1 - (int)System.Math.Ceiling((double)(fieldName.Length / writeSettings.TabSize));
+				whiteSpacechar		= writeSettings.Tab;
+				maxLength			= (alignAtTabStop - 1) * writeSettings.TabSize - 1;
+				break;
+			}
 			case WhiteSpace.Space:
-				{
-					// Subtract the initial line indent and the length of the key from the desired aligning column.
-					requiredCharacters = alignAtColumn - 1 - tagKey.Length - writeSettings.TabSize;
-					whiteSpacechar = ' ';
-					break;
-				}
+			{
+				// Subtract the initial line indent and the length of the key from the desired aligning column.
+				requiredCharacters	= alignAtColumn - 1 - fieldName.Length - writeSettings.TabSize;
+				whiteSpacechar		= ' ';
+				maxLength			= alignAtColumn - 1 - writeSettings.TabSize;
+				break;
+			}
 			default:
-				{
-					throw new InvalidEnumArgumentException("Invalid \"WhiteSpace\" value.");
-				}
+			{
+				throw new InvalidEnumArgumentException("Invalid \"WhiteSpace\" value.");
+			}
 		}
 
 		if (requiredCharacters < 0)
 		{
-			throw new ArgumentOutOfRangeException(nameof(tagKey), "The key is too long for the space allocated for aligning tag values.");
+			throw new BibliographyWriteException(
+				$"The field name is too long for the space allocated for aligning field values.\n" +
+				$"Field name: {fieldName}\n" +
+				$"Field name length: {fieldName.Length}\n" +
+				$"Maximum length: {maxLength}");
 		}
 		return new string(whiteSpacechar, requiredCharacters);
 	}

@@ -23,7 +23,7 @@ public class BibParserTests
     }
 
     [Fact]
-    public void TestParserString()
+    public void TestParserStringConcatenation()
     {
 		BibParser parser = new(new StringReader("@article{keyword, title = \"hello \\\"world\\\"\", address=\"Ping\" # \"Le\" # \"Yuan\",}"));
 		BibEntry entry = parser.Parse().Entries[0];

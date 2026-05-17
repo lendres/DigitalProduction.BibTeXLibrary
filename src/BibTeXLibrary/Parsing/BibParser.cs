@@ -68,7 +68,7 @@ public sealed class BibParser : IDisposable
 
 		{ParserState.InTagEqual,	new Action {
 			{ TokenType.Equal,				new Next(ParserState.InTagValue,	BibBuilderState.Skip) }
-			} },
+		} },
 
 		{ParserState.InTagValue,	new Action {
 			{ TokenType.String,				new Next(ParserState.OutTagValue,	BibBuilderState.SetTagValue) },
@@ -305,7 +305,7 @@ public sealed class BibParser : IDisposable
 
 					case BibBuilderState.SetKey:
 					{
-						Debug.Assert(bibPart != null, "bib != null");
+						Debug.Assert(bibPart != null, "Bibliography part is null.");
 						BibEntry? bibEntry = bibPart as BibEntry;
 						Debug.Assert(bibEntry != null, "Invalid operation, the state should only be SetKey for a BibEntry.");
 						bibEntry.Key = token.Value;

@@ -7,7 +7,7 @@ namespace BibTeXLibrary;
 /// 
 /// The "Description" attribute can be accessed using Reflection to get a string representing the enumeration type.
 /// </summary>
-internal enum BibBuilderState
+internal enum BuilderAction
 {
 	/// <summary>Set the header.</summary>
 	[Description("Set Header")]

@@ -3,9 +3,9 @@ using System.Text;
 
 namespace BibTeXLibrary;
 
-using Action = Dictionary<TokenType, Tuple<ParserState, BibBuilderState>>;
-using Next = Tuple<ParserState, BibBuilderState>;
-using StateMap = Dictionary<ParserState, Dictionary<TokenType, Tuple<ParserState, BibBuilderState>>>;
+using Action = Dictionary<TokenType, Tuple<ParserState, BuilderAction>>;
+using Next = Tuple<ParserState, BuilderAction>;
+using StateMap = Dictionary<ParserState, Dictionary<TokenType, Tuple<ParserState, BuilderAction>>>;
 
 /// <summxary>
 /// BibTeX file parser.
@@ -27,70 +27,70 @@ public sealed class BibParser : IDisposable
 	private static readonly StateMap StateMap = new()
 	{
 		{ParserState.Begin,			new Action {
-			{ TokenType.Comment,			new Next(ParserState.InHeader,		BibBuilderState.SetHeader) },
-			{ TokenType.Start,				new Next(ParserState.InStart,		BibBuilderState.Skip) }
+			{ TokenType.Comment,			new Next(ParserState.InHeader,		BuilderAction.SetHeader) },
+			{ TokenType.Start,				new Next(ParserState.InStart,		BuilderAction.Skip) }
 		} },
 
 		{ParserState.InHeader,		new Action {
-			{ TokenType.Comment,			new Next(ParserState.InHeader,		BibBuilderState.SetHeader) },
-			{ TokenType.Start,				new Next(ParserState.InStart,		BibBuilderState.Skip) }
+			{ TokenType.Comment,			new Next(ParserState.InHeader,		BuilderAction.SetHeader) },
+			{ TokenType.Start,				new Next(ParserState.InStart,		BuilderAction.Skip) }
 		} },
 
 		{ParserState.InStart,		new Action {
-			{ TokenType.Name,				new Next(ParserState.InEntry,		BibBuilderState.SetType) },
-			{ TokenType.StringType,			new Next(ParserState.InStringEntry,	BibBuilderState.SetType) }
+			{ TokenType.Name,				new Next(ParserState.InEntry,		BuilderAction.SetType) },
+			{ TokenType.StringType,			new Next(ParserState.InStringEntry,	BuilderAction.SetType) }
 		} },
 
 		{ParserState.InEntry,		new Action {
-			{ TokenType.LeftBrace,			new Next(ParserState.InKey,			BibBuilderState.Skip) }
+			{ TokenType.LeftBrace,			new Next(ParserState.InKey,			BuilderAction.Skip) }
 		} },
 
 		{ParserState.InStringEntry,	new Action {
-			{ TokenType.LeftBrace,			new Next(ParserState.InTagName,		BibBuilderState.Skip) },
-			{ TokenType.LeftParenthesis,	new Next(ParserState.InTagName,		BibBuilderState.Skip) }
+			{ TokenType.LeftBrace,			new Next(ParserState.InTagName,		BuilderAction.Skip) },
+			{ TokenType.LeftParenthesis,	new Next(ParserState.InTagName,		BuilderAction.Skip) }
 		} },
 
 		{ParserState.InKey,			new Action {
-			{ TokenType.RightBrace,			new Next(ParserState.OutEntry,		BibBuilderState.Build) },
-			{ TokenType.Name,				new Next(ParserState.OutKey,		BibBuilderState.SetKey) },
-			{ TokenType.String,				new Next(ParserState.OutKey,		BibBuilderState.SetKey) },
-			{ TokenType.Comma,				new Next(ParserState.InTagName,		BibBuilderState.Skip) }
+			{ TokenType.RightBrace,			new Next(ParserState.OutEntry,		BuilderAction.Build) },
+			{ TokenType.Name,				new Next(ParserState.OutKey,		BuilderAction.SetKey) },
+			{ TokenType.String,				new Next(ParserState.OutKey,		BuilderAction.SetKey) },
+			{ TokenType.Comma,				new Next(ParserState.InTagName,		BuilderAction.Skip) }
 		} },
 
 		{ParserState.OutKey,		new Action {
-			{ TokenType.Comma,				new Next(ParserState.InTagName,		BibBuilderState.Skip) }
+			{ TokenType.Comma,				new Next(ParserState.InTagName,		BuilderAction.Skip) }
 		} },
 
 		{ParserState.InTagName,		new Action {
-			{ TokenType.Name,				new Next(ParserState.InTagEqual,	BibBuilderState.SetTagName) },
-			{ TokenType.RightBrace,			new Next(ParserState.OutEntry,		BibBuilderState.Build) }
+			{ TokenType.Name,				new Next(ParserState.InTagEqual,	BuilderAction.SetTagName) },
+			{ TokenType.RightBrace,			new Next(ParserState.OutEntry,		BuilderAction.Build) }
 		} },
 
 		{ParserState.InTagEqual,	new Action {
-			{ TokenType.Equal,				new Next(ParserState.InTagValue,	BibBuilderState.Skip) }
+			{ TokenType.Equal,				new Next(ParserState.InTagValue,	BuilderAction.Skip) }
 		} },
 
 		{ParserState.InTagValue,	new Action {
-			{ TokenType.String,				new Next(ParserState.OutTagValue,	BibBuilderState.SetTagValue) },
-			{ TokenType.Name,				new Next(ParserState.OutTagValue,	BibBuilderState.SetTagValue) }
+			{ TokenType.String,				new Next(ParserState.OutTagValue,	BuilderAction.SetTagValue) },
+			{ TokenType.Name,				new Next(ParserState.OutTagValue,	BuilderAction.SetTagValue) }
 		} },
 
 		{ParserState.OutTagValue,	new Action {
-			{ TokenType.Concatenation,		new Next(ParserState.InTagValue,	BibBuilderState.Skip) },
-			{ TokenType.Comma,				new Next(ParserState.InTagName,		BibBuilderState.SetTag) },
-			{ TokenType.RightBrace,			new Next(ParserState.OutEntry,		BibBuilderState.Build) },
-			{ TokenType.RightParenthesis,	new Next(ParserState.OutEntry,		BibBuilderState.Build) },
-			{ TokenType.Comment,			new Next(ParserState.OutTagValue,	BibBuilderState.Skip) },
+			{ TokenType.Concatenation,		new Next(ParserState.InTagValue,	BuilderAction.Skip) },
+			{ TokenType.Comma,				new Next(ParserState.InTagName,		BuilderAction.SetTag) },
+			{ TokenType.RightBrace,			new Next(ParserState.OutEntry,		BuilderAction.Build) },
+			{ TokenType.RightParenthesis,	new Next(ParserState.OutEntry,		BuilderAction.Build) },
+			{ TokenType.Comment,			new Next(ParserState.OutTagValue,	BuilderAction.Skip) },
 		} },
 
 		{ParserState.OutEntry,		new Action {
-			{ TokenType.Start,				new Next(ParserState.InStart,		BibBuilderState.Skip) },
-			{ TokenType.Comment,			new Next(ParserState.InComment,		BibBuilderState.Skip) }
+			{ TokenType.Start,				new Next(ParserState.InStart,		BuilderAction.Skip) },
+			{ TokenType.Comment,			new Next(ParserState.InComment,		BuilderAction.Skip) }
 		} },
 
 		{ParserState.InComment,		new Action {
-			{ TokenType.Start,				new Next(ParserState.InStart,		BibBuilderState.Skip) },
-			{ TokenType.Comment,			new Next(ParserState.InComment,		BibBuilderState.Skip) }
+			{ TokenType.Start,				new Next(ParserState.InStart,		BuilderAction.Skip) },
+			{ TokenType.Comment,			new Next(ParserState.InComment,		BuilderAction.Skip) }
 		} },
 	};
 
@@ -281,13 +281,13 @@ public sealed class BibParser : IDisposable
 				// Build BibEntry.
 				switch (StateMap[curState][token.Type].Item2)
 				{
-					case BibBuilderState.SetHeader:
+					case BuilderAction.SetHeader:
 					{
 						bibliographyDOM.AddHeaderLine(token.Value);
 						break;
 					}
 
-					case BibBuilderState.SetType:
+					case BuilderAction.SetType:
 					{
 						if (token.Value.ToLower() == StringEntry.TypeString.ToLower())
 						{
@@ -303,7 +303,7 @@ public sealed class BibParser : IDisposable
 						break;
 					}
 
-					case BibBuilderState.SetKey:
+					case BuilderAction.SetKey:
 					{
 						Debug.Assert(bibPart != null, "Bibliography part is null.");
 						BibEntry? bibEntry = bibPart as BibEntry;
@@ -312,13 +312,13 @@ public sealed class BibParser : IDisposable
 						break;
 					}
 
-					case BibBuilderState.SetTagName:
+					case BuilderAction.SetTagName:
 					{
 						tagName = token.Value;
 						break;
 					}
 
-					case BibBuilderState.SetTagValue:
+					case BuilderAction.SetTagValue:
 					{
 						if (token.Type != TokenType.Concatenation)
 						{
@@ -328,14 +328,14 @@ public sealed class BibParser : IDisposable
 						break;
 					}
 
-					case BibBuilderState.SetTag:
+					case BuilderAction.SetTag:
 					{
 						Debug.Assert(bibPart != null, "bib != null");
 						SetTag(bibPart, ref tagName, tagValueType, tagValueBuilder);
 						break;
 					}
 
-					case BibBuilderState.Build:
+					case BuilderAction.Build:
 					{
 						Debug.Assert(bibPart != null, "bib != null");
 						if (tagName != string.Empty)

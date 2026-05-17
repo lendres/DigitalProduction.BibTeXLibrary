@@ -3,9 +3,9 @@ using System.Text;
 
 namespace BibTeXLibrary;
 
-using Action = Dictionary<TokenType, Tuple<ParserState, BuilderAction>>;
-using Next = Tuple<ParserState, BuilderAction>;
-using StateMap = Dictionary<ParserState, Dictionary<TokenType, Tuple<ParserState, BuilderAction>>>;
+internal record struct Next(ParserState State, BuilderAction Action);
+internal class TokenToNextMap : Dictionary<TokenType, Next> { }
+internal class StateMap : Dictionary<ParserState, TokenToNextMap> { }
 
 /// <summxary>
 /// BibTeX file parser.
@@ -26,56 +26,56 @@ public sealed class BibParser : IDisposable
 	/// </summary>
 	private static readonly StateMap StateMap = new()
 	{
-		{ParserState.Begin,			new Action {
+		{ParserState.Begin,			new TokenToNextMap {
 			{ TokenType.Comment,			new Next(ParserState.InHeader,		BuilderAction.SetHeader) },
 			{ TokenType.Start,				new Next(ParserState.InStart,		BuilderAction.Skip) }
 		} },
 
-		{ParserState.InHeader,		new Action {
+		{ParserState.InHeader,		new TokenToNextMap {
 			{ TokenType.Comment,			new Next(ParserState.InHeader,		BuilderAction.SetHeader) },
 			{ TokenType.Start,				new Next(ParserState.InStart,		BuilderAction.Skip) }
 		} },
 
-		{ParserState.InStart,		new Action {
+		{ParserState.InStart,		new TokenToNextMap {
 			{ TokenType.Name,				new Next(ParserState.InEntry,		BuilderAction.SetType) },
 			{ TokenType.StringType,			new Next(ParserState.InStringEntry,	BuilderAction.SetType) }
 		} },
 
-		{ParserState.InEntry,		new Action {
+		{ParserState.InEntry,		new TokenToNextMap {
 			{ TokenType.LeftBrace,			new Next(ParserState.InKey,			BuilderAction.Skip) }
 		} },
 
-		{ParserState.InStringEntry,	new Action {
+		{ParserState.InStringEntry,	new TokenToNextMap {
 			{ TokenType.LeftBrace,			new Next(ParserState.InTagName,		BuilderAction.Skip) },
 			{ TokenType.LeftParenthesis,	new Next(ParserState.InTagName,		BuilderAction.Skip) }
 		} },
 
-		{ParserState.InKey,			new Action {
+		{ParserState.InKey,			new TokenToNextMap {
 			{ TokenType.RightBrace,			new Next(ParserState.OutEntry,		BuilderAction.Build) },
 			{ TokenType.Name,				new Next(ParserState.OutKey,		BuilderAction.SetKey) },
 			{ TokenType.String,				new Next(ParserState.OutKey,		BuilderAction.SetKey) },
 			{ TokenType.Comma,				new Next(ParserState.InTagName,		BuilderAction.Skip) }
 		} },
 
-		{ParserState.OutKey,		new Action {
+		{ParserState.OutKey,		new TokenToNextMap {
 			{ TokenType.Comma,				new Next(ParserState.InTagName,		BuilderAction.Skip) }
 		} },
 
-		{ParserState.InTagName,		new Action {
+		{ParserState.InTagName,		new TokenToNextMap {
 			{ TokenType.Name,				new Next(ParserState.InTagEqual,	BuilderAction.SetTagName) },
 			{ TokenType.RightBrace,			new Next(ParserState.OutEntry,		BuilderAction.Build) }
 		} },
 
-		{ParserState.InTagEqual,	new Action {
+		{ParserState.InTagEqual,	new TokenToNextMap {
 			{ TokenType.Equal,				new Next(ParserState.InTagValue,	BuilderAction.Skip) }
 		} },
 
-		{ParserState.InTagValue,	new Action {
+		{ParserState.InTagValue,	new TokenToNextMap {
 			{ TokenType.String,				new Next(ParserState.OutTagValue,	BuilderAction.SetTagValue) },
 			{ TokenType.Name,				new Next(ParserState.OutTagValue,	BuilderAction.SetTagValue) }
 		} },
 
-		{ParserState.OutTagValue,	new Action {
+		{ParserState.OutTagValue,	new TokenToNextMap {
 			{ TokenType.Concatenation,		new Next(ParserState.InTagValue,	BuilderAction.Skip) },
 			{ TokenType.Comma,				new Next(ParserState.InTagName,		BuilderAction.SetTag) },
 			{ TokenType.RightBrace,			new Next(ParserState.OutEntry,		BuilderAction.Build) },
@@ -83,12 +83,12 @@ public sealed class BibParser : IDisposable
 			{ TokenType.Comment,			new Next(ParserState.OutTagValue,	BuilderAction.Skip) },
 		} },
 
-		{ParserState.OutEntry,		new Action {
+		{ParserState.OutEntry,		new TokenToNextMap {
 			{ TokenType.Start,				new Next(ParserState.InStart,		BuilderAction.Skip) },
 			{ TokenType.Comment,			new Next(ParserState.InComment,		BuilderAction.Skip) }
 		} },
 
-		{ParserState.InComment,		new Action {
+		{ParserState.InComment,		new TokenToNextMap {
 			{ TokenType.Start,				new Next(ParserState.InStart,		BuilderAction.Skip) },
 			{ TokenType.Comment,			new Next(ParserState.InComment,		BuilderAction.Skip) }
 		} },
@@ -269,9 +269,9 @@ public sealed class BibParser : IDisposable
 			foreach (Token token in Tokenize())
 			{
 				// Transfer state.
-				if (StateMap[curState].TryGetValue(token.Type, out Next? value))
+				if (StateMap[curState].TryGetValue(token.Type, out Next next))
 				{
-					nextState = value.Item1;
+					nextState = next.State;
 				}
 				else
 				{
@@ -279,7 +279,7 @@ public sealed class BibParser : IDisposable
 					throw new UnexpectedTokenException(_lineCount, _columnCount, token.Type, [.. expected]);
 				}
 				// Build BibEntry.
-				switch (StateMap[curState][token.Type].Item2)
+				switch (StateMap[curState][token.Type].Action)
 				{
 					case BuilderAction.SetHeader:
 					{

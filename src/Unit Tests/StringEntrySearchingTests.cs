@@ -55,7 +55,7 @@ public class StringEntrySearchingTests
 
 	private static BibliographyDOM ParseBibEntry(string stringConstants)
 	{
-		BibParser parser = new(new StringReader(stringConstants));
+		BibliographyParser parser = new(new StringReader(stringConstants));
 		return parser.Parse();
 	}
 

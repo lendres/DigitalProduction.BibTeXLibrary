@@ -134,7 +134,7 @@ public class BibliographyTests
 
 	private Bibliography ParseBibEntry(string bibString)
 	{
-		BibParser parser = new(new StringReader(bibString));
+		BibliographyParser parser = new(new StringReader(bibString));
 		return (Bibliography)parser.Parse(_bibliography);
 	}
 

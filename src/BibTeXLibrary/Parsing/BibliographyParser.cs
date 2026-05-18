@@ -10,7 +10,7 @@ internal class StateMap : Dictionary<ParserState, TokenToNextMap> { }
 /// <summxary>
 /// BibTeX file parser.
 /// </summary>
-public sealed class BibParser : IDisposable
+public sealed class BibliographyParser : IDisposable
 {
 	#region Static Fields
 
@@ -135,7 +135,7 @@ public sealed class BibParser : IDisposable
 	/// Constructor that reads a file using a StreamReader with default encoding.
 	/// </summary>
 	/// <param name="path">Full path and file name to the file to reader.</param>
-	public BibParser(string path) :
+	public BibliographyParser(string path) :
 		this(new StreamReader(path, Encoding.UTF8))
 	{
 	}
@@ -145,7 +145,7 @@ public sealed class BibParser : IDisposable
 	/// </summary>
 	/// <param name="path">Full path and file name to the file to reader.</param>'
 	/// <param name="bibEntryInitializationFile">Path of the BibEntry initialization information.</param>
-	public BibParser(string path, string bibEntryInitializationFile) :
+	public BibliographyParser(string path, string bibEntryInitializationFile) :
 		this(new StreamReader(path, Encoding.UTF8), bibEntryInitializationFile)
 	{
 	}
@@ -154,7 +154,7 @@ public sealed class BibParser : IDisposable
 	/// Constructor.
 	/// </summary>
 	/// <param name="textReader">TextReader.</param>
-	public BibParser(TextReader textReader)
+	public BibliographyParser(TextReader textReader)
 	{
 		_inputText = textReader;
 	}
@@ -164,7 +164,7 @@ public sealed class BibParser : IDisposable
 	/// </summary>
 	/// <param name="textReader">TextReader.</param>
 	/// <param name="bibEntryInitializationFile">Path to a BibEntryInitialization file.</param>
-	public BibParser(TextReader textReader, string bibEntryInitializationFile) :
+	public BibliographyParser(TextReader textReader, string bibEntryInitializationFile) :
 		this(textReader, BibEntryInitialization.Deserialize(bibEntryInitializationFile))
 	{
 	}
@@ -174,7 +174,7 @@ public sealed class BibParser : IDisposable
 	/// </summary>
 	/// <param name="textReader">TextReader.</param>
 	/// <param name="bibEntryInitialization">BibEntryInitialization.</param>
-	public BibParser(TextReader textReader, BibEntryInitialization? bibEntryInitialization)
+	public BibliographyParser(TextReader textReader, BibEntryInitialization? bibEntryInitialization)
 	{
 		if (bibEntryInitialization == null)
 		{
@@ -194,7 +194,7 @@ public sealed class BibParser : IDisposable
 	/// <param name="path">Full path and file name to the file to reader.</param>
 	public static BibliographyDOM Parse(string path)
 	{
-		using BibParser parser = new(path);
+		using BibliographyParser parser = new(path);
 		try
 		{
 			return parser.Parse();
@@ -211,7 +211,7 @@ public sealed class BibParser : IDisposable
 	/// <param name="inputText">TextReader containing the input text to be parsed.</param>
 	public static BibliographyDOM Parse(TextReader inputText)
 	{
-		using BibParser parser = new(inputText);
+		using BibliographyParser parser = new(inputText);
 		return parser.Parse();
 	}
 
@@ -232,7 +232,7 @@ public sealed class BibParser : IDisposable
 	/// <param name="bibEntryInitialization">BibEntryInitialization.</param>
 	public static BibliographyDOM Parse(TextReader inputText, BibEntryInitialization? bibEntryInitialization)
 	{
-		using BibParser parser = new(inputText, bibEntryInitialization);
+		using BibliographyParser parser = new(inputText, bibEntryInitialization);
 		return parser.Parse();
 	}
 

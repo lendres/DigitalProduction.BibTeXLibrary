@@ -72,7 +72,7 @@ public class BibliographyDomSearchingTests
 
 	private static BibliographyDOM ParseBibEntry(string bibString)
 	{
-		BibParser parser = new(new StringReader(bibString));
+		BibliographyParser parser = new(new StringReader(bibString));
 		return parser.Parse();
 	}
 

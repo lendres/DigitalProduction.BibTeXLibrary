@@ -32,7 +32,7 @@ public class Bibliography : BibliographyDOM
 		Clear();
 		try
 		{
-			BibParser parser = new(bibFilePath);
+			BibliographyParser parser = new(bibFilePath);
 			parser.Parse(this);
 		}
 		catch (UnexpectedTokenException exception)
@@ -56,7 +56,7 @@ public class Bibliography : BibliographyDOM
 		Clear();
 		try
 		{
-			BibParser parser = new(bibFilePath, bibEntryInitializationFile);
+			BibliographyParser parser = new(bibFilePath, bibEntryInitializationFile);
 			parser.Parse(this);
 		}
 		catch (UnexpectedTokenException exception)

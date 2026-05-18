@@ -188,7 +188,7 @@ public class BibEntryTests
 
 	private static BibEntry ParseBibEntry(string bibString)
 	{
-		BibParser parser = new(new StringReader(bibString));
+		BibliographyParser parser = new(new StringReader(bibString));
 		return parser.Parse().Entries[0];
 	}
 

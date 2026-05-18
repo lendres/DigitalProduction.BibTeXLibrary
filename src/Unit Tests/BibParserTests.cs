@@ -11,7 +11,7 @@ public class BibParserTests
 	[Fact]
     public void TestParserRegularBibEntry()
     {
-		BibParser parser = new(new StringReader("@Article{keyword, title = {\"0\"{123}456{789}}, year = 2012, address=\"PingLeYuan\"}"));
+		BibliographyParser parser = new(new StringReader("@Article{keyword, title = {\"0\"{123}456{789}}, year = 2012, address=\"PingLeYuan\"}"));
 		BibEntry entry = parser.Parse().Entries[0];
 
 		Assert.Equal("Article"           , entry.Type);
@@ -25,7 +25,7 @@ public class BibParserTests
     [Fact]
     public void TestParserStringConcatenation()
     {
-		BibParser parser = new(new StringReader("@article{keyword, title = \"hello \\\"world\\\"\", address=\"Ping\" # \"Le\" # \"Yuan\",}"));
+		BibliographyParser parser = new(new StringReader("@article{keyword, title = \"hello \\\"world\\\"\", address=\"Ping\" # \"Le\" # \"Yuan\",}"));
 		BibEntry entry = parser.Parse().Entries[0];
 
 		Assert.Equal("article"            , entry.Type);
@@ -38,7 +38,7 @@ public class BibParserTests
     [Fact]
     public void TestParserWithoutKey()
     {
-		BibParser parser = new(new StringReader("@book{, title = {}}"));
+		BibliographyParser parser = new(new StringReader("@book{, title = {}}"));
 		BibEntry entry = parser.Parse().Entries[0];
 
 		Assert.Equal("book", entry.Type);
@@ -50,7 +50,7 @@ public class BibParserTests
     [Fact]
     public void TestParserWithoutKeyAndFields()
     {
-		BibParser parser = new(new StringReader("@book{}"));
+		BibliographyParser parser = new(new StringReader("@book{}"));
 		BibEntry entry = parser.Parse().Entries[0];
 
 		Assert.Equal("book", entry.Type);
@@ -68,7 +68,7 @@ public class BibParserTests
 	[InlineData("@STRING(key = \"value\")")]
 	public void TestParserBasicStringConstant(string content)
     {
-		BibParser		parser	= new(new StringReader(content));
+		BibliographyParser		parser	= new(new StringReader(content));
 		StringEntry	entry	= parser.Parse().StringConstants[0];
 
 		Assert.Equal(StringEntry.TypeString, entry.Type);
@@ -83,7 +83,7 @@ public class BibParserTests
 	[InlineData("@string{key = \"value\"}")]
 	public void TestParserStringConstantSyntax(string content)
     {
-		BibParser		parser	= new(new StringReader(content));
+		BibliographyParser		parser	= new(new StringReader(content));
 		StringEntry	entry	= parser.Parse().StringConstants[0];
 
 		Assert.Equal(StringEntry.TypeString, entry.Type);
@@ -95,7 +95,7 @@ public class BibParserTests
 	[Fact]
     public void TestParserStringConstantWithInternalBrackets()
     {
-		BibParser		parser	= new(new StringReader("@string(key = {The {VALUE}})"));
+		BibliographyParser		parser	= new(new StringReader("@string(key = {The {VALUE}})"));
 		StringEntry	entry	= parser.Parse().StringConstants[0];
 
 		Assert.Equal(StringEntry.TypeString, entry.Type);
@@ -127,35 +127,35 @@ public class BibParserTests
 	[Fact]
     public void TestParserWithBorkenBibEntry()
     {
-		using BibParser parser = new(new StringReader("@book{,"));
+		using BibliographyParser parser = new(new StringReader("@book{,"));
 		Assert.Throws<UnexpectedTokenException>(() => parser.Parse());
 	}
 
     [Fact]
     public void TestParserWithIncompletedField()
     {
-		using BibParser parser = new(new StringReader("@book{,title=,}"));
+		using BibliographyParser parser = new(new StringReader("@book{,title=,}"));
 		Assert.Throws<UnexpectedTokenException>(() => parser.Parse());
 	}
 
     [Fact]
     public void TestParserWithBrokenField()
     {
-		using BibParser parser = new(new StringReader("@book{,titl"));
+		using BibliographyParser parser = new(new StringReader("@book{,titl"));
 		Assert.Throws<UnexpectedTokenException>(() => parser.Parse());
 	}
 
     [Fact]
     public void TestParserWithBrokenNumber()
     {
-		using BibParser parser = new(new StringReader("@book{,title = 2014"));
+		using BibliographyParser parser = new(new StringReader("@book{,title = 2014"));
 		Assert.Throws<UnexpectedTokenException>(() => parser.Parse());
 	}
 
     [Fact]
     public void TestParserWithUnexpectedCharacter()
     {
-		using BibParser parser = new(new StringReader("@book{,ti?le = {Hadoop}}"));
+		using BibliographyParser parser = new(new StringReader("@book{,ti?le = {Hadoop}}"));
 		Assert.Throws<UnrecognizableCharacterException>(() => parser.Parse());
 	}
 
@@ -166,7 +166,7 @@ public class BibParserTests
     [Fact]
     public void TestParserWithBibFile()
     {
-		BibParser parser = new(new StreamReader("TestData/BibParserTest1_In.bib", Encoding.Default));
+		BibliographyParser parser = new(new StreamReader("TestData/BibParserTest1_In.bib", Encoding.Default));
 		ObservableCollection<BibEntry> entries = parser.Parse().Entries;
 
 		Assert.Equal(4,														entries.Count);
@@ -179,7 +179,7 @@ public class BibParserTests
     [Fact]
     public void TestStaticParseWithBibFile()
     {
-		ObservableCollection<BibEntry> entries = BibParser.Parse(new StreamReader("TestData/BibParserTest1_In.bib", Encoding.Default)).Entries;
+		ObservableCollection<BibEntry> entries = BibliographyParser.Parse(new StreamReader("TestData/BibParserTest1_In.bib", Encoding.Default)).Entries;
 
 		Assert.Equal(4,														entries.Count);
 		Assert.Equal("nobody",												entries[0].Publisher);
@@ -190,7 +190,7 @@ public class BibParserTests
     [Fact]
     public void TestParserResult()
     {
-		BibParser parser	= new(new StreamReader("TestData/BibParserTest1_In.bib", Encoding.Default));
+		BibliographyParser parser	= new(new StreamReader("TestData/BibParserTest1_In.bib", Encoding.Default));
 		BibEntry entry		= parser.Parse().Entries[0];
 		string entryString	= entry.ToString().TrimEnd('\n').TrimEnd('\r');
 		string expected		= "@Article{mrx05,\r\n  author = {Mr. X},\r\n  title = {Something Great},\r\n  publisher = {nobody},\r\n  year = {2005}\r\n}";
@@ -206,7 +206,7 @@ public class BibParserTests
 	[Fact]
 	public void TestParserBibStringWithBrackets()
 	{
-		BibParser parser = new(new StringReader("@string{NAME = {Title of Conference}}"));
+		BibliographyParser parser = new(new StringReader("@string{NAME = {Title of Conference}}"));
 		StringEntry entry = parser.Parse().StringConstants[0];
 
 		Assert.Equal(StringEntry.TypeString, entry.Type);
@@ -218,7 +218,7 @@ public class BibParserTests
 	[Fact]
 	public void TestParserBibStringWithParentheses()
 	{
-		BibParser parser = new(new StringReader("@string(NAME = {Title of Conference})"));
+		BibliographyParser parser = new(new StringReader("@string(NAME = {Title of Conference})"));
 		StringEntry entry = parser.Parse().StringConstants[0];
 
 		Assert.Equal(StringEntry.TypeString, entry.Type);
@@ -230,7 +230,7 @@ public class BibParserTests
 	[Fact]
 	public void TestParserBibStringWithBracketsAndQuotes()
 	{
-		BibParser parser = new(new StringReader("@string{NAME = \"Title of Conference\"}"));
+		BibliographyParser parser = new(new StringReader("@string{NAME = \"Title of Conference\"}"));
 		StringEntry entry = parser.Parse().StringConstants[0];
 
 		Assert.Equal(StringEntry.TypeString, entry.Type);
@@ -242,7 +242,7 @@ public class BibParserTests
 	[Fact]
 	public void TestParserBibStringWithParenthesisAndQuotes()
 	{
-		BibParser parser = new(new StringReader("@string(NAME = \"Title of Conference\")"));
+		BibliographyParser parser = new(new StringReader("@string(NAME = \"Title of Conference\")"));
 		StringEntry entry = parser.Parse().StringConstants[0];
 
 		Assert.Equal(StringEntry.TypeString, entry.Type);
@@ -295,7 +295,7 @@ public class BibParserTests
 
 	private static BibliographyDOM ParseBibEntry(string bibString)
 	{
-		BibParser parser = new(new StringReader(bibString));
+		BibliographyParser parser = new(new StringReader(bibString));
 		return parser.Parse();
 	}
 

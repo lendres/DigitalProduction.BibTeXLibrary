@@ -3,7 +3,7 @@ using System.Text;
 
 namespace BibTeXLibrary;
 
-internal record struct Next(ParserState State, BuilderAction Action);
+internal record struct Next(ParserState State, BuildAction Action);
 internal class TokenToNextMap : Dictionary<TokenType, Next> { }
 internal class StateMap : Dictionary<ParserState, TokenToNextMap> { }
 
@@ -27,70 +27,70 @@ public sealed class BibParser : IDisposable
 	private static readonly StateMap StateMap = new()
 	{
 		{ParserState.Begin,			new TokenToNextMap {
-			{ TokenType.Comment,			new Next(ParserState.InHeader,		BuilderAction.AddHeaderLine) },
-			{ TokenType.Start,				new Next(ParserState.InStart,		BuilderAction.Skip) }
+			{ TokenType.Comment,			new Next(ParserState.InHeader,		BuildAction.AddHeaderLine) },
+			{ TokenType.Start,				new Next(ParserState.InStart,		BuildAction.Skip) }
 		} },
 
 		{ParserState.InHeader,		new TokenToNextMap {
-			{ TokenType.Comment,			new Next(ParserState.InHeader,		BuilderAction.AddHeaderLine) },
-			{ TokenType.Start,				new Next(ParserState.InStart,		BuilderAction.Skip) }
+			{ TokenType.Comment,			new Next(ParserState.InHeader,		BuildAction.AddHeaderLine) },
+			{ TokenType.Start,				new Next(ParserState.InStart,		BuildAction.Skip) }
 		} },
 
 		{ParserState.InStart,		new TokenToNextMap {
-			{ TokenType.Name,				new Next(ParserState.InEntry,		BuilderAction.SetType) },
-			{ TokenType.StringType,			new Next(ParserState.InStringEntry,	BuilderAction.SetType) }
+			{ TokenType.Name,				new Next(ParserState.InEntry,		BuildAction.SetType) },
+			{ TokenType.StringType,			new Next(ParserState.InStringEntry,	BuildAction.SetType) }
 		} },
 
 		{ParserState.InEntry,		new TokenToNextMap {
-			{ TokenType.LeftBrace,			new Next(ParserState.InKey,			BuilderAction.Skip) }
+			{ TokenType.LeftBrace,			new Next(ParserState.InKey,			BuildAction.Skip) }
 		} },
 
 		{ParserState.InStringEntry,	new TokenToNextMap {
-			{ TokenType.LeftBrace,			new Next(ParserState.InFiledName,	BuilderAction.Skip) },
-			{ TokenType.LeftParenthesis,	new Next(ParserState.InFiledName,	BuilderAction.Skip) }
+			{ TokenType.LeftBrace,			new Next(ParserState.InFiledName,	BuildAction.Skip) },
+			{ TokenType.LeftParenthesis,	new Next(ParserState.InFiledName,	BuildAction.Skip) }
 		} },
 
 		{ParserState.InKey,			new TokenToNextMap {
-			{ TokenType.RightBrace,			new Next(ParserState.OutEntry,		BuilderAction.Build) },
-			{ TokenType.Name,				new Next(ParserState.OutKey,		BuilderAction.SetKey) },
-			{ TokenType.String,				new Next(ParserState.OutKey,		BuilderAction.SetKey) },
-			{ TokenType.Comma,				new Next(ParserState.InFiledName,	BuilderAction.Skip) }
+			{ TokenType.RightBrace,			new Next(ParserState.OutEntry,		BuildAction.AddBibliographyPart) },
+			{ TokenType.Name,				new Next(ParserState.OutKey,		BuildAction.SetKey) },
+			{ TokenType.String,				new Next(ParserState.OutKey,		BuildAction.SetKey) },
+			{ TokenType.Comma,				new Next(ParserState.InFiledName,	BuildAction.Skip) }
 		} },
 
 		{ParserState.OutKey,		new TokenToNextMap {
-			{ TokenType.Comma,				new Next(ParserState.InFiledName,	BuilderAction.Skip) }
+			{ TokenType.Comma,				new Next(ParserState.InFiledName,	BuildAction.Skip) }
 		} },
 
 		{ParserState.InFiledName,		new TokenToNextMap {
-			{ TokenType.Name,				new Next(ParserState.InFieldEqual,	BuilderAction.SetFieldName) },
-			{ TokenType.RightBrace,			new Next(ParserState.OutEntry,		BuilderAction.Build) }
+			{ TokenType.Name,				new Next(ParserState.InFieldEqual,	BuildAction.SetFieldName) },
+			{ TokenType.RightBrace,			new Next(ParserState.OutEntry,		BuildAction.AddBibliographyPart) }
 		} },
 
 		{ParserState.InFieldEqual,	new TokenToNextMap {
-			{ TokenType.Equal,				new Next(ParserState.InFieldValue,	BuilderAction.Skip) }
+			{ TokenType.Equal,				new Next(ParserState.InFieldValue,	BuildAction.Skip) }
 		} },
 
 		{ParserState.InFieldValue,	new TokenToNextMap {
-			{ TokenType.String,				new Next(ParserState.OutFieldValue,	BuilderAction.SetFieldValue) },
-			{ TokenType.Name,				new Next(ParserState.OutFieldValue,	BuilderAction.SetFieldValue) }
+			{ TokenType.String,				new Next(ParserState.OutFieldValue,	BuildAction.SetFieldValue) },
+			{ TokenType.Name,				new Next(ParserState.OutFieldValue,	BuildAction.SetFieldValue) }
 		} },
 
 		{ParserState.OutFieldValue,	new TokenToNextMap {
-			{ TokenType.Concatenation,		new Next(ParserState.InFieldValue,	BuilderAction.Skip) },
-			{ TokenType.Comma,				new Next(ParserState.InFiledName,	BuilderAction.SetField) },
-			{ TokenType.RightBrace,			new Next(ParserState.OutEntry,		BuilderAction.Build) },
-			{ TokenType.RightParenthesis,	new Next(ParserState.OutEntry,		BuilderAction.Build) },
-			{ TokenType.Comment,			new Next(ParserState.OutFieldValue,	BuilderAction.Skip) },
+			{ TokenType.Concatenation,		new Next(ParserState.InFieldValue,	BuildAction.Skip) },
+			{ TokenType.Comma,				new Next(ParserState.InFiledName,	BuildAction.SetField) },
+			{ TokenType.RightBrace,			new Next(ParserState.OutEntry,		BuildAction.AddBibliographyPart) },
+			{ TokenType.RightParenthesis,	new Next(ParserState.OutEntry,		BuildAction.AddBibliographyPart) },
+			{ TokenType.Comment,			new Next(ParserState.OutFieldValue,	BuildAction.Skip) },
 		} },
 
 		{ParserState.OutEntry,		new TokenToNextMap {
-			{ TokenType.Start,				new Next(ParserState.InStart,		BuilderAction.Skip) },
-			{ TokenType.Comment,			new Next(ParserState.InComment,		BuilderAction.Skip) }
+			{ TokenType.Start,				new Next(ParserState.InStart,		BuildAction.Skip) },
+			{ TokenType.Comment,			new Next(ParserState.InComment,		BuildAction.Skip) }
 		} },
 
 		{ParserState.InComment,		new TokenToNextMap {
-			{ TokenType.Start,				new Next(ParserState.InStart,		BuilderAction.Skip) },
-			{ TokenType.Comment,			new Next(ParserState.InComment,		BuilderAction.Skip) }
+			{ TokenType.Start,				new Next(ParserState.InStart,		BuildAction.Skip) },
+			{ TokenType.Comment,			new Next(ParserState.InComment,		BuildAction.Skip) }
 		} },
 	};
 
@@ -275,13 +275,13 @@ public sealed class BibParser : IDisposable
 				// Build BibEntry.
 				switch (next.Action)
 				{
-					case BuilderAction.AddHeaderLine:
+					case BuildAction.AddHeaderLine:
 					{
 						bibliographyDOM.AddHeaderLine(token.Value);
 						break;
 					}
 
-					case BuilderAction.SetType:
+					case BuildAction.SetType:
 					{
 						if (token.Value.ToLower() == StringEntry.TypeString.ToLower())
 						{
@@ -297,7 +297,7 @@ public sealed class BibParser : IDisposable
 						break;
 					}
 
-					case BuilderAction.SetKey:
+					case BuildAction.SetKey:
 					{
 						Debug.Assert(bibPart != null, "Bibliography part is null.");
 						BibEntry? bibEntry = bibPart as BibEntry;
@@ -306,13 +306,13 @@ public sealed class BibParser : IDisposable
 						break;
 					}
 
-					case BuilderAction.SetFieldName:
+					case BuildAction.SetFieldName:
 					{
 						fieldName = token.Value;
 						break;
 					}
 
-					case BuilderAction.SetFieldValue:
+					case BuildAction.SetFieldValue:
 					{
 						if (token.Type != TokenType.Concatenation)
 						{
@@ -322,16 +322,16 @@ public sealed class BibParser : IDisposable
 						break;
 					}
 
-					case BuilderAction.SetField:
+					case BuildAction.SetField:
 					{
-						Debug.Assert(bibPart != null, "bib != null");
+						Debug.Assert(bibPart != null, "Bibliography part is null.");
 						SetField(bibPart, ref fieldName, fieldValueType, fieldValueBuilder);
 						break;
 					}
 
-					case BuilderAction.Build:
+					case BuildAction.AddBibliographyPart:
 					{
-						Debug.Assert(bibPart != null, "bib != null");
+						Debug.Assert(bibPart != null, "Bibliography part is null.");
 						if (fieldName != string.Empty)
 						{
 							SetField(bibPart, ref fieldName, fieldValueType, fieldValueBuilder);

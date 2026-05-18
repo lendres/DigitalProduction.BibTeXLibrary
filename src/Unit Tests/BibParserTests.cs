@@ -253,4 +253,52 @@ public class BibParserTests
 
 	#endregion
 
+	#region Header Parsing
+
+	[Fact]
+	public void ReadPreservesHeaderComments()
+	{
+		string bibString =
+			"% First header line\n" +
+			"% Second header line\n" +
+			"@book{ref:keyA1, author = {John Smith}, year = {2023}}";
+
+		BibliographyDOM bibliographyDom = ParseBibEntry(bibString);
+
+		Assert.Equal(2, bibliographyDom.Header.Count);
+		Assert.Equal("% First header line", bibliographyDom.Header[0]);
+		Assert.Equal("% Second header line", bibliographyDom.Header[1]);
+		Assert.Single(bibliographyDom.Entries);
+	}
+
+	[Fact]
+	public void ReadPreservesBlankLineBetweenHeaderComments()
+	{
+		string bibString =
+			"% First header line\n" +
+			"% Second header line\n" +
+			"\n" +
+			"% Comment line\n" +
+			"@book{ref:keyA1, author = {John Smith}, year = {2023}}";
+
+		BibliographyDOM bibliographyDom = ParseBibEntry(bibString);
+
+		Assert.Equal(3, bibliographyDom.Header.Count);
+		Assert.Equal("% First header line", bibliographyDom.Header[0]);
+		Assert.Equal("% Second header line", bibliographyDom.Header[1]);
+		Assert.Single(bibliographyDom.Entries);
+	}
+
+	#endregion
+
+	#region Helper Methods
+
+	private static BibliographyDOM ParseBibEntry(string bibString)
+	{
+		BibParser parser = new(new StringReader(bibString));
+		return parser.Parse();
+	}
+
+	#endregion
+
 } // End class.

@@ -7,7 +7,7 @@ namespace BibTeXLibrary;
 /// 
 /// The "Description" attribute can be accessed using Reflection to get a string representing the enumeration type.
 /// </summary>
-internal enum BuilderAction
+internal enum BuildAction
 {
 	/// <summary>Add a header line.</summary>
 	[Description("Add Header Line")]
@@ -35,7 +35,7 @@ internal enum BuilderAction
 
 	/// <summary>Build.</summary>
 	[Description("Build")]
-	Build,
+	AddBibliographyPart,
 
 	/// <summary>Skip.</summary>
 	[Description("Skip")]

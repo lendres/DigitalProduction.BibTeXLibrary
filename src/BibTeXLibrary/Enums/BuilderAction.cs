@@ -9,9 +9,9 @@ namespace BibTeXLibrary;
 /// </summary>
 internal enum BuilderAction
 {
-	/// <summary>Set the header.</summary>
-	[Description("Set Header")]
-	SetHeader,
+	/// <summary>Add a header line.</summary>
+	[Description("Add Header Line")]
+	AddHeaderLine,
 
 	/// <summary>Set the .</summary>
 	[Description("Set Type")]

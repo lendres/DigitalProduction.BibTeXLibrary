@@ -27,12 +27,12 @@ public sealed class BibParser : IDisposable
 	private static readonly StateMap StateMap = new()
 	{
 		{ParserState.Begin,			new TokenToNextMap {
-			{ TokenType.Comment,			new Next(ParserState.InHeader,		BuilderAction.SetHeader) },
+			{ TokenType.Comment,			new Next(ParserState.InHeader,		BuilderAction.AddHeaderLine) },
 			{ TokenType.Start,				new Next(ParserState.InStart,		BuilderAction.Skip) }
 		} },
 
 		{ParserState.InHeader,		new TokenToNextMap {
-			{ TokenType.Comment,			new Next(ParserState.InHeader,		BuilderAction.SetHeader) },
+			{ TokenType.Comment,			new Next(ParserState.InHeader,		BuilderAction.AddHeaderLine) },
 			{ TokenType.Start,				new Next(ParserState.InStart,		BuilderAction.Skip) }
 		} },
 
@@ -281,7 +281,7 @@ public sealed class BibParser : IDisposable
 				// Build BibEntry.
 				switch (StateMap[curState][token.Type].Action)
 				{
-					case BuilderAction.SetHeader:
+					case BuilderAction.AddHeaderLine:
 					{
 						bibliographyDOM.AddHeaderLine(token.Value);
 						break;

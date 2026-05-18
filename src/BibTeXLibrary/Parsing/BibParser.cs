@@ -257,7 +257,7 @@ public sealed class BibParser : IDisposable
 	{
 		try
 		{
-			ParserState			curState			= ParserState.Begin;
+			ParserState			currentState			= ParserState.Begin;
 			BibliographyPart?	bibPart				= null;
 			string				fieldName			= "";
 			FieldValueType		fieldValueType		= FieldValueType.String;
@@ -267,9 +267,9 @@ public sealed class BibParser : IDisposable
 			foreach (Token token in Tokenize())
 			{
 				// Get the transfer state. Throw an exception if the token is not expected in the current state.
-				if (!StateMap[curState].TryGetValue(token.Type, out Next next))
+				if (!StateMap[currentState].TryGetValue(token.Type, out Next next))
 				{
-					IEnumerable<TokenType> expected = from pair in StateMap[curState] select pair.Key;
+					IEnumerable<TokenType> expected = from pair in StateMap[currentState] select pair.Key;
 					throw new UnexpectedTokenException(_lineCount, _columnCount, token.Type, [.. expected]);
 				}
 				// Build BibEntry.
@@ -340,16 +340,16 @@ public sealed class BibParser : IDisposable
 						break;
 					}
 				}
-				curState = next.State;
+				currentState = next.State;
 			}
 
 			// Check the current state.  Valid exit options are:
 			//    ParserState.OutEntry : We have completed an entire entry.
 			//    ParserState.Begin    : There are no entries and no header information.
 			//    ParserState.InHeader : We read header information, but did not find any entries in the file.
-			if (curState != ParserState.OutEntry & curState != ParserState.Begin & curState != ParserState.InHeader)
+			if (currentState != ParserState.OutEntry & currentState != ParserState.Begin & currentState != ParserState.InHeader)
 			{
-				IEnumerable<BibTeXLibrary.TokenType> expected = from pair in StateMap[curState] select pair.Key;
+				IEnumerable<BibTeXLibrary.TokenType> expected = from pair in StateMap[currentState] select pair.Key;
 				throw new UnexpectedTokenException(_lineCount, _columnCount, TokenType.EOF, [.. expected]);
 			}
 		}

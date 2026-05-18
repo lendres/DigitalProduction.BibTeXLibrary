@@ -278,14 +278,14 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 	#region Search Methods
 
 	/// <summary>
-	/// Searches the values of the specified tags for the search string.
+	/// Searches the values of the specified fields for the search string.
 	/// </summary>
-	/// <param name="tags">Bibliography tags to search.</param>
+	/// <param name="fields">Bibliography fields to search.</param>
 	/// <param name="searchKey">Whether to search the cite key.</param>
 	/// <param name="searchString">The string to search for.</param>
 	/// <param name="caseSensitive">Whether the search should be case-sensitive.</param>
 	/// <returns>A list of matching bibliography entries.</returns>
-	public List<BibEntry> SearchBibEntries(IEnumerable<string> tags, bool searchKey, string searchString, bool caseSensitive = false)
+	public List<BibEntry> SearchBibEntries(IEnumerable<string> fields, bool searchKey, string searchString, bool caseSensitive = false)
 	{
 		List<BibEntry> matches		= [];
 		StringComparison comparison	= caseSensitive ? StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase;
@@ -298,7 +298,7 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 				continue;
 			}
 
-			if (entry.DoTagsContainString(tags, searchString, caseSensitive))
+			if (entry.DoFieldsContainString(fields, searchString, caseSensitive))
 			{
 				matches.Add(entry);
 			}
@@ -307,7 +307,7 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 	}
 
 	/// <summary>
-	/// Searches the values of the specified tags for the search string.
+	/// Searches the values of the specified fields for the search string.
 	/// </summary>
 	/// <param name="searchName">Whether to search the name of the string constant.</param>
 	/// <param name="searchString">The string to search for.</param>

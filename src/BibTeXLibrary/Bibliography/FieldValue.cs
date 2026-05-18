@@ -3,7 +3,7 @@
 namespace BibTeXLibrary;
 
 /// <summary>
-/// The tag value for a BibTeX library.  This is an object to allow more complex behavior.  Specifically,
+/// The field value for a BibTeX library.  This is an object to allow more complex behavior.  Specifically,
 /// it allows different types of writing (ToString) for the value.
 /// </summary>
 public class FieldValue : IEquatable<FieldValue>, IComparable<FieldValue>
@@ -20,7 +20,7 @@ public class FieldValue : IEquatable<FieldValue>, IComparable<FieldValue>
 	/// <summary>
 	/// Content constructor.
 	/// </summary>
-	/// <param name="content">The tag content.</param>
+	/// <param name="content">The field content.</param>
 	public FieldValue(string content)
 	{
 		Content = content;
@@ -33,18 +33,18 @@ public class FieldValue : IEquatable<FieldValue>, IComparable<FieldValue>
 	public FieldValue(FieldValue fieldValue)
 	{
 		Content			= fieldValue.Content;
-		TagValueType	= fieldValue.TagValueType;
+		FieldValueType	= fieldValue.FieldValueType;
 	}
 
 	/// <summary>
 	/// Copy constructor.
 	/// </summary>
-	/// <param name="content">The tag content.</param>
+	/// <param name="content">The field content.</param>
 	/// <param name="format">Specifies the format to write in.</param>
-	public FieldValue(string content, FieldValueType tagValueType)
+	public FieldValue(string content, FieldValueType fieldValueType)
 	{
 		Content			= content;
-		TagValueType	= tagValueType;
+		FieldValueType	= fieldValueType;
 	}
 
 	#endregion
@@ -52,17 +52,17 @@ public class FieldValue : IEquatable<FieldValue>, IComparable<FieldValue>
 	#region Properties
 
 	/// <summary>
-	/// The content of the tag value.
+	/// The content of the field value.
 	/// </summary>
 	public string Content { get; set; } = string.Empty;
 
 	/// <summary>
-	/// The type of the tag value, which determines how it is written when ToString is called with a format.  The default
-	/// is TagValueType.String, which means that the content will be written with enclosing brackets/quoates around it. If
-	/// the type is TagValueType.StringConstant, then the content will be written without brackets or quotes when ToString
+	/// The type of the field value, which determines how it is written when ToString is called with a format.  The default
+	/// is FieldValueType.String, which means that the content will be written with enclosing brackets/quoates around it. If
+	/// the type is FieldValueType.StringConstant, then the content will be written without brackets or quotes when ToString
 	/// regardless of the format specified.
 	/// </summary>
-	public FieldValueType TagValueType { get; set; } = FieldValueType.String;
+	public FieldValueType FieldValueType { get; set; } = FieldValueType.String;
 
 	#endregion
 
@@ -83,7 +83,7 @@ public class FieldValue : IEquatable<FieldValue>, IComparable<FieldValue>
 	public string ToString(FieldValueFormat format)
 	{
 		// For string constants, we ignore the format and just return the content.
-		if (TagValueType == FieldValueType.StringConstant)
+		if (FieldValueType == FieldValueType.StringConstant)
 		{
 			return Content;
 		}
@@ -93,7 +93,7 @@ public class FieldValue : IEquatable<FieldValue>, IComparable<FieldValue>
 			FieldValueFormat.CurlyBraces	=> "{"+Content+"}",
 			FieldValueFormat.Quotes		=> "\""+Content+"\"",
 			FieldValueFormat.None		=> Content,
-			_							=> throw new Exception("Invalid tag format."),
+			_							=> throw new Exception("Invalid field format."),
 		};
 	}
 
@@ -118,7 +118,7 @@ public class FieldValue : IEquatable<FieldValue>, IComparable<FieldValue>
 			return contentComparison;
 		}
 
-		return TagValueType.CompareTo(other.TagValueType);
+		return FieldValueType.CompareTo(other.FieldValueType);
 	}
 
 	/// <summary>
@@ -131,7 +131,7 @@ public class FieldValue : IEquatable<FieldValue>, IComparable<FieldValue>
 			return false;
 		}
 
-		return Content == other.Content && TagValueType == other.TagValueType;
+		return Content == other.Content && FieldValueType == other.FieldValueType;
 	}
 
 	/// <summary>
@@ -147,7 +147,7 @@ public class FieldValue : IEquatable<FieldValue>, IComparable<FieldValue>
 	/// </summary>
 	public override int GetHashCode()
 	{
-		return HashCode.Combine(Content, TagValueType);
+		return HashCode.Combine(Content, FieldValueType);
 	}
 
 	public static bool operator ==(FieldValue? left, FieldValue? right)

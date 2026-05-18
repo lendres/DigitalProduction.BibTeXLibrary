@@ -37,7 +37,7 @@ public class BibEntryTests
     }
 
     [Fact]
-    public void TestSettingTagType()
+    public void TestSettingFieldType()
     {
         const string title	= "Mapreduce";
 		BibEntry entry		= new();
@@ -59,10 +59,10 @@ public class BibEntryTests
 	#region Find and Search Tests
 
 	/// <summary>
-	/// Find key of a tag value by searching through the tag values.
+	/// Find key of a field value by searching through the field values.
 	/// </summary>
 	[Fact]
-    public void TestFindTagValue()
+    public void TestFindFieldValue()
 	{
 		// Test with quotes.
 		string fieldValue	= "SPE Drilling Conference and Exhibition";
@@ -77,27 +77,27 @@ public class BibEntryTests
 	}
 
 	/// <summary>
-	/// Verifies that the DoTagsContainString method correctly identifies when a specified string is present in the values
-	/// of given BibTeX entry tags.
+	/// Verifies that the DoFieldsContainString method correctly identifies when a specified string is present in the values
+	/// of given BibTeX entry fields.
 	/// </summary>
 	/// <remarks>
-	/// This test ensures that searching for a substring within multiple tag values returns the expected
-	/// result. It demonstrates usage with a typical BibTeX entry and a list of common tag names.
+	/// This test ensures that searching for a substring within multiple field values returns the expected
+	/// result. It demonstrates usage with a typical BibTeX entry and a list of common field names.
 	/// </remarks>
 	[Fact]
-    public void TestSearchInTagValues()
+    public void TestSearchInFieldValues()
     {
-		string tagValue		= "Acme Journal of Science";
-		string bibString	= "@book{ref:key, booktitle = \"" + tagValue + "\", author = {John Smith}, year = {2023}, abstract = {Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.}}";
+		string fieldValue		= "Acme Journal of Science";
+		string bibString		= "@book{ref:key, booktitle = \"" + fieldValue + "\", author = {John Smith}, year = {2023}, abstract = {Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.}}";
 
-		List<string> tagNames	= ["booktitle", "author", "year", "abstract"];
+		List<string> fieldNames	= ["booktitle", "author", "year", "abstract"];
 		BibEntry entry			= ParseBibEntry(bibString);
 
-		// Case insensitive search should find "acme" in the booktitle tag.
-		Assert.True(entry.DoTagsContainString(tagNames, "acme"));
+		// Case insensitive search should find "acme" in the booktitle field.
+		Assert.True(entry.DoFieldsContainString(fieldNames, "acme"));
 
-		// Case sensitive search should not find "acme" in the booktitle tag.
-		Assert.False(entry.DoTagsContainString(tagNames, "acme", true));
+		// Case sensitive search should not find "acme" in the booktitle field.
+		Assert.False(entry.DoFieldsContainString(fieldNames, "acme", true));
 	}
 
 	#endregion
@@ -129,7 +129,7 @@ public class BibEntryTests
 	[InlineData(FieldValueFormat.CurlyBraces, "title = {Mapreduce}")]
 	[InlineData(FieldValueFormat.Quotes, "title = \"Mapreduce\"")]
 	[InlineData(FieldValueFormat.None, "title = Mapreduce")]
-	public void TestToStringWithWriteSettingsFormatsFieldValues(FieldValueFormat fieldValueFormat, string expectedTagLine)
+	public void TestToStringWithWriteSettingsFormatsFieldValues(FieldValueFormat fieldValueFormat, string expectedFieldLine)
 	{
 		BibEntry entry = new() { Type = "article", Key = "Dean2008" };
 		entry["title"] = "Mapreduce";
@@ -137,20 +137,20 @@ public class BibEntryTests
 		WriteSettings writeSettings = new()
 		{
 			AlignFieldValues			= false,
-			WhiteSpace				= WhiteSpace.Space,
+			WhiteSpace					= WhiteSpace.Space,
 			BibEntryFieldValueFormat	= fieldValueFormat,
-			BibEntryBracketType		= EntryBracketType.CurlyBraces
+			BibEntryBracketType			= EntryBracketType.CurlyBraces
 		};
 
 		string result = entry.ToString(writeSettings);
 
 		Assert.Contains("@article{Dean2008,", result);
-		Assert.Contains(expectedTagLine, result);
+		Assert.Contains(expectedFieldLine, result);
 		Assert.Contains("}", result);
 	}
 
 	[Fact]
-	public void TestToStringWithWriteSettingsFormatsMultipleTagValues()
+	public void TestToStringWithWriteSettingsFormatsMultipleFieldValues()
 	{
 		BibEntry entry = new()
 		{
@@ -165,7 +165,7 @@ public class BibEntryTests
 		WriteSettings writeSettings = new()
 		{
 			AlignFieldValues			= false,
-			WhiteSpace				= WhiteSpace.Space,
+			WhiteSpace					= WhiteSpace.Space,
 			BibEntryFieldValueFormat	= FieldValueFormat.CurlyBraces
 		};
 

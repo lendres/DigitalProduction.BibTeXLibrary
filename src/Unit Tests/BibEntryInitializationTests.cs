@@ -64,15 +64,15 @@ public class BibEntryInitializationTests
 	}
 
 	[Fact]
-	public void TestGetDefaultTagsFromString()
+	public void TestGetDefaultFieldsFromString()
 	{
 		BibEntryInitialization? initialization = BibEntryInitialization.Deserialize(_initializationFilePath);
 
 		Assert.NotNull(initialization);
 
-		List<string> tags = initialization!.GetDefaultTags("ConFeRence");
+		List<string> fields = initialization!.GetDefaultFields("ConFeRence");
 
-		Assert.Equal(["author", "title"], tags);
+		Assert.Equal(["author", "title"], fields);
 	}
 
 	[Fact]
@@ -82,24 +82,24 @@ public class BibEntryInitializationTests
 
 		BibEntry entry = BibEntry.NewBibEntryFromTemplate(initialization!, "inproceedings");
 
-		List<string> tags = entry.FieldNames;
+		List<string> fields = entry.FieldNames;
 
-		Assert.Equal("author", tags[0]);
-		Assert.Equal("affiliation", tags[1]);
-		Assert.Equal("title", tags[2]);
-		Assert.Equal("booktitle", tags[3]);
+		Assert.Equal("author", fields[0]);
+		Assert.Equal("affiliation", fields[1]);
+		Assert.Equal("title", fields[2]);
+		Assert.Equal("booktitle", fields[3]);
 	}
 
 	[Fact]
-	public void TestGetDefaultTagsForUnknownType()
+	public void TestGetDefaultFieldsForUnknownType()
 	{
 		BibEntryInitialization? initialization = BibEntryInitialization.Deserialize(_initializationFilePath);
 
 		Assert.NotNull(initialization);
 
-		List<string> tags = initialization!.GetDefaultTags("notARealType");
+		List<string> fields = initialization!.GetDefaultFields("notARealType");
 
-		Assert.Empty(tags);
+		Assert.Empty(fields);
 	}
 
 	#endregion

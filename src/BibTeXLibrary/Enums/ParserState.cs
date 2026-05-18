@@ -37,21 +37,21 @@ internal enum ParserState
 	[Description("In String Definition")]
 	InStringEntry,
 
-	/// <summary>In the name of a tag.</summary>
-	[Description("In Tag Name")]
-	InTagName,
+	/// <summary>In the name of a field.</summary>
+	[Description("In Field Name")]
+	InFiledName,
 
-	/// <summary>At the equal sign betwen a tag name and value.</summary>
-	[Description("In Tag Equal")]
-	InTagEqual,
+	/// <summary>At the equal sign betwen a field name and value.</summary>
+	[Description("In Field Equal")]
+	InFieldEqual,
 
-	/// <summary>In the value of a tag.</summary>
-	[Description("In Tag Value")]
-	InTagValue,
+	/// <summary>In the value of a field.</summary>
+	[Description("In Field Value")]
+	InFieldValue,
 
-	/// <summary>Finish reading the tag value.</summary>
-	[Description("Out of Tag Value")]
-	OutTagValue,
+	/// <summary>Finish reading the field value.</summary>
+	[Description("Out of Field Value")]
+	OutFieldValue,
 
 	/// <summary>Read a comment.</summary>
 	[Description("In comment")]

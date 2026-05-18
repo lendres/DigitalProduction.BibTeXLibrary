@@ -48,7 +48,7 @@ public class BibParserTests
     }
 
     [Fact]
-    public void TestParserWithoutKeyAndTags()
+    public void TestParserWithoutKeyAndFields()
     {
 		BibParser parser = new(new StringReader("@book{}"));
 		BibEntry entry = parser.Parse().Entries[0];
@@ -132,14 +132,14 @@ public class BibParserTests
 	}
 
     [Fact]
-    public void TestParserWithIncompletedTag()
+    public void TestParserWithIncompletedField()
     {
 		using BibParser parser = new(new StringReader("@book{,title=,}"));
 		Assert.Throws<UnexpectedTokenException>(() => parser.Parse());
 	}
 
     [Fact]
-    public void TestParserWithBrokenTag()
+    public void TestParserWithBrokenField()
     {
 		using BibParser parser = new(new StringReader("@book{,titl"));
 		Assert.Throws<UnexpectedTokenException>(() => parser.Parse());

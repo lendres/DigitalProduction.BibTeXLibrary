@@ -22,16 +22,16 @@ internal enum BuilderAction
 	SetKey,
 
 	/// <summary>Set the .</summary>
-	[Description("Set Tag Name")]
-	SetTagName,
+	[Description("Set Field Name")]
+	SetFieldName,
 
 	/// <summary>Set the .</summary>
-	[Description("Set Tag Value")]
-	SetTagValue,
+	[Description("Set Field Value")]
+	SetFieldValue,
 
 	/// <summary>Set the .</summary>
-	[Description("Set Tag")]
-	SetTag,
+	[Description("Set Field")]
+	SetField,
 
 	/// <summary>Build.</summary>
 	[Description("Build")]

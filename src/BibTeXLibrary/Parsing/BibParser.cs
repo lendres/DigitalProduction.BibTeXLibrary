@@ -46,41 +46,41 @@ public sealed class BibParser : IDisposable
 		} },
 
 		{ParserState.InStringEntry,	new TokenToNextMap {
-			{ TokenType.LeftBrace,			new Next(ParserState.InTagName,		BuilderAction.Skip) },
-			{ TokenType.LeftParenthesis,	new Next(ParserState.InTagName,		BuilderAction.Skip) }
+			{ TokenType.LeftBrace,			new Next(ParserState.InFiledName,	BuilderAction.Skip) },
+			{ TokenType.LeftParenthesis,	new Next(ParserState.InFiledName,	BuilderAction.Skip) }
 		} },
 
 		{ParserState.InKey,			new TokenToNextMap {
 			{ TokenType.RightBrace,			new Next(ParserState.OutEntry,		BuilderAction.Build) },
 			{ TokenType.Name,				new Next(ParserState.OutKey,		BuilderAction.SetKey) },
 			{ TokenType.String,				new Next(ParserState.OutKey,		BuilderAction.SetKey) },
-			{ TokenType.Comma,				new Next(ParserState.InTagName,		BuilderAction.Skip) }
+			{ TokenType.Comma,				new Next(ParserState.InFiledName,	BuilderAction.Skip) }
 		} },
 
 		{ParserState.OutKey,		new TokenToNextMap {
-			{ TokenType.Comma,				new Next(ParserState.InTagName,		BuilderAction.Skip) }
+			{ TokenType.Comma,				new Next(ParserState.InFiledName,	BuilderAction.Skip) }
 		} },
 
-		{ParserState.InTagName,		new TokenToNextMap {
-			{ TokenType.Name,				new Next(ParserState.InTagEqual,	BuilderAction.SetTagName) },
+		{ParserState.InFiledName,		new TokenToNextMap {
+			{ TokenType.Name,				new Next(ParserState.InFieldEqual,	BuilderAction.SetFieldName) },
 			{ TokenType.RightBrace,			new Next(ParserState.OutEntry,		BuilderAction.Build) }
 		} },
 
-		{ParserState.InTagEqual,	new TokenToNextMap {
-			{ TokenType.Equal,				new Next(ParserState.InTagValue,	BuilderAction.Skip) }
+		{ParserState.InFieldEqual,	new TokenToNextMap {
+			{ TokenType.Equal,				new Next(ParserState.InFieldValue,	BuilderAction.Skip) }
 		} },
 
-		{ParserState.InTagValue,	new TokenToNextMap {
-			{ TokenType.String,				new Next(ParserState.OutTagValue,	BuilderAction.SetTagValue) },
-			{ TokenType.Name,				new Next(ParserState.OutTagValue,	BuilderAction.SetTagValue) }
+		{ParserState.InFieldValue,	new TokenToNextMap {
+			{ TokenType.String,				new Next(ParserState.OutFieldValue,	BuilderAction.SetFieldValue) },
+			{ TokenType.Name,				new Next(ParserState.OutFieldValue,	BuilderAction.SetFieldValue) }
 		} },
 
-		{ParserState.OutTagValue,	new TokenToNextMap {
-			{ TokenType.Concatenation,		new Next(ParserState.InTagValue,	BuilderAction.Skip) },
-			{ TokenType.Comma,				new Next(ParserState.InTagName,		BuilderAction.SetTag) },
+		{ParserState.OutFieldValue,	new TokenToNextMap {
+			{ TokenType.Concatenation,		new Next(ParserState.InFieldValue,	BuilderAction.Skip) },
+			{ TokenType.Comma,				new Next(ParserState.InFiledName,	BuilderAction.SetField) },
 			{ TokenType.RightBrace,			new Next(ParserState.OutEntry,		BuilderAction.Build) },
 			{ TokenType.RightParenthesis,	new Next(ParserState.OutEntry,		BuilderAction.Build) },
-			{ TokenType.Comment,			new Next(ParserState.OutTagValue,	BuilderAction.Skip) },
+			{ TokenType.Comment,			new Next(ParserState.OutFieldValue,	BuilderAction.Skip) },
 		} },
 
 		{ParserState.OutEntry,		new TokenToNextMap {
@@ -114,7 +114,7 @@ public sealed class BibParser : IDisposable
 	private int                     _columnCount;
 
 	/// <summary>
-	/// Initializer for BibEntrys.  Used  to allow a defined order of tags.
+	/// Initializer for BibEntrys.  Used  to allow a defined order of fields.
 	/// </summary>
 	private BibEntryInitialization  _bibEntryInitialization     = new();
 
@@ -123,7 +123,7 @@ public sealed class BibParser : IDisposable
 	#region Public Fields
 
 	/// <summary>
-	/// Initializer for BibEntrys.  Used  to allow a defined order of tags.
+	/// Initializer for BibEntrys.  Used  to allow a defined order of fields.
 	/// </summary>
 	public BibEntryInitialization BibEntryInitializer { get => _bibEntryInitialization; set => _bibEntryInitialization = value; }
 
@@ -261,9 +261,9 @@ public sealed class BibParser : IDisposable
 			ParserState				nextState			= ParserState.Begin;
 
 			BibliographyPart?		bibPart				= null;
-			string					tagName				= "";
-			FieldValueType			tagValueType		= FieldValueType.String;
-			StringBuilder			tagValueBuilder		= new();
+			string					fieldName			= "";
+			FieldValueType			fieldValueType		= FieldValueType.String;
+			StringBuilder			fieldValueBuilder	= new();
 
 			// Fetch token from Tokenizer and build BibEntry.
 			foreach (Token token in Tokenize())
@@ -297,7 +297,7 @@ public sealed class BibParser : IDisposable
 						{
 							// Must add the value before doing the initialization.
 							BibEntry bibEntry = new() { Type = token.Value };
-							bibEntry.Initialize(_bibEntryInitialization.GetDefaultTags(bibEntry));
+							bibEntry.Initialize(_bibEntryInitialization.GetDefaultFields(bibEntry));
 							bibPart = bibEntry;
 						}
 						break;
@@ -312,35 +312,35 @@ public sealed class BibParser : IDisposable
 						break;
 					}
 
-					case BuilderAction.SetTagName:
+					case BuilderAction.SetFieldName:
 					{
-						tagName = token.Value;
+						fieldName = token.Value;
 						break;
 					}
 
-					case BuilderAction.SetTagValue:
+					case BuilderAction.SetFieldValue:
 					{
 						if (token.Type != TokenType.Concatenation)
 						{
-							tagValueType = token.Type == TokenType.String ? FieldValueType.String : FieldValueType.StringConstant;
+							fieldValueType = token.Type == TokenType.String ? FieldValueType.String : FieldValueType.StringConstant;
 						}
-						tagValueBuilder.Append(token.Value);
+						fieldValueBuilder.Append(token.Value);
 						break;
 					}
 
-					case BuilderAction.SetTag:
+					case BuilderAction.SetField:
 					{
 						Debug.Assert(bibPart != null, "bib != null");
-						SetTag(bibPart, ref tagName, tagValueType, tagValueBuilder);
+						SetField(bibPart, ref fieldName, fieldValueType, fieldValueBuilder);
 						break;
 					}
 
 					case BuilderAction.Build:
 					{
 						Debug.Assert(bibPart != null, "bib != null");
-						if (tagName != string.Empty)
+						if (fieldName != string.Empty)
 						{
-							SetTag(bibPart, ref tagName, tagValueType, tagValueBuilder);
+							SetField(bibPart, ref fieldName, fieldValueType, fieldValueBuilder);
 						}
 						bibliographyDOM.Add(bibPart);
 						break;
@@ -368,18 +368,18 @@ public sealed class BibParser : IDisposable
 	}
 
 	/// <summary>
-	/// Sets the tag and resets all the variables used to build the tag.
+	/// Sets the field and resets all the variables used to build the field.
 	/// </summary>
 	/// <param name="bibPart">BibliographyPart.</param>
-	/// <param name="tagName">The name of the tag.</param>
-	/// <param name="tagValueIsString">A boolean to indicate if the value of the tag is a name (string constant) or an ordinary string.</param>
-	/// <param name="tagValueBuilder">String builder used to build the tag value.</param>
-	private static void SetTag(BibliographyPart bibPart, ref string tagName, FieldValueType tagValueType, StringBuilder tagValueBuilder)
+	/// <param name="fieldName">The name of the field.</param>
+	/// <param name="fieldValueType">A boolean to indicate if the value of the field is a name (string constant) or an ordinary string.</param>
+	/// <param name="fieldValueBuilder">String builder used to build the field value.</param>
+	private static void SetField(BibliographyPart bibPart, ref string fieldName, FieldValueType fieldValueType, StringBuilder fieldValueBuilder)
 	{
 		Debug.Assert(bibPart != null, "bib != null");
-		bibPart.SetField(tagName, tagValueBuilder.ToString(), tagValueType);
-		tagValueBuilder.Clear();
-		tagName = string.Empty;
+		bibPart.SetField(fieldName, fieldValueBuilder.ToString(), fieldValueType);
+		fieldValueBuilder.Clear();
+		fieldName = string.Empty;
 	}
 
 	/// <summary>

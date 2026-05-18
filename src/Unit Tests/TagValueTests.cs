@@ -2,7 +2,7 @@
 
 namespace DigitalProduction.UnitTests;
 
-public class TagValueTests
+public class FieldValueTests
 {
 	[Theory]
 	[InlineData(FieldValueFormat.CurlyBraces, "{Mapreduce}")]
@@ -10,9 +10,9 @@ public class TagValueTests
 	[InlineData(FieldValueFormat.None, "Mapreduce")]
 	public void TestToStringWithFormat(FieldValueFormat format, string expected)
 	{
-		FieldValue tagValue = new("Mapreduce");
+		FieldValue fieldValue = new("Mapreduce");
 
-		string actual = tagValue.ToString(format);
+		string actual = fieldValue.ToString(format);
 
 		Assert.Equal(expected, actual);
 	}
@@ -20,32 +20,32 @@ public class TagValueTests
 	[Fact]
 	public void TestToStringWithFormatUsesCurrentContent()
 	{
-		FieldValue tagValue = new("Original");
+		FieldValue fieldValue = new("Original");
 
-		tagValue.Content = "Updated";
+		fieldValue.Content = "Updated";
 
-		Assert.Equal("{Updated}", tagValue.ToString(FieldValueFormat.CurlyBraces));
-		Assert.Equal("\"Updated\"", tagValue.ToString(FieldValueFormat.Quotes));
-		Assert.Equal("Updated", tagValue.ToString(FieldValueFormat.None));
+		Assert.Equal("{Updated}", fieldValue.ToString(FieldValueFormat.CurlyBraces));
+		Assert.Equal("\"Updated\"", fieldValue.ToString(FieldValueFormat.Quotes));
+		Assert.Equal("Updated", fieldValue.ToString(FieldValueFormat.None));
 	}
 
 	[Fact]
 	public void TestDefaultConstructorInitializesEmptyContent()
 	{
-		FieldValue tagValue = new();
+		FieldValue fieldValue = new();
 
-		Assert.Equal("{}", tagValue.ToString(FieldValueFormat.CurlyBraces));
-		Assert.Equal("\"\"", tagValue.ToString(FieldValueFormat.Quotes));
-		Assert.Equal(string.Empty, tagValue.ToString(FieldValueFormat.None));
+		Assert.Equal("{}", fieldValue.ToString(FieldValueFormat.CurlyBraces));
+		Assert.Equal("\"\"", fieldValue.ToString(FieldValueFormat.Quotes));
+		Assert.Equal(string.Empty, fieldValue.ToString(FieldValueFormat.None));
 	}
 
 	[Fact]
 	public void TestToStringWithInvalidFormatThrowsException()
 	{
-		FieldValue tagValue = new("Mapreduce");
+		FieldValue fieldValue = new("Mapreduce");
 
-		Exception exception = Assert.Throws<Exception>(() => tagValue.ToString((FieldValueFormat)999));
+		Exception exception = Assert.Throws<Exception>(() => fieldValue.ToString((FieldValueFormat)999));
 
-		Assert.Equal("Invalid tag format.", exception.Message);
+		Assert.Equal("Invalid field format.", exception.Message);
 	}
 }

@@ -16,7 +16,7 @@ public class BibEntry : BibliographyPart
 
 	private static readonly string[]						_nameSuffixes		= ["jr", "jr.", "sr", "sr.", "ii", "iii", "iv", "v", @"p\`{e}re", "fils"];
 
-	/// <summary>Store all tags.</summary>
+	/// <summary>Store all fields.</summary>
 	protected readonly OrderedDictionary<string, Field>		_fields				= [];
 
 	#endregion
@@ -43,7 +43,7 @@ public class BibEntry : BibliographyPart
 	public static BibEntry NewBibEntryFromTemplate(BibEntryInitialization bibEntryInitialization, string type)
 	{
 		BibEntry bibEntry = new() { Type = type };
-		bibEntry.Initialize(bibEntryInitialization.GetDefaultTags(type));
+		bibEntry.Initialize(bibEntryInitialization.GetDefaultFields(type));
 
 		return bibEntry;
 	}
@@ -63,7 +63,7 @@ public class BibEntry : BibliographyPart
 	public string Key { get => GetValueOrDefault(string.Empty); set => SetValue(value); }
 
 	/// <summary>
-	/// Get the names of the tags.
+	/// Get the names of the fields.
 	/// </summary>
 	public List<string> FieldNames { get => _fields.Keys.ToList(); }
 
@@ -343,13 +343,13 @@ public class BibEntry : BibliographyPart
 	}
 
 	/// <summary>
-	/// Check if the BibEntry contains a tag with the given name.
+	/// Check if the BibEntry contains a field with the given name.
 	/// </summary>
 	/// <param name="fieldName">Name to check for.</param>
-	/// <returns>True if the tag name exists, false otherwise.</returns>
+	/// <returns>True if the field name exists, false otherwise.</returns>
 	public bool ContainsFieldName(string fieldName)
 	{
-		if (!_caseSensitivetags)
+		if (!_caseSensitiveFields)
 		{
 			fieldName = fieldName.ToLower();
 		}
@@ -357,14 +357,14 @@ public class BibEntry : BibliographyPart
 	}
 
 	/// <summary>
-	/// Get value by given tag name (index) or create new tag by index and value.
+	/// Get value by given field name (index) or create new field by index and value.
 	/// </summary>
-	/// <param name="fieldName">Tag name.</param>
+	/// <param name="fieldName">Field name.</param>
 	public string this[string fieldName]
 	{
 		get
 		{
-			if (!_caseSensitivetags)
+			if (!_caseSensitiveFields)
 			{
 				fieldName = fieldName.ToLower();
 			}
@@ -373,7 +373,7 @@ public class BibEntry : BibliographyPart
 
 		set
 		{
-			if (!_caseSensitivetags)
+			if (!_caseSensitiveFields)
 			{
 				fieldName = fieldName.ToLower();
 			}
@@ -394,12 +394,12 @@ public class BibEntry : BibliographyPart
 	}
 
 	/// <summary>
-	/// Get a TagValue.
+	/// Get a FieldValue.
 	/// </summary>
-	/// <param name="fieldName">Name of the tag to get.</param>
+	/// <param name="fieldName">Name of the field to get.</param>
 	public Field GetField(string fieldName)
 	{
-		if (!_caseSensitivetags)
+		if (!_caseSensitiveFields)
 		{
 			fieldName = fieldName.ToLower();
 		}
@@ -407,16 +407,16 @@ public class BibEntry : BibliographyPart
 		{
 			return field;
 		}
-		throw new Exception("Invalid tag name: "+fieldName);
+		throw new Exception("Invalid field name: "+fieldName);
 	}
 
 	/// <summary>
-	/// Set a TagValue.
+	/// Set a FieldValue.
 	/// </summary>
-	/// <param name="fieldName">Name of the tag to get.</param>
+	/// <param name="fieldName">Name of the field to get.</param>
 	public override void SetField(string fieldName, string fieldValue, FieldValueType fieldValueType)
 	{
-		if (!_caseSensitivetags)
+		if (!_caseSensitiveFields)
 		{
 			fieldName = fieldName.ToLower();
 		}
@@ -440,20 +440,20 @@ public class BibEntry : BibliographyPart
 	}
 
 	/// <summary>
-	/// Determine if any of the specified tags contain the search string.
+	/// Determine if any of the specified fields contain the search string.
 	/// </summary>
-	/// <param name="tags">The tags to search within.</param>
+	/// <param name="fields">The fields to search within.</param>
 	/// <param name="searchString">The string to search for.</param>
 	/// <param name="caseSensitive">Whether the search should be case-sensitive.</param>
-	/// <returns>True if any tag contains the search string, false otherwise.</returns>
-	public bool DoTagsContainString(IEnumerable<string> tags, string searchString, bool caseSensitive = false)
+	/// <returns>True if any field contains the search string, false otherwise.</returns>
+	public bool DoFieldsContainString(IEnumerable<string> fields, string searchString, bool caseSensitive = false)
 	{
 		StringComparison stringComparison = caseSensitive ? StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase;
-		foreach (string fieldName in tags)
+		foreach (string fieldName in fields)
 		{
 			if (ContainsFieldName(fieldName))
 			{
-				// Some tags may contain brackets "{}" to indicate that the value should not be changed by BibTeX.  We do not want the search to include the brackets.
+				// Some fields may contain brackets "{}" to indicate that the value should not be changed by BibTeX.  We do not want the search to include the brackets.
 				string fieldValue = this[fieldName].Replace("{", string.Empty).Replace("}", string.Empty);
 				if (fieldValue.Contains(searchString, stringComparison))
 				{
@@ -475,7 +475,7 @@ public class BibEntry : BibliographyPart
 	private string GetFormattedName([CallerMemberName] string? propertyName = null)
 	{
 		System.Diagnostics.Debug.Assert(propertyName != null);
-		if (!_caseSensitivetags)
+		if (!_caseSensitiveFields)
 		{
 			propertyName = propertyName.ToLower();
 		}
@@ -542,10 +542,10 @@ public class BibEntry : BibliographyPart
 			bibliographyPart.Append(writeSettings.NewLine);
 		}
 
-		// Option to remove comma after last tag.
+		// Option to remove comma after last field.
 		if (writeSettings.RemoveLastComma)
 		{
-			// Remove comma after the last tag.  To do that, we need to remove the new line character and the
+			// Remove comma after the last field.  To do that, we need to remove the new line character and the
 			// comma and then replace it with a new line character.
 			bibliographyPart.Remove(bibliographyPart.Length - 1 - writeSettings.NewLine.Length, 1 + writeSettings.NewLine.Length);
 			bibliographyPart.Append(writeSettings.NewLine);
@@ -564,7 +564,7 @@ public class BibEntry : BibliographyPart
 	#region Public Methods for Names
 
 	/// <summary>
-	/// Initialize with a set of (ordered) tags.
+	/// Initialize with a set of (ordered) fields.
 	/// </summary>
 	public void Initialize(List<string> names)
 	{
@@ -575,11 +575,11 @@ public class BibEntry : BibliographyPart
 	}
 
 	/// <summary>
-	/// Change the Key of a tag.
+	/// Change the Key of a field.
 	/// </summary>
-	/// <param name="fieldName">Tag Key to change.</param>
-	/// <param name="newFieldName">New tag Key.</param>
-	/// <exception cref="ArgumentException">Thrown if the new tag Key already exists.</exception>
+	/// <param name="fieldName">Field Key to change.</param>
+	/// <param name="newFieldName">New field name.</param>
+	/// <exception cref="ArgumentException">Thrown if the new field name already exists.</exception>
 	public void RenameField(string fieldName, string newFieldName)
 	{
 		List<string> fieldNames = FieldNames;
@@ -608,8 +608,8 @@ public class BibEntry : BibliographyPart
 	{
 		// Get the authors.  The first step is to remove any internal braces ({}).  Then split on the " and " string (need spaces).
 		// If there are no authors, return a blank string.
-		string authorTag = Author.TrimStart('{').TrimEnd('}');
-		string[] authors = authorTag.Split([" and "], StringSplitOptions.RemoveEmptyEntries);
+		string authorField = Author.TrimStart('{').TrimEnd('}');
+		string[] authors = authorField.Split([" and "], StringSplitOptions.RemoveEmptyEntries);
 		if (authors.Length == 0)
 		{
 			return "";

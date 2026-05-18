@@ -258,7 +258,7 @@ public sealed class BibParser : IDisposable
 		try
 		{
 			ParserState			currentState			= ParserState.Begin;
-			BibliographyPart?	bibPart				= null;
+			BibliographyPart?	bibliographyPart				= null;
 			string				fieldName			= "";
 			FieldValueType		fieldValueType		= FieldValueType.String;
 			StringBuilder		fieldValueBuilder	= new();
@@ -285,22 +285,22 @@ public sealed class BibParser : IDisposable
 					{
 						if (token.Value.ToLower() == StringEntry.TypeString.ToLower())
 						{
-							bibPart = new StringEntry();
+							bibliographyPart = new StringEntry();
 						}
 						else
 						{
 							// Must add the value before doing the initialization.
 							BibEntry bibEntry = new() { Type = token.Value };
 							bibEntry.Initialize(_bibEntryInitialization.GetDefaultFields(bibEntry));
-							bibPart = bibEntry;
+							bibliographyPart = bibEntry;
 						}
 						break;
 					}
 
 					case BuildAction.SetKey:
 					{
-						Debug.Assert(bibPart != null, "Bibliography part is null.");
-						BibEntry? bibEntry = bibPart as BibEntry;
+						Debug.Assert(bibliographyPart != null, "Bibliography part is null.");
+						BibEntry? bibEntry = bibliographyPart as BibEntry;
 						Debug.Assert(bibEntry != null, "Invalid operation, the state should only be SetKey for a BibEntry.");
 						bibEntry.Key = token.Value;
 						break;
@@ -324,19 +324,19 @@ public sealed class BibParser : IDisposable
 
 					case BuildAction.SetField:
 					{
-						Debug.Assert(bibPart != null, "Bibliography part is null.");
-						SetField(bibPart, ref fieldName, fieldValueType, fieldValueBuilder);
+						Debug.Assert(bibliographyPart != null, "Bibliography part is null.");
+						SetField(bibliographyPart, ref fieldName, fieldValueType, fieldValueBuilder);
 						break;
 					}
 
 					case BuildAction.AddBibliographyPart:
 					{
-						Debug.Assert(bibPart != null, "Bibliography part is null.");
+						Debug.Assert(bibliographyPart != null, "Bibliography part is null.");
 						if (fieldName != string.Empty)
 						{
-							SetField(bibPart, ref fieldName, fieldValueType, fieldValueBuilder);
+							SetField(bibliographyPart, ref fieldName, fieldValueType, fieldValueBuilder);
 						}
-						bibliographyDOM.Add(bibPart);
+						bibliographyDOM.Add(bibliographyPart);
 						break;
 					}
 				}
@@ -364,14 +364,14 @@ public sealed class BibParser : IDisposable
 	/// <summary>
 	/// Sets the field and resets all the variables used to build the field.
 	/// </summary>
-	/// <param name="bibPart">BibliographyPart.</param>
+	/// <param name="bibliographyPart">BibliographyPart.</param>
 	/// <param name="fieldName">The name of the field.</param>
 	/// <param name="fieldValueType">A boolean to indicate if the value of the field is a name (string constant) or an ordinary string.</param>
 	/// <param name="fieldValueBuilder">String builder used to build the field value.</param>
-	private static void SetField(BibliographyPart bibPart, ref string fieldName, FieldValueType fieldValueType, StringBuilder fieldValueBuilder)
+	private static void SetField(BibliographyPart bibliographyPart, ref string fieldName, FieldValueType fieldValueType, StringBuilder fieldValueBuilder)
 	{
-		Debug.Assert(bibPart != null, "bib != null");
-		bibPart.SetField(fieldName, fieldValueBuilder.ToString(), fieldValueType);
+		Debug.Assert(bibliographyPart != null, "bib != null");
+		bibliographyPart.SetField(fieldName, fieldValueBuilder.ToString(), fieldValueType);
 		fieldValueBuilder.Clear();
 		fieldName = string.Empty;
 	}

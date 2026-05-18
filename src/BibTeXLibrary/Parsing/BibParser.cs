@@ -257,29 +257,23 @@ public sealed class BibParser : IDisposable
 	{
 		try
 		{
-			ParserState				curState			= ParserState.Begin;
-			ParserState				nextState			= ParserState.Begin;
-
-			BibliographyPart?		bibPart				= null;
-			string					fieldName			= "";
-			FieldValueType			fieldValueType		= FieldValueType.String;
-			StringBuilder			fieldValueBuilder	= new();
+			ParserState			curState			= ParserState.Begin;
+			BibliographyPart?	bibPart				= null;
+			string				fieldName			= "";
+			FieldValueType		fieldValueType		= FieldValueType.String;
+			StringBuilder		fieldValueBuilder	= new();
 
 			// Fetch token from Tokenizer and build BibEntry.
 			foreach (Token token in Tokenize())
 			{
-				// Transfer state.
-				if (StateMap[curState].TryGetValue(token.Type, out Next next))
-				{
-					nextState = next.State;
-				}
-				else
+				// Get the transfer state. Throw an exception if the token is not expected in the current state.
+				if (!StateMap[curState].TryGetValue(token.Type, out Next next))
 				{
 					IEnumerable<TokenType> expected = from pair in StateMap[curState] select pair.Key;
 					throw new UnexpectedTokenException(_lineCount, _columnCount, token.Type, [.. expected]);
 				}
 				// Build BibEntry.
-				switch (StateMap[curState][token.Type].Action)
+				switch (next.Action)
 				{
 					case BuilderAction.AddHeaderLine:
 					{
@@ -346,7 +340,7 @@ public sealed class BibParser : IDisposable
 						break;
 					}
 				}
-				curState = nextState;
+				curState = next.State;
 			}
 
 			// Check the current state.  Valid exit options are:

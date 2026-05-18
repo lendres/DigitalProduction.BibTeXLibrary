@@ -2,7 +2,7 @@
 
 namespace DigitalProduction.UnitTests;
 
-public class StringConstantSearchingTests
+public class StringEntrySearchingTests
 {
 	# region Fields
 
@@ -17,7 +17,7 @@ public class StringConstantSearchingTests
 
 	#region Construction
 
-	public StringConstantSearchingTests()
+	public StringEntrySearchingTests()
 	{
 		_bibliographyDom = ParseBibEntry(_stringConstants);
 	}

@@ -2,7 +2,7 @@
 
 namespace DigitalProduction.UnitTests;
 
-public class EventTests
+public class BibliographyEventTests
 {
 	string _message	= "";
 	string _file	= "testoutput.bib";

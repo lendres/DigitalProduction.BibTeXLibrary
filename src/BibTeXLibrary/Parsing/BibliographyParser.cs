@@ -3,14 +3,14 @@ using System.Text;
 
 namespace BibTeXLibrary;
 
-using Action = Dictionary<TokenType, Tuple<ParserState, BibBuilderState>>;
-using Next = Tuple<ParserState, BibBuilderState>;
-using StateMap = Dictionary<ParserState, Dictionary<TokenType, Tuple<ParserState, BibBuilderState>>>;
+internal record struct Next(ParserState State, BuildAction Action);
+internal class TokenToNextMap : Dictionary<TokenType, Next> { }
+internal class StateMap : Dictionary<ParserState, TokenToNextMap> { }
 
 /// <summxary>
 /// BibTeX file parser.
 /// </summary>
-public sealed class BibParser : IDisposable
+public sealed class BibliographyParser : IDisposable
 {
 	#region Static Fields
 
@@ -26,71 +26,71 @@ public sealed class BibParser : IDisposable
 	/// </summary>
 	private static readonly StateMap StateMap = new()
 	{
-		{ParserState.Begin,			new Action {
-			{ TokenType.Comment,			new Next(ParserState.InHeader,		BibBuilderState.SetHeader) },
-			{ TokenType.Start,				new Next(ParserState.InStart,		BibBuilderState.Skip) }
+		{ParserState.Begin,			new TokenToNextMap {
+			{ TokenType.Comment,			new Next(ParserState.InHeader,		BuildAction.AddHeaderLine) },
+			{ TokenType.Start,				new Next(ParserState.InStart,		BuildAction.Skip) }
 		} },
 
-		{ParserState.InHeader,		new Action {
-			{ TokenType.Comment,			new Next(ParserState.InHeader,		BibBuilderState.SetHeader) },
-			{ TokenType.Start,				new Next(ParserState.InStart,		BibBuilderState.Skip) }
+		{ParserState.InHeader,		new TokenToNextMap {
+			{ TokenType.Comment,			new Next(ParserState.InHeader,		BuildAction.AddHeaderLine) },
+			{ TokenType.Start,				new Next(ParserState.InStart,		BuildAction.Skip) }
 		} },
 
-		{ParserState.InStart,		new Action {
-			{ TokenType.Name,				new Next(ParserState.InEntry,		BibBuilderState.SetType) },
-			{ TokenType.StringType,			new Next(ParserState.InStringEntry,	BibBuilderState.SetType) }
+		{ParserState.InStart,		new TokenToNextMap {
+			{ TokenType.Name,				new Next(ParserState.InEntry,		BuildAction.SetType) },
+			{ TokenType.StringType,			new Next(ParserState.InStringEntry,	BuildAction.SetType) }
 		} },
 
-		{ParserState.InEntry,		new Action {
-			{ TokenType.LeftBrace,			new Next(ParserState.InKey,			BibBuilderState.Skip) }
+		{ParserState.InEntry,		new TokenToNextMap {
+			{ TokenType.LeftBrace,			new Next(ParserState.InKey,			BuildAction.Skip) }
 		} },
 
-		{ParserState.InStringEntry,	new Action {
-			{ TokenType.LeftBrace,			new Next(ParserState.InTagName,		BibBuilderState.Skip) },
-			{ TokenType.LeftParenthesis,	new Next(ParserState.InTagName,		BibBuilderState.Skip) }
+		{ParserState.InStringEntry,	new TokenToNextMap {
+			{ TokenType.LeftBrace,			new Next(ParserState.InFiledName,	BuildAction.Skip) },
+			{ TokenType.LeftParenthesis,	new Next(ParserState.InFiledName,	BuildAction.Skip) }
 		} },
 
-		{ParserState.InKey,			new Action {
-			{ TokenType.RightBrace,			new Next(ParserState.OutEntry,		BibBuilderState.Build) },
-			{ TokenType.Name,				new Next(ParserState.OutKey,		BibBuilderState.SetKey) },
-			{ TokenType.String,				new Next(ParserState.OutKey,		BibBuilderState.SetKey) },
-			{ TokenType.Comma,				new Next(ParserState.InTagName,		BibBuilderState.Skip) }
+		{ParserState.InKey,			new TokenToNextMap {
+			{ TokenType.RightBrace,			new Next(ParserState.OutEntry,		BuildAction.AddBibliographyPart) },
+			{ TokenType.Name,				new Next(ParserState.OutKey,		BuildAction.SetKey) },
+			{ TokenType.String,				new Next(ParserState.OutKey,		BuildAction.SetKey) },
+			{ TokenType.Comma,				new Next(ParserState.InFiledName,	BuildAction.Skip) }
 		} },
 
-		{ParserState.OutKey,		new Action {
-			{ TokenType.Comma,				new Next(ParserState.InTagName,		BibBuilderState.Skip) }
+		{ParserState.OutKey,		new TokenToNextMap {
+			{ TokenType.Comma,				new Next(ParserState.InFiledName,	BuildAction.Skip) }
 		} },
 
-		{ParserState.InTagName,		new Action {
-			{ TokenType.Name,				new Next(ParserState.InTagEqual,	BibBuilderState.SetTagName) },
-			{ TokenType.RightBrace,			new Next(ParserState.OutEntry,		BibBuilderState.Build) }
+		{ParserState.InFiledName,		new TokenToNextMap {
+			{ TokenType.Name,				new Next(ParserState.InFieldEqual,	BuildAction.SetFieldName) },
+			{ TokenType.RightBrace,			new Next(ParserState.OutEntry,		BuildAction.AddBibliographyPart) }
 		} },
 
-		{ParserState.InTagEqual,	new Action {
-			{ TokenType.Equal,				new Next(ParserState.InTagValue,	BibBuilderState.Skip) }
-			} },
-
-		{ParserState.InTagValue,	new Action {
-			{ TokenType.String,				new Next(ParserState.OutTagValue,	BibBuilderState.SetTagValue) },
-			{ TokenType.Name,				new Next(ParserState.OutTagValue,	BibBuilderState.SetTagValue) }
+		{ParserState.InFieldEqual,	new TokenToNextMap {
+			{ TokenType.Equal,				new Next(ParserState.InFieldValue,	BuildAction.Skip) }
 		} },
 
-		{ParserState.OutTagValue,	new Action {
-			{ TokenType.Concatenation,		new Next(ParserState.InTagValue,	BibBuilderState.Skip) },
-			{ TokenType.Comma,				new Next(ParserState.InTagName,		BibBuilderState.SetTag) },
-			{ TokenType.RightBrace,			new Next(ParserState.OutEntry,		BibBuilderState.Build) },
-			{ TokenType.RightParenthesis,	new Next(ParserState.OutEntry,		BibBuilderState.Build) },
-			{ TokenType.Comment,			new Next(ParserState.OutTagValue,	BibBuilderState.Skip) },
+		{ParserState.InFieldValue,	new TokenToNextMap {
+			{ TokenType.String,				new Next(ParserState.OutFieldValue,	BuildAction.SetFieldValue) },
+			{ TokenType.Name,				new Next(ParserState.OutFieldValue,	BuildAction.SetFieldValue) }
 		} },
 
-		{ParserState.OutEntry,		new Action {
-			{ TokenType.Start,				new Next(ParserState.InStart,		BibBuilderState.Skip) },
-			{ TokenType.Comment,			new Next(ParserState.InComment,		BibBuilderState.Skip) }
+		{ParserState.OutFieldValue,	new TokenToNextMap {
+			{ TokenType.Concatenation,		new Next(ParserState.InFieldValue,	BuildAction.Skip) },
+			{ TokenType.Comma,				new Next(ParserState.InFiledName,	BuildAction.SetField) },
+			{ TokenType.RightBrace,			new Next(ParserState.OutEntry,		BuildAction.AddBibliographyPart) },
+			{ TokenType.RightParenthesis,	new Next(ParserState.OutEntry,		BuildAction.AddBibliographyPart) },
+			{ TokenType.Comment,			new Next(ParserState.OutFieldValue,	BuildAction.Skip) },
 		} },
 
-		{ParserState.InComment,		new Action {
-			{ TokenType.Start,				new Next(ParserState.InStart,		BibBuilderState.Skip) },
-			{ TokenType.Comment,			new Next(ParserState.InComment,		BibBuilderState.Skip) }
+		{ParserState.OutEntry,		new TokenToNextMap {
+			{ TokenType.Start,				new Next(ParserState.InStart,		BuildAction.Skip) },
+			{ TokenType.Comment,			new Next(ParserState.InComment,		BuildAction.Skip) }
+		} },
+
+		{ParserState.InComment,		new TokenToNextMap {
+			{ TokenType.Start,				new Next(ParserState.InStart,		BuildAction.Skip) },
+			{ TokenType.Comment,			new Next(ParserState.InComment,		BuildAction.Skip) }
 		} },
 	};
 
@@ -114,7 +114,7 @@ public sealed class BibParser : IDisposable
 	private int                     _columnCount;
 
 	/// <summary>
-	/// Initializer for BibEntrys.  Used  to allow a defined order of tags.
+	/// Initializer for BibEntrys.  Used  to allow a defined order of fields.
 	/// </summary>
 	private BibEntryInitialization  _bibEntryInitialization     = new();
 
@@ -123,7 +123,7 @@ public sealed class BibParser : IDisposable
 	#region Public Fields
 
 	/// <summary>
-	/// Initializer for BibEntrys.  Used  to allow a defined order of tags.
+	/// Initializer for BibEntrys.  Used  to allow a defined order of fields.
 	/// </summary>
 	public BibEntryInitialization BibEntryInitializer { get => _bibEntryInitialization; set => _bibEntryInitialization = value; }
 
@@ -135,7 +135,7 @@ public sealed class BibParser : IDisposable
 	/// Constructor that reads a file using a StreamReader with default encoding.
 	/// </summary>
 	/// <param name="path">Full path and file name to the file to reader.</param>
-	public BibParser(string path) :
+	public BibliographyParser(string path) :
 		this(new StreamReader(path, Encoding.UTF8))
 	{
 	}
@@ -145,7 +145,7 @@ public sealed class BibParser : IDisposable
 	/// </summary>
 	/// <param name="path">Full path and file name to the file to reader.</param>'
 	/// <param name="bibEntryInitializationFile">Path of the BibEntry initialization information.</param>
-	public BibParser(string path, string bibEntryInitializationFile) :
+	public BibliographyParser(string path, string bibEntryInitializationFile) :
 		this(new StreamReader(path, Encoding.UTF8), bibEntryInitializationFile)
 	{
 	}
@@ -154,7 +154,7 @@ public sealed class BibParser : IDisposable
 	/// Constructor.
 	/// </summary>
 	/// <param name="textReader">TextReader.</param>
-	public BibParser(TextReader textReader)
+	public BibliographyParser(TextReader textReader)
 	{
 		_inputText = textReader;
 	}
@@ -164,7 +164,7 @@ public sealed class BibParser : IDisposable
 	/// </summary>
 	/// <param name="textReader">TextReader.</param>
 	/// <param name="bibEntryInitializationFile">Path to a BibEntryInitialization file.</param>
-	public BibParser(TextReader textReader, string bibEntryInitializationFile) :
+	public BibliographyParser(TextReader textReader, string bibEntryInitializationFile) :
 		this(textReader, BibEntryInitialization.Deserialize(bibEntryInitializationFile))
 	{
 	}
@@ -174,7 +174,7 @@ public sealed class BibParser : IDisposable
 	/// </summary>
 	/// <param name="textReader">TextReader.</param>
 	/// <param name="bibEntryInitialization">BibEntryInitialization.</param>
-	public BibParser(TextReader textReader, BibEntryInitialization? bibEntryInitialization)
+	public BibliographyParser(TextReader textReader, BibEntryInitialization? bibEntryInitialization)
 	{
 		if (bibEntryInitialization == null)
 		{
@@ -194,7 +194,7 @@ public sealed class BibParser : IDisposable
 	/// <param name="path">Full path and file name to the file to reader.</param>
 	public static BibliographyDOM Parse(string path)
 	{
-		using BibParser parser = new(path);
+		using BibliographyParser parser = new(path);
 		try
 		{
 			return parser.Parse();
@@ -211,7 +211,7 @@ public sealed class BibParser : IDisposable
 	/// <param name="inputText">TextReader containing the input text to be parsed.</param>
 	public static BibliographyDOM Parse(TextReader inputText)
 	{
-		using BibParser parser = new(inputText);
+		using BibliographyParser parser = new(inputText);
 		return parser.Parse();
 	}
 
@@ -232,7 +232,7 @@ public sealed class BibParser : IDisposable
 	/// <param name="bibEntryInitialization">BibEntryInitialization.</param>
 	public static BibliographyDOM Parse(TextReader inputText, BibEntryInitialization? bibEntryInitialization)
 	{
-		using BibParser parser = new(inputText, bibEntryInitialization);
+		using BibliographyParser parser = new(inputText, bibEntryInitialization);
 		return parser.Parse();
 	}
 
@@ -257,105 +257,99 @@ public sealed class BibParser : IDisposable
 	{
 		try
 		{
-			ParserState				curState			= ParserState.Begin;
-			ParserState				nextState			= ParserState.Begin;
-
-			BibliographyPart?		bibPart				= null;
-			string					tagName				= "";
-			FieldValueType			tagValueType		= FieldValueType.String;
-			StringBuilder			tagValueBuilder		= new();
+			ParserState			currentState			= ParserState.Begin;
+			BibliographyPart?	bibliographyPart				= null;
+			string				fieldName			= "";
+			FieldValueType		fieldValueType		= FieldValueType.String;
+			StringBuilder		fieldValueBuilder	= new();
 
 			// Fetch token from Tokenizer and build BibEntry.
 			foreach (Token token in Tokenize())
 			{
-				// Transfer state.
-				if (StateMap[curState].TryGetValue(token.Type, out Next? value))
+				// Get the transfer state. Throw an exception if the token is not expected in the current state.
+				if (!StateMap[currentState].TryGetValue(token.Type, out Next next))
 				{
-					nextState = value.Item1;
-				}
-				else
-				{
-					IEnumerable<TokenType> expected = from pair in StateMap[curState] select pair.Key;
+					IEnumerable<TokenType> expected = from pair in StateMap[currentState] select pair.Key;
 					throw new UnexpectedTokenException(_lineCount, _columnCount, token.Type, [.. expected]);
 				}
 				// Build BibEntry.
-				switch (StateMap[curState][token.Type].Item2)
+				switch (next.Action)
 				{
-					case BibBuilderState.SetHeader:
+					case BuildAction.AddHeaderLine:
 					{
 						bibliographyDOM.AddHeaderLine(token.Value);
 						break;
 					}
 
-					case BibBuilderState.SetType:
+					case BuildAction.SetType:
 					{
 						if (token.Value.ToLower() == StringEntry.TypeString.ToLower())
 						{
-							bibPart = new StringEntry();
+							bibliographyPart = new StringEntry();
 						}
 						else
 						{
 							// Must add the value before doing the initialization.
 							BibEntry bibEntry = new() { Type = token.Value };
-							bibEntry.Initialize(_bibEntryInitialization.GetDefaultTags(bibEntry));
-							bibPart = bibEntry;
+							bibEntry.Initialize(_bibEntryInitialization.GetDefaultFields(bibEntry));
+							bibliographyPart = bibEntry;
 						}
 						break;
 					}
 
-					case BibBuilderState.SetKey:
+					case BuildAction.SetKey:
 					{
-						Debug.Assert(bibPart != null, "bib != null");
-						BibEntry? bibEntry = bibPart as BibEntry;
+						Debug.Assert(bibliographyPart != null, "Bibliography part is null.");
+						BibEntry? bibEntry = bibliographyPart as BibEntry;
 						Debug.Assert(bibEntry != null, "Invalid operation, the state should only be SetKey for a BibEntry.");
 						bibEntry.Key = token.Value;
 						break;
 					}
 
-					case BibBuilderState.SetTagName:
+					case BuildAction.SetFieldName:
 					{
-						tagName = token.Value;
+						fieldName = token.Value;
 						break;
 					}
 
-					case BibBuilderState.SetTagValue:
+					case BuildAction.SetFieldValue:
 					{
 						if (token.Type != TokenType.Concatenation)
 						{
-							tagValueType = token.Type == TokenType.String ? FieldValueType.String : FieldValueType.StringConstant;
+							fieldValueType = token.Type == TokenType.String ? FieldValueType.String : FieldValueType.StringConstant;
 						}
-						tagValueBuilder.Append(token.Value);
+						fieldValueBuilder.Append(token.Value);
 						break;
 					}
 
-					case BibBuilderState.SetTag:
+					case BuildAction.SetField:
 					{
-						Debug.Assert(bibPart != null, "bib != null");
-						SetTag(bibPart, ref tagName, tagValueType, tagValueBuilder);
+						Debug.Assert(bibliographyPart != null, "Bibliography part is null.");
+						SetField(bibliographyPart, ref fieldName, fieldValueType, fieldValueBuilder);
 						break;
 					}
 
-					case BibBuilderState.Build:
+					case BuildAction.AddBibliographyPart:
 					{
-						Debug.Assert(bibPart != null, "bib != null");
-						if (tagName != string.Empty)
+						Debug.Assert(bibliographyPart != null, "Bibliography part is null.");
+						if (fieldName != string.Empty)
 						{
-							SetTag(bibPart, ref tagName, tagValueType, tagValueBuilder);
+							SetField(bibliographyPart, ref fieldName, fieldValueType, fieldValueBuilder);
 						}
-						bibliographyDOM.Add(bibPart);
+						bibliographyDOM.Add(bibliographyPart);
 						break;
 					}
 				}
-				curState = nextState;
+				currentState = next.State;
 			}
 
 			// Check the current state.  Valid exit options are:
 			//    ParserState.OutEntry : We have completed an entire entry.
 			//    ParserState.Begin    : There are no entries and no header information.
 			//    ParserState.InHeader : We read header information, but did not find any entries in the file.
-			if (curState != ParserState.OutEntry & curState != ParserState.Begin & curState != ParserState.InHeader)
+			if (currentState != ParserState.OutEntry & currentState != ParserState.Begin & currentState != ParserState.InHeader)
 			{
-				IEnumerable<BibTeXLibrary.TokenType> expected = from pair in StateMap[curState] select pair.Key;
+				IEnumerable<BibTeXLibrary.TokenType> expected = from pair in StateMap[currentState] select pair.Key;
 				throw new UnexpectedTokenException(_lineCount, _columnCount, TokenType.EOF, [.. expected]);
 			}
 		}
@@ -368,18 +362,18 @@ public sealed class BibParser : IDisposable
 	}
 
 	/// <summary>
-	/// Sets the tag and resets all the variables used to build the tag.
+	/// Sets the field and resets all the variables used to build the field.
 	/// </summary>
-	/// <param name="bibPart">BibliographyPart.</param>
-	/// <param name="tagName">The name of the tag.</param>
-	/// <param name="tagValueIsString">A boolean to indicate if the value of the tag is a name (string constant) or an ordinary string.</param>
-	/// <param name="tagValueBuilder">String builder used to build the tag value.</param>
-	private static void SetTag(BibliographyPart bibPart, ref string tagName, FieldValueType tagValueType, StringBuilder tagValueBuilder)
+	/// <param name="bibliographyPart">BibliographyPart.</param>
+	/// <param name="fieldName">The name of the field.</param>
+	/// <param name="fieldValueType">A boolean to indicate if the value of the field is a name (string constant) or an ordinary string.</param>
+	/// <param name="fieldValueBuilder">String builder used to build the field value.</param>
+	private static void SetField(BibliographyPart bibliographyPart, ref string fieldName, FieldValueType fieldValueType, StringBuilder fieldValueBuilder)
 	{
-		Debug.Assert(bibPart != null, "bib != null");
-		bibPart.SetField(tagName, tagValueBuilder.ToString(), tagValueType);
-		tagValueBuilder.Clear();
-		tagName = string.Empty;
+		Debug.Assert(bibliographyPart != null, "bib != null");
+		bibliographyPart.SetField(fieldName, fieldValueBuilder.ToString(), fieldValueType);
+		fieldValueBuilder.Clear();
+		fieldName = string.Empty;
 	}
 
 	/// <summary>

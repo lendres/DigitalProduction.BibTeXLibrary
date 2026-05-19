@@ -26,43 +26,43 @@ public class BibliographyDomSearchingTests
 	#region Tests
 
 	[Fact]
-    public void TestSearchInTagValues()
+    public void TestSearchInFieldValues()
     {
-		List<string> tagNames = ["booktitle", "author", "year", "abstract"];
+		List<string> fieldNames = ["booktitle", "author", "year", "abstract"];
 
-		List<BibEntry> result = _bibliographyDom.SearchBibEntries(tagNames, false, "acme");
+		List<BibEntry> result = _bibliographyDom.SearchBibEntries(fieldNames, false, "acme");
 		Assert.Single(result);
 		
-		result = _bibliographyDom.SearchBibEntries(tagNames, false, "Journal");
+		result = _bibliographyDom.SearchBibEntries(fieldNames, false, "Journal");
 		Assert.Equal(2, result.Count);
 	}
 
 	[Fact]
     public void TestSearchInSpecificValues()
     {
-		List<string> tagNames = ["author"];
-		List<BibEntry> result = _bibliographyDom.SearchBibEntries(tagNames, false, "John");
+		List<string> fieldNames = ["author"];
+		List<BibEntry> result = _bibliographyDom.SearchBibEntries(fieldNames, false, "John");
 		Assert.Single(result);
 	
-		tagNames = ["author", "abstract"];
-		result = _bibliographyDom.SearchBibEntries(tagNames, false, "John");
+		fieldNames = ["author", "abstract"];
+		result = _bibliographyDom.SearchBibEntries(fieldNames, false, "John");
 		Assert.Equal(2, result.Count);
 	}
 
 	[Fact]
     public void TestSearchWithKeys()
     {
-		List<string> tagNames = [];
-		List<BibEntry> result = _bibliographyDom.SearchBibEntries(tagNames, true, "A1");
+		List<string> fieldNames = [];
+		List<BibEntry> result = _bibliographyDom.SearchBibEntries(fieldNames, true, "A1");
 		Assert.Single(result);
 	}
 
 	[Fact]
-    public void TestSearchOfTagWithBrackets()
+    public void TestSearchOfFieldWithBrackets()
     {
 		// The book title is "Journal of {SCIENCE} Fiction" but we will search for "Journal of SCIENCE Fiction".
-		List<string> tagNames = ["booktitle"];
-		List<BibEntry> result = _bibliographyDom.SearchBibEntries(tagNames, false, "Journal of SCIENCE Fiction");
+		List<string> fieldNames = ["booktitle"];
+		List<BibEntry> result = _bibliographyDom.SearchBibEntries(fieldNames, false, "Journal of SCIENCE Fiction");
 		Assert.Single(result);
 	}
 
@@ -72,7 +72,7 @@ public class BibliographyDomSearchingTests
 
 	private static BibliographyDOM ParseBibEntry(string bibString)
 	{
-		BibParser parser = new(new StringReader(bibString));
+		BibliographyParser parser = new(new StringReader(bibString));
 		return parser.Parse();
 	}
 

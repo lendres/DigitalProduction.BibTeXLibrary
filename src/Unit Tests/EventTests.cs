@@ -61,12 +61,12 @@ public class EventTests
 		SaveBibliography(bibliography);
 
 		// Test adding an entry using bracket notation. This should cause it to be marked as modified again.
-		entry["NewTag"] = "New tag added using bracket notation.";
+		entry["NewField"] = "New field added using bracket notation.";
 		Assert.Equal("True", GetAndResetMessage());
 		SaveBibliography(bibliography);
 
 		// Test adding the same value. This should NOT cause it to be marked as modified again.
-		entry["NewTag"] = "New tag added using bracket notation.";
+		entry["NewField"] = "New field added using bracket notation.";
 		Assert.False(bibliography.Modified);
 		Assert.Equal("", GetAndResetMessage());
     }

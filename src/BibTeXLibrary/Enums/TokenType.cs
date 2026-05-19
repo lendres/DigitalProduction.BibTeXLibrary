@@ -37,7 +37,7 @@ public enum TokenType
 	[Description("Left Parenthesis")]
 	LeftParenthesis,
 
-	/// <summary>The value of a cite key, tag name, or name of a string definition.</summary>
+	/// <summary>The value of a cite key, field name, or name of a string definition.</summary>
 	[Description("Name")]
 	Name,
 
@@ -57,7 +57,7 @@ public enum TokenType
 	[Description("Start")]
 	Start,
 
-	/// <summary>String.  The contents of a tag value.</summary>
+	/// <summary>String.  The contents of a field value.</summary>
 	[Description("String")]
 	String,
 

@@ -65,7 +65,7 @@ public class WriteSettings : NotifyPropertyModifiedChanged
 	}
 
 	/// <summary>
-	/// Specifies if the tag values should be aligned at the equal sign.
+	/// Specifies if the field values should be aligned at the equal sign.
 	/// </summary>
 	[XmlAttribute("alignatequals")]
 	public bool AlignFieldValues
@@ -75,7 +75,7 @@ public class WriteSettings : NotifyPropertyModifiedChanged
 	}
 
 	/// <summary>
-	/// Specifies the column number to align tag values at when using spaces as the white space.
+	/// Specifies the column number to align field values at when using spaces as the white space.
 	/// </summary>
 	[XmlAttribute("stringentrybrackettype")]
 	public EntryBracketType StringEntryBracketType
@@ -85,7 +85,7 @@ public class WriteSettings : NotifyPropertyModifiedChanged
 	}
 
 	/// <summary>
-	/// Specifies the column number to align tag values at when using spaces as the white space.
+	/// Specifies the column number to align field values at when using spaces as the white space.
 	/// </summary>
 	[XmlAttribute("bibentrybrackettype")]
 	public EntryBracketType BibEntryBracketType
@@ -95,7 +95,7 @@ public class WriteSettings : NotifyPropertyModifiedChanged
 	}
 
 	/// <summary>
-	/// Specifies the column number to align tag values at when using spaces as the white space.
+	/// Specifies the column number to align field values at when using spaces as the white space.
 	/// </summary>
 	[XmlAttribute("stringentryalignatcolumn")]
 	public int StringEntryAlignAtColumn
@@ -105,7 +105,7 @@ public class WriteSettings : NotifyPropertyModifiedChanged
 	}
 
 	/// <summary>
-	/// Specifies the column number to align tag values at when using spaces as the white space.
+	/// Specifies the column number to align field values at when using spaces as the white space.
 	/// </summary>
 	[XmlAttribute("bibentryalignatcolumn")]
 	public int BibEntryAlignAtColumn
@@ -115,7 +115,7 @@ public class WriteSettings : NotifyPropertyModifiedChanged
 	}
 
 	/// <summary>
-	/// Specifies the tab stop number to align tag values at when using spaces as the white space.
+	/// Specifies the tab stop number to align field values at when using spaces as the white space.
 	/// </summary>
 	[XmlAttribute("stringentryalignattabstop")]
 	public int StringEntryAlignAtTabStop
@@ -125,7 +125,7 @@ public class WriteSettings : NotifyPropertyModifiedChanged
 	}
 
 	/// <summary>
-	/// Specifies the tab stop number to align tag values at when using spaces as the white space.
+	/// Specifies the tab stop number to align field values at when using spaces as the white space.
 	/// </summary>
 	[XmlAttribute("bibentryalignattabstop")]
 	public int BibEntryAlignAtTabStop
@@ -135,9 +135,9 @@ public class WriteSettings : NotifyPropertyModifiedChanged
 	}
 
 	/// <summary>
-	/// Specifies the format for writing the tag values of StringConstant when the tag value is a string.
+	/// Specifies the format for writing the field values of StringConstant when the field value is a string.
 	/// </summary>
-	[XmlAttribute("stringentrytagvalueformat")]
+	[XmlAttribute("stringentryfieldvalueformat")]
 	public FieldValueFormat StringEntryFieldValueFormat
 	{
 		get => GetValueOrDefault(FieldValueFormat.Quotes);
@@ -145,9 +145,9 @@ public class WriteSettings : NotifyPropertyModifiedChanged
 	}
 
 	/// <summary>
-	/// Specifies the format for writing the tag values of BibEntries when the tag value is a string.
+	/// Specifies the format for writing the field values of BibEntries when the field value is a string.
 	/// </summary>
-	[XmlAttribute("bibentrytagvalueformat")]
+	[XmlAttribute("bibentryfieldvalueformat")]
 	public FieldValueFormat BibEntryFieldValueFormat
 	{
 		get => GetValueOrDefault(FieldValueFormat.CurlyBraces);
@@ -155,7 +155,7 @@ public class WriteSettings : NotifyPropertyModifiedChanged
 	}
 
 	/// <summary>
-	/// Remove the comma after the last tag in a BibEntry.
+	/// Remove the comma after the last field in a BibEntry.
 	/// </summary>
 	[XmlAttribute("removelastcomma")]
 	public bool RemoveLastComma

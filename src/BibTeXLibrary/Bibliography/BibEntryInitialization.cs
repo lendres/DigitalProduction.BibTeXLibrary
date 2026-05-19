@@ -50,19 +50,19 @@ public class BibEntryInitialization
 	#region Methods
 
 	/// <summary>
-	/// Gets the default set of (ordered) tags for a type of bibliography entry.
+	/// Gets the default set of (ordered) fields for a type of bibliography entry.
 	/// </summary>
 	/// <param name="bibEntry">BibTex entry type.</param>
-	public List<string> GetDefaultTags(BibEntry bibEntry)
+	public List<string> GetDefaultFields(BibEntry bibEntry)
 	{
-		return GetDefaultTags(bibEntry.Type);
+		return GetDefaultFields(bibEntry.Type);
 	}
 
 	/// <summary>
-	/// Gets the default set of (ordered) tags for a type of bibliography entry.
+	/// Gets the default set of (ordered) fields for a type of bibliography entry.
 	/// </summary>
 	/// <param name="type">BibTex entry type.</param>
-	public List<string> GetDefaultTags(string type)
+	public List<string> GetDefaultFields(string type)
 	{
 		type = type.ToLower();
 

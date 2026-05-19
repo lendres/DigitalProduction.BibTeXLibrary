@@ -7,11 +7,11 @@ namespace BibTeXLibrary;
 /// 
 /// The "Description" attribute can be accessed using Reflection to get a string representing the enumeration type.
 /// </summary>
-internal enum BibBuilderState
+internal enum BuildAction
 {
-	/// <summary>Set the header.</summary>
-	[Description("Set Header")]
-	SetHeader,
+	/// <summary>Add a header line.</summary>
+	[Description("Add Header Line")]
+	AddHeaderLine,
 
 	/// <summary>Set the .</summary>
 	[Description("Set Type")]
@@ -22,20 +22,20 @@ internal enum BibBuilderState
 	SetKey,
 
 	/// <summary>Set the .</summary>
-	[Description("Set Tag Name")]
-	SetTagName,
+	[Description("Set Field Name")]
+	SetFieldName,
 
 	/// <summary>Set the .</summary>
-	[Description("Set Tag Value")]
-	SetTagValue,
+	[Description("Set Field Value")]
+	SetFieldValue,
 
 	/// <summary>Set the .</summary>
-	[Description("Set Tag")]
-	SetTag,
+	[Description("Set Field")]
+	SetField,
 
 	/// <summary>Build.</summary>
 	[Description("Build")]
-	Build,
+	AddBibliographyPart,
 
 	/// <summary>Skip.</summary>
 	[Description("Skip")]

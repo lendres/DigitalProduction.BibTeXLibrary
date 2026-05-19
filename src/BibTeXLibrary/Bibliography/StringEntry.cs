@@ -91,12 +91,12 @@ public class StringEntry : BibliographyPart
 	}
 
 	/// <summary>
-	/// Set a TagValue.
+	/// Set a FieldValue.
 	/// </summary>
-	/// <param name="fieldName">Name of the tag to get.</param>
+	/// <param name="fieldName">Name of the field to get.</param>
 	public override void SetField(string fieldName, string fieldValue, FieldValueType fieldValueType)
 	{
-		if (!_caseSensitivetags)
+		if (!_caseSensitiveFields)
 		{
 			fieldName = fieldName.ToLower();
 		}

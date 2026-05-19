@@ -19,7 +19,7 @@ public class Field : NotifyPropertyModifiedChanged
 	/// <summary>
 	/// Copy constructor.
 	/// </summary>
-	/// <param name="field">The tag content.</param>
+	/// <param name="field">The field content.</param>
 	public Field(Field field)
 	{
 		Name		= field.Name;
@@ -112,7 +112,7 @@ public class Field : NotifyPropertyModifiedChanged
 	}
 
 	/// <summary>
-	/// Get the space between the tag "key" and the tag "value".
+	/// Get the space between the field "name" and the field "value".
 	/// 
 	/// Examples:
 	/// % Use a space between the key and value (no alignment).
@@ -127,7 +127,7 @@ public class Field : NotifyPropertyModifiedChanged
 	/// 
 	/// % Use a space between the key and value (no alignment).
 	/// </summary>
-	/// <param name="fieldName">The tag key as a string.</param>
+	/// <param name="fieldName">The field key as a string.</param>
 	protected string GetSpacing(string fieldName, WriteSettings writeSettings, int alignAtTabStop, int alignAtColumn)
 	{
 		// If we are not aligning values, just return a space.

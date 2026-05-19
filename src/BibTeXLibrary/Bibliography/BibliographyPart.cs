@@ -9,12 +9,12 @@ namespace BibTeXLibrary;
 /// <remarks>
 /// Default constructor.
 /// </remarks>
-public abstract class BibliographyPart(bool caseSensitivetags) : NotifyPropertyModifiedChanged
+public abstract class BibliographyPart(bool caseSensitiveFields) : NotifyPropertyModifiedChanged
 {
 	#region Fields
 
-	/// <summary>Specifies if the tags are case sensitive.</summary>
-	protected readonly bool		_caseSensitivetags		= caseSensitivetags;
+	/// <summary>Specifies if the fields are case sensitive.</summary>
+	protected readonly bool		_caseSensitiveFields		= caseSensitiveFields;
 
 	#endregion
 
@@ -50,12 +50,12 @@ public abstract class BibliographyPart(bool caseSensitivetags) : NotifyPropertyM
 
 	#endregion
 
-	#region Public Tag Value Methods
+	#region Public Field Value Methods
 
 	/// <summary>
-	/// Set a TagValue.
+	/// Set a FieldValue.
 	/// </summary>
-	/// <param name="tagName">Name of the tag to get.</param>
+	/// <param name="fieldName">Name of the field to set.</param>
 	public abstract void SetField(string fieldName, string fieldValue, FieldValueType fieldValueType);
 
 	#endregion

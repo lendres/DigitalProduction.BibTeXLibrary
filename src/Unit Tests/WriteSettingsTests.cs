@@ -9,7 +9,7 @@ public class WriteSettingsTests
 {
 
 	[Fact]
-	public void TestToStringWithWriteSettingsFormatsMultipleTagValues()
+	public void TestToStringWithWriteSettingsFormatsMultipleFieldValues()
 	{
 		WriteSettings	settings	= new();
 		string			serialized	= SerializeObjectToString(settings);

@@ -25,7 +25,9 @@ public class BibliographyTests
 
 	#endregion
 
-	#region Cite Key Generation
+	#region Cite Key
+
+	#region Generation
 
 	[Fact]
 	public void TestHavingAndInName()
@@ -36,11 +38,64 @@ public class BibliographyTests
 		Assert.Equal("ref:menand2004a", result.Key);
 	}
 
+
+	[Fact]
+	public void GenerateUniqueCiteKeySkipsSuffixWhenGeneratedKeyIsAlreadyInUse()
+	{
+		BibEntry entry = _bibliography.Entries[1];
+
+		// Set the first entry's key to be the "a" value.
+		_bibliography.GenerateUniqueCiteKey(_bibliography.Entries[0]);
+
+		// Generate the second entry's key, which should be the "b" value since the "a" value is already in use.
+		_bibliography.GenerateUniqueCiteKey(entry);
+
+		Assert.Equal("ref:smith2023a", _bibliography.Entries[0].Key);
+		Assert.Equal("ref:smith2023b", entry.Key);
+	}
+
+	#endregion
+
+	#region In Use
+
+	[Theory]
+	[InlineData("ref:keyA1")]
+	[InlineData("REF:KEYA1")]
+	[InlineData("ref:keyb2")]
+	[InlineData("10.2118/87837-PA")]
+	public void IsKeyInUseReturnsTrueWhenKeyExists(string key)
+	{
+		Assert.True(_bibliography.IsKeyInUse(key));
+	}
+
+	[Theory]
+	[InlineData("ref:keyA")]
+	[InlineData("ref:keyA10")]
+	[InlineData("keyA1")]
+	[InlineData("")]
+	public void IsKeyInUseReturnsFalseWhenKeyDoesNotExist(string key)
+	{
+		Assert.False(_bibliography.IsKeyInUse(key));
+	}
+
+	[Fact]
+	public void IsKeyInUseReturnsTrueAfterKeyIsChanged()
+	{
+		BibEntry entry = _bibliography.Entries[0];
+
+		entry.Key = "ref:changedKey";
+
+		Assert.True(_bibliography.IsKeyInUse("ref:changedKey"));
+		Assert.True(_bibliography.IsKeyInUse("REF:CHANGEDKEY"));
+	}
+
+	#endregion
+
 	#endregion
 
 	#region Reading and Writing Files
 
-    [Fact]
+	[Fact]
     public void TestReadingBibFile()
     {
 		Bibliography bibliography = new();
@@ -79,7 +134,7 @@ public class BibliographyTests
 
 	private Bibliography ParseBibEntry(string bibString)
 	{
-		BibParser parser = new(new StringReader(bibString));
+		BibliographyParser parser = new(new StringReader(bibString));
 		return (Bibliography)parser.Parse(_bibliography);
 	}
 

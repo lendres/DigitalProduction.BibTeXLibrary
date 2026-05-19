@@ -1,6 +1,7 @@
 ﻿using BibTeXLibrary;
 using System.Collections.ObjectModel;
 using System.Text;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace DigitalProduction.UnitTests;
 
@@ -265,9 +266,10 @@ public class BibParserTests
 
 		BibliographyDOM bibliographyDom = ParseBibEntry(bibString);
 
-		Assert.Equal(2, bibliographyDom.Header.Count);
-		Assert.Equal("% First header line", bibliographyDom.Header[0]);
-		Assert.Equal("% Second header line", bibliographyDom.Header[1]);
+		List<string> lines = GetHeaderAsSeparateLines(bibliographyDom.Header);
+
+		Assert.Equal("% First header line", lines[0]);
+		Assert.Equal("% Second header line", lines[1]);
 		Assert.Single(bibliographyDom.Entries);
 	}
 
@@ -283,10 +285,19 @@ public class BibParserTests
 
 		BibliographyDOM bibliographyDom = ParseBibEntry(bibString);
 
-		Assert.Equal(2, bibliographyDom.Header.Count);
-		Assert.Equal("% First header line", bibliographyDom.Header[0]);
-		Assert.Equal("% Second header line", bibliographyDom.Header[1]);
+		List<string> lines = GetHeaderAsSeparateLines(bibliographyDom.Header);
+
+		Assert.Equal(2, lines.Count);
+		Assert.Equal("% First header line", lines[0]);
+		Assert.Equal("% Second header line", lines[1]);
 		Assert.Single(bibliographyDom.Entries);
+	}
+
+	private List<string> GetHeaderAsSeparateLines(string header)
+	{
+		string[] trimChars = new[] { "\r\n", "\r", "\n" };
+		header = DigitalProduction.Strings.Format.TrimEnd(header, trimChars);
+		return header.Split(trimChars, StringSplitOptions.None).ToList();
 	}
 
 	#endregion

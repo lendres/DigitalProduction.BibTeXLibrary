@@ -93,12 +93,8 @@ public class Bibliography : BibliographyDOM
 		// Make sure the BibEntries use the expected line feed and carriage return character(s).
 		writeSettings.NewLine = streamWriter.NewLine;
 
-		// Write the header.  The header is stored as separate lines so when we write it we can use
-		// the expected line ending type (\r\n, \n) used by the writer.
-		foreach (string line in Header)
-		{
-			streamWriter.WriteLine(line);
-		}
+		// Write the header.
+		streamWriter.Write(Header);
 
 		// Write string constants.
 		if (StringConstants.Count > 0)

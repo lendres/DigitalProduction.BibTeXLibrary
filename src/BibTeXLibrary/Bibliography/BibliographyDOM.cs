@@ -12,7 +12,6 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 {
 	#region Fields
 
-	private readonly List<string>							_header				= [];
 	private readonly ObservableCollection<BibEntry>			_bibEntries			= [];
 	private readonly ObservableCollection<StringEntry>		_strings			= [];
 
@@ -36,7 +35,7 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 	/// <summary>
 	/// The file header.
 	/// </summary>
-	public List<string> Header { get { return _header; } }
+	public string Header { get; set; } = string.Empty;
 
 	/// <summary>
 	/// Get the bibliography entries.
@@ -95,7 +94,7 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 	/// </summary>
 	public void Clear()
 	{
-		_header.Clear();
+		Header = string.Empty;
 		_bibEntries.Clear();
 		_strings.Clear();
 	}
@@ -128,7 +127,7 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 	/// <param name="line">Line to add.</param>
 	public void AddHeaderLine(string line)
 	{
-		_header.Add(line);
+		Header += line + Environment.NewLine;
 	}
 
 	/// <summary>

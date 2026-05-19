@@ -18,7 +18,7 @@ public sealed class BibliographyParser : IDisposable
 
 	#endregion
 
-	#region Constant Fields
+	#region State Map
 
 	/// <summary>
 	/// State tranfer map.
@@ -27,12 +27,20 @@ public sealed class BibliographyParser : IDisposable
 	private static readonly StateMap StateMap = new()
 	{
 		{ParserState.Begin,			new TokenToNextMap {
+			{ TokenType.BlankLine,			new Next(ParserState.InStart,		BuildAction.Skip) },
 			{ TokenType.Comment,			new Next(ParserState.InHeader,		BuildAction.AddHeaderLine) },
 			{ TokenType.Start,				new Next(ParserState.InStart,		BuildAction.Skip) }
 		} },
 
 		{ParserState.InHeader,		new TokenToNextMap {
+			{ TokenType.BlankLine,			new Next(ParserState.OutHeader,		BuildAction.Skip) },
 			{ TokenType.Comment,			new Next(ParserState.InHeader,		BuildAction.AddHeaderLine) },
+			{ TokenType.Start,				new Next(ParserState.InStart,		BuildAction.Skip) }
+		} },
+
+		{ParserState.OutHeader,		new TokenToNextMap {
+			{ TokenType.BlankLine,			new Next(ParserState.OutHeader,		BuildAction.Skip) },
+			{ TokenType.Comment,			new Next(ParserState.OutHeader,		BuildAction.Skip) },
 			{ TokenType.Start,				new Next(ParserState.InStart,		BuildAction.Skip) }
 		} },
 
@@ -51,6 +59,7 @@ public sealed class BibliographyParser : IDisposable
 		} },
 
 		{ParserState.InKey,			new TokenToNextMap {
+			{ TokenType.BlankLine,			new Next(ParserState.InKey,		BuildAction.Skip) },
 			{ TokenType.RightBrace,			new Next(ParserState.OutEntry,		BuildAction.AddBibliographyPart) },
 			{ TokenType.Name,				new Next(ParserState.OutKey,		BuildAction.SetKey) },
 			{ TokenType.String,				new Next(ParserState.OutKey,		BuildAction.SetKey) },
@@ -58,24 +67,29 @@ public sealed class BibliographyParser : IDisposable
 		} },
 
 		{ParserState.OutKey,		new TokenToNextMap {
+			{ TokenType.BlankLine,			new Next(ParserState.OutKey,		BuildAction.Skip) },
 			{ TokenType.Comma,				new Next(ParserState.InFiledName,	BuildAction.Skip) }
 		} },
 
 		{ParserState.InFiledName,		new TokenToNextMap {
+			{ TokenType.BlankLine,			new Next(ParserState.InFiledName,		BuildAction.Skip) },
 			{ TokenType.Name,				new Next(ParserState.InFieldEqual,	BuildAction.SetFieldName) },
 			{ TokenType.RightBrace,			new Next(ParserState.OutEntry,		BuildAction.AddBibliographyPart) }
 		} },
 
 		{ParserState.InFieldEqual,	new TokenToNextMap {
+			{ TokenType.BlankLine,			new Next(ParserState.InFieldEqual,		BuildAction.Skip) },
 			{ TokenType.Equal,				new Next(ParserState.InFieldValue,	BuildAction.Skip) }
 		} },
 
 		{ParserState.InFieldValue,	new TokenToNextMap {
+			{ TokenType.BlankLine,			new Next(ParserState.InFieldValue,		BuildAction.Skip) },
 			{ TokenType.String,				new Next(ParserState.OutFieldValue,	BuildAction.SetFieldValue) },
 			{ TokenType.Name,				new Next(ParserState.OutFieldValue,	BuildAction.SetFieldValue) }
 		} },
 
 		{ParserState.OutFieldValue,	new TokenToNextMap {
+			{ TokenType.BlankLine,			new Next(ParserState.OutFieldValue,		BuildAction.Skip) },
 			{ TokenType.Concatenation,		new Next(ParserState.InFieldValue,	BuildAction.Skip) },
 			{ TokenType.Comma,				new Next(ParserState.InFiledName,	BuildAction.SetField) },
 			{ TokenType.RightBrace,			new Next(ParserState.OutEntry,		BuildAction.AddBibliographyPart) },
@@ -84,11 +98,13 @@ public sealed class BibliographyParser : IDisposable
 		} },
 
 		{ParserState.OutEntry,		new TokenToNextMap {
+			{ TokenType.BlankLine,			new Next(ParserState.OutEntry,		BuildAction.Skip) },
 			{ TokenType.Start,				new Next(ParserState.InStart,		BuildAction.Skip) },
 			{ TokenType.Comment,			new Next(ParserState.InComment,		BuildAction.Skip) }
 		} },
 
 		{ParserState.InComment,		new TokenToNextMap {
+			{ TokenType.BlankLine,			new Next(ParserState.InComment,		BuildAction.Skip) },
 			{ TokenType.Start,				new Next(ParserState.InStart,		BuildAction.Skip) },
 			{ TokenType.Comment,			new Next(ParserState.InComment,		BuildAction.Skip) }
 		} },
@@ -386,6 +402,7 @@ public sealed class BibliographyParser : IDisposable
 		char    c;
 		int     braceCount          = 0;
 		int     parenthesisCount    = 0;
+		bool	isBlankLine			= true;
 
 		while ((code = Peek()) != -1)
 		{
@@ -393,12 +410,14 @@ public sealed class BibliographyParser : IDisposable
 
 			if (c == '@')
 			{
+				isBlankLine = false;
 				Read();
 				yield return new Token(TokenType.Start);
 			}
 			else if (IsStringCharacter(c))
 			{
-				StringBuilder value = new();
+				isBlankLine			= false;
+				StringBuilder value	= new();
 
 				while (true)
 				{
@@ -424,6 +443,7 @@ public sealed class BibliographyParser : IDisposable
 			}
 			else if (c == '"')
 			{
+				isBlankLine				= false;
 				StringBuilder value     = new();
 				int internalBraceCount  = 0;
 
@@ -459,6 +479,8 @@ public sealed class BibliographyParser : IDisposable
 			}
 			else if (c == '{')
 			{
+				isBlankLine = false;
+
 				// Braces have to be handled differently depending on if the are the opening bracket for a group or
 				// internal backets used to internally group for keeping capital letters, et cetera.
 				// To parse BibTex strings, we have to allow for a parentheses used as the grouping characters, so we need
@@ -497,34 +519,40 @@ public sealed class BibliographyParser : IDisposable
 			}
 			else if (c == '}')
 			{
+				isBlankLine = false;
 				Read();
 				braceCount--;
 				yield return new Token(TokenType.RightBrace);
 			}
 			else if (c == '(')
 			{
+				isBlankLine = false;
 				Read();
 				parenthesisCount++;
 				yield return new Token(TokenType.LeftParenthesis);
 			}
 			else if (c == ')')
 			{
+				isBlankLine = false;
 				Read();
 				parenthesisCount--;
 				yield return new Token(TokenType.RightParenthesis);
 			}
 			else if (c == ',')
 			{
+				isBlankLine = false;
 				Read();
 				yield return new Token(TokenType.Comma);
 			}
 			else if (c == '#')
 			{
+				isBlankLine = false;
 				Read();
 				yield return new Token(TokenType.Concatenation);
 			}
 			else if (c == '=')
 			{
+				isBlankLine = false;
 				Read();
 				yield return new Token(TokenType.Equal);
 			}
@@ -533,11 +561,18 @@ public sealed class BibliographyParser : IDisposable
 				Read();
 				_columnCount = 0;
 				_lineCount++;
+				if (isBlankLine)
+				{
+					yield return new Token(TokenType.BlankLine);
+				}
+				isBlankLine = true;
 			}
 			else if (_beginCommentCharacters.Any(item => item == c))
 			{
+				isBlankLine = false;
 				_columnCount = 0;
 				_lineCount++;
+				isBlankLine = true;
 				yield return new Token(TokenType.Comment, _inputText.ReadLine()!);
 			}
 			else if (!char.IsWhiteSpace(c))
@@ -599,7 +634,7 @@ public sealed class BibliographyParser : IDisposable
 
 	#endregion
 
-	#region Impement Interface "IDisposable"
+	#region Implement Interface "IDisposable"
 
 	/// <summary>
 	/// Dispose stream resource.

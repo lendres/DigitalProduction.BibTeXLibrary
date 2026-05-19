@@ -9,6 +9,10 @@ namespace BibTeXLibrary;
 /// </summary>
 public enum TokenType
 {
+	/// <summary>Blank line.</summary>
+	[Description("Blank Line")]
+	BlankLine,
+
 	/// <summary>Comma.</summary>
 	[Description("Comma")]
 	Comma,

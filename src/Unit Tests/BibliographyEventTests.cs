@@ -4,21 +4,22 @@ namespace DigitalProduction.UnitTests;
 
 public class BibliographyEventTests
 {
+	#region Fields
+
 	string _message	= "";
 	string _file	= "testoutput.bib";
+
+	#endregion
+
+	#region Tests
 
 	/// <summary>
 	/// Test that "Modified" is set to the correct value and that the event is triggered properly.
 	/// </summary>
-    [Fact]
+	[Fact]
     public void TestBibEntryAdded()
     {
-		Bibliography bibliography = new();
-		bibliography.ModifiedChanged += OnModifiedChanged;
-
-		bibliography.Read("TestData/BibParserTest1_In.bib");
-		Assert.False(bibliography.Modified);
-		Assert.Equal("False", GetAndResetMessage());
+		Bibliography bibliography = CreateBibliography();
 
 		BibEntry entry = new() {["Title"] = "Mapreduce"};
 		bibliography.Add(entry);
@@ -40,13 +41,7 @@ public class BibliographyEventTests
     [Fact]
     public void TestBibEntryModified()
     {
-		Bibliography bibliography = new();
-		bibliography.ModifiedChanged += OnModifiedChanged;
-
-		// Test that after a read, the bibliography is not marked as modified.
-		bibliography.Read("TestData/BibParserTest1_In.bib");
-		Assert.False(bibliography.Modified);
-		Assert.Equal("False", GetAndResetMessage());
+		Bibliography bibliography = CreateBibliography();
 
 		BibEntry entry = bibliography.Entries[0];
 		Assert.False(bibliography.Modified);
@@ -71,6 +66,29 @@ public class BibliographyEventTests
 		Assert.Equal("", GetAndResetMessage());
     }
 
+
+	/// <summary>
+	/// Test that "Modified" is set to the correct value and that the event is triggered properly.
+	/// </summary>
+	[Fact]
+	public void TestHeaderModified()
+	{
+		Bibliography bibliography = CreateBibliography();
+
+		string header = bibliography.Header;
+		Assert.False(bibliography.Modified);
+
+		bibliography.Header = header + "\n% New header comment added.";
+		Assert.Equal("True", GetAndResetMessage());
+		Assert.True(bibliography.Modified);
+
+		SaveBibliography(bibliography);
+	}
+
+	#endregion
+
+	#region Helper Methods
+
 	private void OnModifiedChanged(object sender, bool modified)
 	{
 		_message = modified.ToString();
@@ -80,8 +98,23 @@ public class BibliographyEventTests
 	{
 		bibliography.Write(_file);
 		System.IO.File.Delete(_file);
+
+		// Test the after saving the bibliography is not marked as modified.
 		Assert.False(bibliography.Modified);
 		Assert.Equal("False", GetAndResetMessage());
+	}
+
+	private Bibliography CreateBibliography()
+	{
+		Bibliography bibliography = new();
+		bibliography.ModifiedChanged += OnModifiedChanged;
+		bibliography.Read("TestData/BibParserTest1_In.bib");
+
+		// Test that after a read, the bibliography is not marked as modified.
+		Assert.False(bibliography.Modified);
+		Assert.Equal("False", GetAndResetMessage());
+
+		return bibliography;
 	}
 
 	private string GetAndResetMessage()
@@ -90,5 +123,7 @@ public class BibliographyEventTests
 		_message		= string.Empty;
 		return message;
 	}
+
+	#endregion
 
 } // End class.

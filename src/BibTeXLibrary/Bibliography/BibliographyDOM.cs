@@ -35,7 +35,7 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 	/// <summary>
 	/// The file header.
 	/// </summary>
-	public string Header { get; set; } = string.Empty;
+	public string Header { get => GetValueOrDefault(string.Empty); set => SetValue(value); }
 
 	/// <summary>
 	/// Get the bibliography entries.

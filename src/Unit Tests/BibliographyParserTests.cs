@@ -5,7 +5,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace DigitalProduction.UnitTests;
 
-public class BibParserTests
+public class BibliographyParserTests
 {
 	#region Basic BibEntry Parsing
 

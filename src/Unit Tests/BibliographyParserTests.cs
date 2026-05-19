@@ -1,7 +1,6 @@
 ﻿using BibTeXLibrary;
 using System.Collections.ObjectModel;
 using System.Text;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace DigitalProduction.UnitTests;
 

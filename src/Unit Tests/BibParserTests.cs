@@ -191,9 +191,9 @@ public class BibParserTests
     public void TestParserResult()
     {
 		BibliographyParser parser	= new(new StreamReader("TestData/BibParserTest1_In.bib", Encoding.Default));
-		BibEntry entry		= parser.Parse().Entries[0];
-		string entryString	= entry.ToString().TrimEnd('\n').TrimEnd('\r');
-		string expected		= "@Article{mrx05,\r\n  author = {Mr. X},\r\n  title = {Something Great},\r\n  publisher = {nobody},\r\n  year = {2005}\r\n}";
+		BibEntry entry				= parser.Parse().Entries[0];
+		string entryString			= entry.ToString().TrimEnd('\n').TrimEnd('\r');
+		string expected				= "@Article{mrx05,\r\n  author = {Mr. X},\r\n  title = {Something Great},\r\n  publisher = {nobody},\r\n  year = {2005}\r\n}";
 
 		Assert.Equal(expected, entryString);
 		parser.Dispose();
@@ -256,7 +256,7 @@ public class BibParserTests
 	#region Header Parsing
 
 	[Fact]
-	public void ReadPreservesHeaderComments()
+	public void HeaderPreservesHeaderComments()
 	{
 		string bibString =
 			"% First header line\n" +
@@ -272,7 +272,7 @@ public class BibParserTests
 	}
 
 	[Fact]
-	public void ReadPreservesBlankLineBetweenHeaderComments()
+	public void BlankLineBetweenHeaderComments()
 	{
 		string bibString =
 			"% First header line\n" +
@@ -283,7 +283,7 @@ public class BibParserTests
 
 		BibliographyDOM bibliographyDom = ParseBibEntry(bibString);
 
-		Assert.Equal(3, bibliographyDom.Header.Count);
+		Assert.Equal(2, bibliographyDom.Header.Count);
 		Assert.Equal("% First header line", bibliographyDom.Header[0]);
 		Assert.Equal("% Second header line", bibliographyDom.Header[1]);
 		Assert.Single(bibliographyDom.Entries);

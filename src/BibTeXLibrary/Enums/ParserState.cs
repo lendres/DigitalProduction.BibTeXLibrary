@@ -17,6 +17,10 @@ internal enum ParserState
 	[Description("In Header")]
 	InHeader,
 
+	/// <summary>After the header.</summary>
+	[Description("Out of Header")]
+	OutHeader,
+
 	/// <summary>At the start of a bibliography entry where the type is written.</summary>
 	[Description("In Start")]
 	InStart,

@@ -18,7 +18,7 @@ public sealed class BibliographyParser : IDisposable
 
 	#endregion
 
-	#region Constant Fields
+	#region State Map
 
 	/// <summary>
 	/// State tranfer map.
@@ -27,11 +27,13 @@ public sealed class BibliographyParser : IDisposable
 	private static readonly StateMap StateMap = new()
 	{
 		{ParserState.Begin,			new TokenToNextMap {
+			{ TokenType.BlankLine,			new Next(ParserState.InStart,		BuildAction.Skip) },
 			{ TokenType.Comment,			new Next(ParserState.InHeader,		BuildAction.AddHeaderLine) },
 			{ TokenType.Start,				new Next(ParserState.InStart,		BuildAction.Skip) }
 		} },
 
 		{ParserState.InHeader,		new TokenToNextMap {
+			{ TokenType.BlankLine,			new Next(ParserState.InHeader,		BuildAction.AddHeaderLine) },
 			{ TokenType.Comment,			new Next(ParserState.InHeader,		BuildAction.AddHeaderLine) },
 			{ TokenType.Start,				new Next(ParserState.InStart,		BuildAction.Skip) }
 		} },

@@ -34,6 +34,9 @@ public abstract class BibliographyPart(bool caseSensitiveFields) : NotifyPropert
 	/// </summary>
 	public abstract string Type { get; set; }
 
+	// <summary>Comment associated with the bibliography part. It is the comment in the file immediately before the entry.</summary>
+	public string Comment { get; set; } = string.Empty;
+
 	#endregion
 
 	#region Events

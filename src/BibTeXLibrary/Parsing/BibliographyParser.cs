@@ -40,7 +40,7 @@ public sealed class BibliographyParser : IDisposable
 
 		{ParserState.OutHeader,		new TokenToNextMap {
 			{ TokenType.BlankLine,			new Next(ParserState.OutHeader,		BuildAction.Skip) },
-			{ TokenType.Comment,			new Next(ParserState.OutHeader,		BuildAction.Skip) },
+			{ TokenType.Comment,			new Next(ParserState.OutHeader,		BuildAction.AddComment) },
 			{ TokenType.Start,				new Next(ParserState.InStart,		BuildAction.Skip) }
 		} },
 
@@ -100,13 +100,13 @@ public sealed class BibliographyParser : IDisposable
 		{ParserState.OutEntry,		new TokenToNextMap {
 			{ TokenType.BlankLine,			new Next(ParserState.OutEntry,		BuildAction.Skip) },
 			{ TokenType.Start,				new Next(ParserState.InStart,		BuildAction.Skip) },
-			{ TokenType.Comment,			new Next(ParserState.InComment,		BuildAction.Skip) }
+			{ TokenType.Comment,			new Next(ParserState.InComment,		BuildAction.AddComment) }
 		} },
 
 		{ParserState.InComment,		new TokenToNextMap {
 			{ TokenType.BlankLine,			new Next(ParserState.InComment,		BuildAction.Skip) },
 			{ TokenType.Start,				new Next(ParserState.InStart,		BuildAction.Skip) },
-			{ TokenType.Comment,			new Next(ParserState.InComment,		BuildAction.Skip) }
+			{ TokenType.Comment,			new Next(ParserState.InComment,		BuildAction.AddComment) }
 		} },
 	};
 
@@ -278,6 +278,7 @@ public sealed class BibliographyParser : IDisposable
 			string				fieldName			= "";
 			FieldValueType		fieldValueType		= FieldValueType.String;
 			StringBuilder		fieldValueBuilder	= new();
+			StringBuilder		comment				= new();
 
 			// Fetch token from Tokenizer and build BibEntry.
 			foreach (Token token in Tokenize())
@@ -294,6 +295,12 @@ public sealed class BibliographyParser : IDisposable
 					case BuildAction.AddHeaderLine:
 					{
 						bibliographyDOM.AddHeaderLine(token.Value);
+						break;
+					}
+
+					case BuildAction.AddComment:
+					{
+						comment.Append(token.Value);
 						break;
 					}
 
@@ -351,6 +358,11 @@ public sealed class BibliographyParser : IDisposable
 						if (fieldName != string.Empty)
 						{
 							SetField(bibliographyPart, ref fieldName, fieldValueType, fieldValueBuilder);
+						}
+						if (comment.Length > 0)
+						{
+							bibliographyPart.Comment = comment.ToString();
+							comment.Clear();
 						}
 						bibliographyDOM.Add(bibliographyPart);
 						break;

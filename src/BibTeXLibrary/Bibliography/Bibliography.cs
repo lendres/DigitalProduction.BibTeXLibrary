@@ -97,17 +97,17 @@ public class Bibliography : BibliographyDOM
 		streamWriter.Write(Header);
 
 		// Write string constants.
-		if (StringConstants.Count > 0)
+		if (StringEntries.Count > 0)
 		{
 			streamWriter.WriteLine();
 		}
-		foreach (StringEntry stringConstant in StringConstants)
+		foreach (StringEntry stringConstant in StringEntries)
 		{
 			streamWriter.Write(stringConstant.ToString(writeSettings));
 		}
 
 		// Write each entry with a blank line preceeding it.
-		foreach (BibEntry bibEntry in Entries)
+		foreach (BibEntry bibEntry in BibliographyEntries)
 		{
 			streamWriter.WriteLine();
 			streamWriter.Write(bibEntry.ToString(writeSettings));
@@ -119,11 +119,11 @@ public class Bibliography : BibliographyDOM
 
 	private void MarkSaved()
 	{
-		foreach (BibEntry entry in Entries)
+		foreach (BibEntry entry in BibliographyEntries)
 		{
 			entry.MarkSaved();
 		}
-		foreach (StringEntry stringConstant in StringConstants)
+		foreach (StringEntry stringConstant in StringEntries)
 		{
 			stringConstant.MarkSaved();
 		}
@@ -228,7 +228,7 @@ public class Bibliography : BibliographyDOM
 		// However, this could be confusing or error prone, so (for now anyway) we will do a case insensitive comparison.
 		key = key.ToLower();
 
-		foreach (BibEntry entry in Entries)
+		foreach (BibEntry entry in BibliographyEntries)
 		{
 			if (entry.Key.Equals(key, StringComparison.CurrentCultureIgnoreCase))
 			{

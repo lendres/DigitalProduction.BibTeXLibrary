@@ -189,7 +189,7 @@ public class BibEntryTests
 	private static BibEntry ParseBibEntry(string bibString)
 	{
 		BibliographyParser parser = new(new StringReader(bibString));
-		return parser.Parse().Entries[0];
+		return parser.Parse().BibliographyEntries[0];
 	}
 
 	#endregion

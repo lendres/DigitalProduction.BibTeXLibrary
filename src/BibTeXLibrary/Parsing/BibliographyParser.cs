@@ -27,7 +27,7 @@ public sealed class BibliographyParser : IDisposable
 	private static readonly StateMap StateMap = new()
 	{
 		{ParserState.Begin,			new TokenToNextMap {
-			{ TokenType.BlankLine,			new Next(ParserState.InStart,		BuildAction.Skip) },
+			{ TokenType.BlankLine,			new Next(ParserState.OutHeader,		BuildAction.Skip) },
 			{ TokenType.Comment,			new Next(ParserState.InHeader,		BuildAction.AddHeaderLine) },
 			{ TokenType.Start,				new Next(ParserState.InStart,		BuildAction.Skip) }
 		} },
@@ -45,7 +45,7 @@ public sealed class BibliographyParser : IDisposable
 		} },
 
 		{ParserState.InStart,		new TokenToNextMap {
-			{ TokenType.Name,				new Next(ParserState.InEntry,		BuildAction.SetType) },
+			{ TokenType.Name,               new Next(ParserState.InEntry,		BuildAction.SetType) },
 			{ TokenType.StringType,			new Next(ParserState.InStringEntry,	BuildAction.SetType) }
 		} },
 
@@ -71,7 +71,7 @@ public sealed class BibliographyParser : IDisposable
 			{ TokenType.Comma,				new Next(ParserState.InFiledName,	BuildAction.Skip) }
 		} },
 
-		{ParserState.InFiledName,		new TokenToNextMap {
+		{ParserState.InFiledName,	new TokenToNextMap {
 			{ TokenType.BlankLine,			new Next(ParserState.InFiledName,		BuildAction.Skip) },
 			{ TokenType.Name,				new Next(ParserState.InFieldEqual,	BuildAction.SetFieldName) },
 			{ TokenType.RightBrace,			new Next(ParserState.OutEntry,		BuildAction.AddBibliographyPart) }
@@ -300,7 +300,7 @@ public sealed class BibliographyParser : IDisposable
 
 					case BuildAction.AddComment:
 					{
-						comment.Append(token.Value);
+						comment.Append(token.Value + Environment.NewLine);
 						break;
 					}
 
@@ -364,7 +364,7 @@ public sealed class BibliographyParser : IDisposable
 							bibliographyPart.Comment = comment.ToString();
 							comment.Clear();
 						}
-						bibliographyDOM.Add(bibliographyPart);
+						 bibliographyDOM.Add(bibliographyPart);
 						break;
 					}
 				}

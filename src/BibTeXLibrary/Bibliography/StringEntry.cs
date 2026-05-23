@@ -115,8 +115,16 @@ public class StringEntry : BibliographyPart
 	/// <param name="writeSettings">The settings for writing the bibliography file.</param>
 	public override string ToString(WriteSettings writeSettings)
 	{
+		StringBuilder bibliographyPart = new();
+
+		// Add the comment, if there is one.
+		if (!string.IsNullOrEmpty(Comment))
+		{
+			bibliographyPart.Append(Comment);
+		}
+
 		// Build the entry opening and key.
-		StringBuilder bibliographyPart = new("@");
+		bibliographyPart.Append("@");
 		bibliographyPart.Append(Type);
 
 		char bracketCharacter = writeSettings.StringEntryBracketType == EntryBracketType.CurlyBraces ? '{' : '(';

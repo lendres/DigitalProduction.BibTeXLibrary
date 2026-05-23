@@ -13,23 +13,27 @@ internal enum BuildAction
 	[Description("Add Header Line")]
 	AddHeaderLine,
 
-	/// <summary>Set the .</summary>
+	/// <summary>Add a comment line.</summary>
+	[Description("Add Comment")]
+	AddComment,
+
+	/// <summary>Set the entry type.</summary>
 	[Description("Set Type")]
 	SetType,
 
-	/// <summary>Set the .</summary>
+	/// <summary>Set the entry key.</summary>
 	[Description("Set Key")]
 	SetKey,
 
-	/// <summary>Set the .</summary>
+	/// <summary>Set the field name.</summary>
 	[Description("Set Field Name")]
 	SetFieldName,
 
-	/// <summary>Set the .</summary>
+	/// <summary>Set the field value.</summary>
 	[Description("Set Field Value")]
 	SetFieldValue,
 
-	/// <summary>Set the .</summary>
+	/// <summary>Set the field.</summary>
 	[Description("Set Field")]
 	SetField,
 

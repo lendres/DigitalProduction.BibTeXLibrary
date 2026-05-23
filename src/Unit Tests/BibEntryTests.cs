@@ -56,6 +56,55 @@ public class BibEntryTests
 
 	#endregion
 
+	#region Copy Constructor Tests
+
+	[Fact]
+	public void TestCopyConstructorCopiesBibEntryValues()
+	{
+		BibEntry originalEntry = new()
+		{
+			Type	= "article",
+			Key		= "Dean2008",
+			Comment	= "% Comment before entry\n"
+		};
+
+		originalEntry.SetField("title", "Mapreduce", FieldValueType.String);
+		originalEntry.SetField("journal", "CACM", FieldValueType.StringConstant);
+
+		BibEntry copiedEntry = new(originalEntry);
+
+		Assert.Equal(originalEntry.Type, copiedEntry.Type);
+		Assert.Equal(originalEntry.Key, copiedEntry.Key);
+		Assert.Equal(originalEntry.Comment, copiedEntry.Comment);
+		Assert.Equal(originalEntry.Title, copiedEntry.Title);
+		Assert.Equal(originalEntry.Journal, copiedEntry.Journal);
+		Assert.Equal(originalEntry.GetField("journal").FieldValue, copiedEntry.GetField("journal").FieldValue);
+	}
+
+	[Fact]
+	public void TestCopyConstructorCreatesIndependentBibEntryFields()
+	{
+		BibEntry originalEntry = new()
+		{
+			Type	= "article",
+			Key		= "Dean2008"
+		};
+
+		originalEntry.SetField("title", "Mapreduce", FieldValueType.String);
+
+		BibEntry copiedEntry = new(originalEntry);
+
+		Assert.NotSame(originalEntry.GetField("title"), copiedEntry.GetField("title"));
+		Assert.NotSame(originalEntry.GetField("title").FieldValue, copiedEntry.GetField("title").FieldValue);
+
+		originalEntry.Title = "Updated Title";
+
+		Assert.Equal("Updated Title", originalEntry.Title);
+		Assert.Equal("Mapreduce", copiedEntry.Title);
+	}
+
+	#endregion
+
 	#region Find and Search Tests
 
 	/// <summary>
@@ -189,7 +238,7 @@ public class BibEntryTests
 	private static BibEntry ParseBibEntry(string bibString)
 	{
 		BibliographyParser parser = new(new StringReader(bibString));
-		return parser.Parse().Entries[0];
+		return parser.Parse().BibliographyEntries[0];
 	}
 
 	#endregion

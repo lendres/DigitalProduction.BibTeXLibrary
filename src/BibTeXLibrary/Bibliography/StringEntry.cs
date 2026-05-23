@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Text;
+﻿using System.Text;
 
 namespace BibTeXLibrary;
 
@@ -23,17 +22,18 @@ public class StringEntry : BibliographyPart
 	public StringEntry() :
 		base(true)
 	{
-		_field.ModifiedChanged += OnFieldModifiedChanged;
-		_field.PropertyChanged += OnFieldPropertyChanged;
+		HookUpEvents(_field);
+		MarkSaved();
 	}
 
 	/// <summary>
 	/// Copy constructor.
 	/// </summary>
 	public StringEntry(StringEntry stringEntry) :
-		this()
+		base(stringEntry)
 	{
 		_field = new Field(stringEntry._field);
+		HookUpEvents(_field);
 	}
 
 	#endregion
@@ -115,8 +115,13 @@ public class StringEntry : BibliographyPart
 	/// <param name="writeSettings">The settings for writing the bibliography file.</param>
 	public override string ToString(WriteSettings writeSettings)
 	{
+		StringBuilder bibliographyPart = new();
+
+		// Add the comment, if there is one.
+		AppendComment(bibliographyPart, writeSettings);
+
 		// Build the entry opening and key.
-		StringBuilder bibliographyPart = new("@");
+		bibliographyPart.Append("@");
 		bibliographyPart.Append(Type);
 
 		char bracketCharacter = writeSettings.StringEntryBracketType == EntryBracketType.CurlyBraces ? '{' : '(';

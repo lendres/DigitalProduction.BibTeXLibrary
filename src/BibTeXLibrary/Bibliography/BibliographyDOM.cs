@@ -40,7 +40,7 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 	/// <summary>
 	/// Get the bibliography entries.
 	/// </summary>
-	public ObservableCollection<BibEntry> Entries { get => _bibEntries; }
+	public ObservableCollection<BibEntry> BibliographyEntries { get => _bibEntries; }
 
 	/// <summary>
 	/// The number of bibliography entries.
@@ -50,12 +50,12 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 	/// <summary>
 	/// String constants.
 	/// </summary>
-	public ObservableCollection<StringEntry> StringConstants { get => _strings; }
+	public ObservableCollection<StringEntry> StringEntries { get => _strings; }
 
 	/// <summary>
 	/// The number of string constants.
 	/// </summary>
-	public int NumberOfStringConstants { get => _strings.Count; }
+	public int NumberOfStringEntriess { get => _strings.Count; }
 
 	#endregion
 
@@ -64,15 +64,15 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 	private void OnBibEntriesCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
 	{
 		Modified = true;
-		OnPropertyChanged(nameof(Entries));
+		OnPropertyChanged(nameof(BibliographyEntries));
 		OnPropertyChanged(nameof(NumberOfBibliographyEntries));
 	}
 
 	private void OnStringsCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
 	{
 		Modified = true;
-		OnPropertyChanged(nameof(StringConstants));
-		OnPropertyChanged(nameof(NumberOfStringConstants));
+		OnPropertyChanged(nameof(StringEntries));
+		OnPropertyChanged(nameof(NumberOfStringEntriess));
 	}
 
 	private void OnPartModifiedChanged(object sender, bool modified)

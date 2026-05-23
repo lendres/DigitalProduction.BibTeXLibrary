@@ -33,7 +33,7 @@ public class BibliographyTests
 	public void TestHavingAndInName()
 	{
 		// Test that creating a citation key for "Menand" returns "menand2004a" and not ""men2004a"".
-		BibEntry result = _bibliography.Entries[2];
+		BibEntry result = _bibliography.BibliographyEntries[2];
 		_bibliography.GenerateUniqueCiteKey(result);
 		Assert.Equal("ref:menand2004a", result.Key);
 	}
@@ -42,15 +42,15 @@ public class BibliographyTests
 	[Fact]
 	public void GenerateUniqueCiteKeySkipsSuffixWhenGeneratedKeyIsAlreadyInUse()
 	{
-		BibEntry entry = _bibliography.Entries[1];
+		BibEntry entry = _bibliography.BibliographyEntries[1];
 
 		// Set the first entry's key to be the "a" value.
-		_bibliography.GenerateUniqueCiteKey(_bibliography.Entries[0]);
+		_bibliography.GenerateUniqueCiteKey(_bibliography.BibliographyEntries[0]);
 
 		// Generate the second entry's key, which should be the "b" value since the "a" value is already in use.
 		_bibliography.GenerateUniqueCiteKey(entry);
 
-		Assert.Equal("ref:smith2023a", _bibliography.Entries[0].Key);
+		Assert.Equal("ref:smith2023a", _bibliography.BibliographyEntries[0].Key);
 		Assert.Equal("ref:smith2023b", entry.Key);
 	}
 
@@ -81,7 +81,7 @@ public class BibliographyTests
 	[Fact]
 	public void IsKeyInUseReturnsTrueAfterKeyIsChanged()
 	{
-		BibEntry entry = _bibliography.Entries[0];
+		BibEntry entry = _bibliography.BibliographyEntries[0];
 
 		entry.Key = "ref:changedKey";
 
@@ -101,13 +101,13 @@ public class BibliographyTests
 		Bibliography bibliography = new();
 		bibliography.Read("TestData/BibParserTest1_In.bib");
 
-		ObservableCollection<BibEntry> entries = bibliography.Entries;
+		ObservableCollection<BibEntry> entries = bibliography.BibliographyEntries;
 		Assert.Equal(4,														entries.Count);
 		Assert.Equal("nobody",												entries[0].Publisher);
 		Assert.Equal("Apache hadoop yarn: Yet another resource negotiator",	entries[1].Title);
 		Assert.Equal("KalavriShang-797",									entries[2].Key);
 
-		ObservableCollection<StringEntry> stringConstants = bibliography.StringConstants;
+		ObservableCollection<StringEntry> stringConstants = bibliography.StringEntries;
 		Assert.Equal(2,														stringConstants.Count);
 		Assert.Equal("TRANSMATHSOFT",										stringConstants[0].Name);
 		Assert.Equal("ACM T Math Software",									stringConstants[0].Value);
@@ -124,8 +124,8 @@ public class BibliographyTests
 
 		bibliography = new();
 		bibliography.Read("TestData/BibParserTest1_Out.bib");
-		Assert.Equal(4, bibliography.Entries.Count);
-		Assert.Equal(2, bibliography.StringConstants.Count);
+		Assert.Equal(4, bibliography.BibliographyEntries.Count);
+		Assert.Equal(2, bibliography.StringEntries.Count);
 	}
 
 	#endregion

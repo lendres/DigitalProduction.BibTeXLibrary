@@ -30,7 +30,7 @@ public class BibliographyEventTests
 		SaveBibliography(bibliography);
 
 		// Test removing an entry.  This should cause it to be marked as modified again.
-		bibliography.Entries.Remove(entry);
+		bibliography.BibliographyEntries.Remove(entry);
 		Assert.True(bibliography.Modified);
 		Assert.Equal("True", GetAndResetMessage());
     }
@@ -43,7 +43,7 @@ public class BibliographyEventTests
     {
 		Bibliography bibliography = CreateBibliography();
 
-		BibEntry entry = bibliography.Entries[0];
+		BibEntry entry = bibliography.BibliographyEntries[0];
 		Assert.False(bibliography.Modified);
 
 		entry.Title = "Changed Title";

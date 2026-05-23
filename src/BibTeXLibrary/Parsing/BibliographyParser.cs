@@ -27,7 +27,7 @@ public sealed class BibliographyParser : IDisposable
 	private static readonly StateMap StateMap = new()
 	{
 		{ParserState.Begin,			new TokenToNextMap {
-			{ TokenType.BlankLine,			new Next(ParserState.InStart,		BuildAction.Skip) },
+			{ TokenType.BlankLine,			new Next(ParserState.OutHeader,		BuildAction.Skip) },
 			{ TokenType.Comment,			new Next(ParserState.InHeader,		BuildAction.AddHeaderLine) },
 			{ TokenType.Start,				new Next(ParserState.InStart,		BuildAction.Skip) }
 		} },
@@ -40,12 +40,12 @@ public sealed class BibliographyParser : IDisposable
 
 		{ParserState.OutHeader,		new TokenToNextMap {
 			{ TokenType.BlankLine,			new Next(ParserState.OutHeader,		BuildAction.Skip) },
-			{ TokenType.Comment,			new Next(ParserState.OutHeader,		BuildAction.Skip) },
+			{ TokenType.Comment,			new Next(ParserState.OutHeader,		BuildAction.AddComment) },
 			{ TokenType.Start,				new Next(ParserState.InStart,		BuildAction.Skip) }
 		} },
 
 		{ParserState.InStart,		new TokenToNextMap {
-			{ TokenType.Name,				new Next(ParserState.InEntry,		BuildAction.SetType) },
+			{ TokenType.Name,               new Next(ParserState.InEntry,		BuildAction.SetType) },
 			{ TokenType.StringType,			new Next(ParserState.InStringEntry,	BuildAction.SetType) }
 		} },
 
@@ -71,7 +71,7 @@ public sealed class BibliographyParser : IDisposable
 			{ TokenType.Comma,				new Next(ParserState.InFiledName,	BuildAction.Skip) }
 		} },
 
-		{ParserState.InFiledName,		new TokenToNextMap {
+		{ParserState.InFiledName,	new TokenToNextMap {
 			{ TokenType.BlankLine,			new Next(ParserState.InFiledName,		BuildAction.Skip) },
 			{ TokenType.Name,				new Next(ParserState.InFieldEqual,	BuildAction.SetFieldName) },
 			{ TokenType.RightBrace,			new Next(ParserState.OutEntry,		BuildAction.AddBibliographyPart) }
@@ -100,13 +100,13 @@ public sealed class BibliographyParser : IDisposable
 		{ParserState.OutEntry,		new TokenToNextMap {
 			{ TokenType.BlankLine,			new Next(ParserState.OutEntry,		BuildAction.Skip) },
 			{ TokenType.Start,				new Next(ParserState.InStart,		BuildAction.Skip) },
-			{ TokenType.Comment,			new Next(ParserState.InComment,		BuildAction.Skip) }
+			{ TokenType.Comment,			new Next(ParserState.InComment,		BuildAction.AddComment) }
 		} },
 
 		{ParserState.InComment,		new TokenToNextMap {
 			{ TokenType.BlankLine,			new Next(ParserState.InComment,		BuildAction.Skip) },
 			{ TokenType.Start,				new Next(ParserState.InStart,		BuildAction.Skip) },
-			{ TokenType.Comment,			new Next(ParserState.InComment,		BuildAction.Skip) }
+			{ TokenType.Comment,			new Next(ParserState.InComment,		BuildAction.AddComment) }
 		} },
 	};
 
@@ -278,6 +278,7 @@ public sealed class BibliographyParser : IDisposable
 			string				fieldName			= "";
 			FieldValueType		fieldValueType		= FieldValueType.String;
 			StringBuilder		fieldValueBuilder	= new();
+			StringBuilder		comment				= new();
 
 			// Fetch token from Tokenizer and build BibEntry.
 			foreach (Token token in Tokenize())
@@ -294,6 +295,12 @@ public sealed class BibliographyParser : IDisposable
 					case BuildAction.AddHeaderLine:
 					{
 						bibliographyDOM.AddHeaderLine(token.Value);
+						break;
+					}
+
+					case BuildAction.AddComment:
+					{
+						comment.Append(token.Value + Environment.NewLine);
 						break;
 					}
 
@@ -352,7 +359,12 @@ public sealed class BibliographyParser : IDisposable
 						{
 							SetField(bibliographyPart, ref fieldName, fieldValueType, fieldValueBuilder);
 						}
-						bibliographyDOM.Add(bibliographyPart);
+						if (comment.Length > 0)
+						{
+							bibliographyPart.Comment = comment.ToString();
+							comment.Clear();
+						}
+						 bibliographyDOM.Add(bibliographyPart);
 						break;
 					}
 				}

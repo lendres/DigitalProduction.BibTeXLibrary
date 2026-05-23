@@ -1,5 +1,7 @@
 ﻿using DigitalProduction.ComponentModel;
+using DigitalProduction.Strings;
 using System.ComponentModel;
+using System.Text;
 
 namespace BibTeXLibrary;
 
@@ -9,12 +11,27 @@ namespace BibTeXLibrary;
 /// <remarks>
 /// Default constructor.
 /// </remarks>
-public abstract class BibliographyPart(bool caseSensitiveFields) : NotifyPropertyModifiedChanged
+public abstract class BibliographyPart : NotifyPropertyModifiedChanged
 {
 	#region Fields
 
 	/// <summary>Specifies if the fields are case sensitive.</summary>
-	protected readonly bool		_caseSensitiveFields		= caseSensitiveFields;
+	protected readonly bool		_caseSensitiveFields;
+
+	#endregion
+
+	#region Construction
+
+	protected BibliographyPart(bool caseSensitiveFields)
+	{
+		_caseSensitiveFields = caseSensitiveFields;
+	}
+
+	protected BibliographyPart(BibliographyPart bibliographyPart)
+	{
+		_caseSensitiveFields	= bibliographyPart._caseSensitiveFields;
+		Comment					= bibliographyPart.Comment;
+	}
 
 	#endregion
 
@@ -34,16 +51,25 @@ public abstract class BibliographyPart(bool caseSensitiveFields) : NotifyPropert
 	/// </summary>
 	public abstract string Type { get; set; }
 
+	// <summary>Comment associated with the bibliography part. It is the comment in the file immediately before the entry.</summary>
+	public string Comment { get; set; } = string.Empty;
+
 	#endregion
 
 	#region Events
 
-	protected void OnFieldModifiedChanged(object sender, bool modified)
+	protected void HookUpEvents(Field field)
+	{
+		field.ModifiedChanged += OnFieldModifiedChanged;
+		field.PropertyChanged += OnFieldPropertyChanged;
+	}
+
+	private void OnFieldModifiedChanged(object sender, bool modified)
 	{
 		Modified = true;
 	}
 
-	protected void OnFieldPropertyChanged(object? sender, PropertyChangedEventArgs eventArgs)
+	private void OnFieldPropertyChanged(object? sender, PropertyChangedEventArgs eventArgs)
 	{
 		OnPropertyChanged(sender, eventArgs);
 	}
@@ -75,6 +101,16 @@ public abstract class BibliographyPart(bool caseSensitiveFields) : NotifyPropert
 	/// </summary>
 	/// <param name="writeSettings">The settings for writing the bibliography file.</param>
 	public abstract string ToString(WriteSettings writeSettings);
+
+
+	protected void AppendComment(StringBuilder bibliographyPart, WriteSettings writeSettings)
+	{
+		if (!string.IsNullOrEmpty(Comment))
+		{
+			bibliographyPart.Append(Comment.RemoveLastLineEnding());
+			bibliographyPart.Append(Environment.NewLine);
+		}
+	}
 
 	#endregion
 

@@ -1,7 +1,5 @@
 ﻿using DigitalProduction.Strings;
-using Google.Apis.CustomSearchAPI.v1.Data;
 using System.Collections;
-using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -29,6 +27,23 @@ public class BibEntry : BibliographyPart
 	public BibEntry() :
 		base(false)
 	{
+	}
+
+	/// <summary>
+	/// Default contructor.
+	/// </summary>
+	public BibEntry(BibEntry bibliographyEntry) :
+		base(bibliographyEntry)
+	{
+		Key		= bibliographyEntry.Key;
+		Type	= bibliographyEntry.Type;
+
+		_fields = new();
+		foreach (KeyValuePair<string, Field> entry in bibliographyEntry._fields)
+		{
+			_fields.Add(entry.Key, new Field(entry.Value));
+		}
+		MarkSaved();
 	}
 
 	#endregion
@@ -505,8 +520,7 @@ public class BibEntry : BibliographyPart
 	/// <param name="field">Field to add.</param>
 	private void AddNewField(Field field)
 	{
-		field.ModifiedChanged += OnFieldModifiedChanged;
-		field.PropertyChanged += OnFieldPropertyChanged;
+		HookUpEvents(field);
 		_fields[field.Name] = field;
 		OnPropertyChanged(nameof(FieldNames));
 		Modified = true;
@@ -522,8 +536,13 @@ public class BibEntry : BibliographyPart
 	/// <param name="writeSettings">The settings for writing the bibliography file.</param>
 	public override string ToString(WriteSettings writeSettings)
 	{
+		StringBuilder bibliographyPart = new();
+
+		// Add the comment, if there is one.
+		AppendComment(bibliographyPart, writeSettings);
+
 		// Build the entry opening and key.
-		StringBuilder bibliographyPart = new("@");
+		bibliographyPart.Append("@");
 		bibliographyPart.Append(Type);
 		char bracketCharacter = writeSettings.BibEntryBracketType == EntryBracketType.CurlyBraces ? '{' : '(';
 		bibliographyPart.Append(bracketCharacter);

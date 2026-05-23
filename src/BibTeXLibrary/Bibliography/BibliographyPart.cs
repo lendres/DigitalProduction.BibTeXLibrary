@@ -14,7 +14,7 @@ public abstract class BibliographyPart : NotifyPropertyModifiedChanged
 	#region Fields
 
 	/// <summary>Specifies if the fields are case sensitive.</summary>
-	protected readonly bool		_caseSensitiveFields		= caseSensitiveFields;
+	protected readonly bool		_caseSensitiveFields;
 
 	#endregion
 
@@ -28,7 +28,6 @@ public abstract class BibliographyPart : NotifyPropertyModifiedChanged
 	protected BibliographyPart(BibliographyPart bibliographyPart)
 	{
 		_caseSensitiveFields	= bibliographyPart._caseSensitiveFields;
-		Type					= bibliographyPart.Type;
 		Comment					= bibliographyPart.Comment;
 	}
 

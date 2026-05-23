@@ -2,7 +2,7 @@
 
 namespace DigitalProduction.UnitTests;
 
-public class StringEntrySearchingTests
+public class StringEntryTests
 {
 	# region Fields
 
@@ -17,14 +17,56 @@ public class StringEntrySearchingTests
 
 	#region Construction
 
-	public StringEntrySearchingTests()
+	public StringEntryTests()
 	{
 		_bibliographyDom = ParseBibEntry(_stringConstants);
 	}
 
 	#endregion
 
-	#region Tests
+	#region Copy Constructor Tests
+
+	[Fact]
+	public void TestCopyConstructorCopiesStringEntryValues()
+	{
+		StringEntry originalEntry = new()
+		{
+			Name	= "jcp",
+			Value	= "Journal of Chemical Physics",
+			Comment	= "% Comment before string\n"
+		};
+
+		StringEntry copiedEntry = new(originalEntry);
+
+		Assert.Equal(originalEntry.Type, copiedEntry.Type);
+		Assert.Equal(originalEntry.Name, copiedEntry.Name);
+		Assert.Equal(originalEntry.Value, copiedEntry.Value);
+		Assert.Equal(originalEntry.Comment, copiedEntry.Comment);
+		Assert.Equal(originalEntry.FieldValue, copiedEntry.FieldValue);
+	}
+
+	[Fact]
+	public void TestCopyConstructorCreatesIndependentStringEntryFieldValue()
+	{
+		StringEntry originalEntry = new()
+		{
+			Name	= "jcp",
+			Value	= "Journal of Chemical Physics"
+		};
+
+		StringEntry copiedEntry = new(originalEntry);
+
+		Assert.NotSame(originalEntry.FieldValue, copiedEntry.FieldValue);
+
+		originalEntry.Value = "Updated Journal";
+
+		Assert.Equal("Updated Journal", originalEntry.Value);
+		Assert.Equal("Journal of Chemical Physics", copiedEntry.Value);
+	}
+
+	#endregion
+
+	#region Searching Tests
 
 	[Fact]
     public void TestSearchInValues()

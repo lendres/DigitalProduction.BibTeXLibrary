@@ -1,7 +1,5 @@
 ﻿using DigitalProduction.Strings;
-using Google.Apis.CustomSearchAPI.v1.Data;
 using System.Collections;
-using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -38,7 +36,13 @@ public class BibEntry : BibliographyPart
 		base(bibliographyEntry)
 	{
 		Key		= bibliographyEntry.Key;
-		_fields	= new OrderedDictionary<string, Field>(bibliographyEntry._fields);
+		Type	= bibliographyEntry.Type;
+
+		_fields = new();
+		foreach (KeyValuePair<string, Field> entry in bibliographyEntry._fields)
+		{
+			_fields.Add(entry.Key, new Field(entry.Value));
+		}
 	}
 
 	#endregion

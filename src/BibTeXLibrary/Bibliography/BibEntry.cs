@@ -31,6 +31,16 @@ public class BibEntry : BibliographyPart
 	{
 	}
 
+	/// <summary>
+	/// Default contructor.
+	/// </summary>
+	public BibEntry(BibEntry bibliographyEntry) :
+		base(bibliographyEntry)
+	{
+		Key		= bibliographyEntry.Key;
+		_fields	= new OrderedDictionary<string, Field>(bibliographyEntry._fields);
+	}
+
 	#endregion
 
 	#region Public Static Methods

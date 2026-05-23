@@ -23,17 +23,23 @@ public class StringEntry : BibliographyPart
 	public StringEntry() :
 		base(true)
 	{
-		_field.ModifiedChanged += OnFieldModifiedChanged;
-		_field.PropertyChanged += OnFieldPropertyChanged;
+		HookUpEvents();
 	}
 
 	/// <summary>
 	/// Copy constructor.
 	/// </summary>
 	public StringEntry(StringEntry stringEntry) :
-		this()
+		base(stringEntry)
 	{
 		_field = new Field(stringEntry._field);
+		HookUpEvents();
+	}
+
+	private void HookUpEvents()
+	{
+		_field.ModifiedChanged += OnFieldModifiedChanged;
+		_field.PropertyChanged += OnFieldPropertyChanged;
 	}
 
 	#endregion

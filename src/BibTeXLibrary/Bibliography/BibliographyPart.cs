@@ -9,12 +9,28 @@ namespace BibTeXLibrary;
 /// <remarks>
 /// Default constructor.
 /// </remarks>
-public abstract class BibliographyPart(bool caseSensitiveFields) : NotifyPropertyModifiedChanged
+public abstract class BibliographyPart : NotifyPropertyModifiedChanged
 {
 	#region Fields
 
 	/// <summary>Specifies if the fields are case sensitive.</summary>
 	protected readonly bool		_caseSensitiveFields		= caseSensitiveFields;
+
+	#endregion
+
+	#region Construction
+
+	protected BibliographyPart(bool caseSensitiveFields)
+	{
+		_caseSensitiveFields = caseSensitiveFields;
+	}
+
+	protected BibliographyPart(BibliographyPart bibliographyPart)
+	{
+		_caseSensitiveFields	= bibliographyPart._caseSensitiveFields;
+		Type					= bibliographyPart.Type;
+		Comment					= bibliographyPart.Comment;
+	}
 
 	#endregion
 

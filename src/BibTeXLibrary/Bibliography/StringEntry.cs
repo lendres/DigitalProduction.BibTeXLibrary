@@ -24,6 +24,7 @@ public class StringEntry : BibliographyPart
 		base(true)
 	{
 		HookUpEvents(_field);
+		MarkSaved();
 	}
 
 	/// <summary>

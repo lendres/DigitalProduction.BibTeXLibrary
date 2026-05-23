@@ -43,6 +43,7 @@ public class BibEntry : BibliographyPart
 		{
 			_fields.Add(entry.Key, new Field(entry.Value));
 		}
+		MarkSaved();
 	}
 
 	#endregion

@@ -539,10 +539,7 @@ public class BibEntry : BibliographyPart
 		StringBuilder bibliographyPart = new();
 
 		// Add the comment, if there is one.
-		if (!string.IsNullOrEmpty(Comment))
-		{
-			bibliographyPart.Append(Comment);
-		}
+		AppendComment(bibliographyPart, writeSettings);
 
 		// Build the entry opening and key.
 		bibliographyPart.Append("@");

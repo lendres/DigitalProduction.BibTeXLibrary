@@ -1,5 +1,7 @@
 ﻿using DigitalProduction.ComponentModel;
+using DigitalProduction.Strings;
 using System.ComponentModel;
+using System.Text;
 
 namespace BibTeXLibrary;
 
@@ -99,6 +101,16 @@ public abstract class BibliographyPart : NotifyPropertyModifiedChanged
 	/// </summary>
 	/// <param name="writeSettings">The settings for writing the bibliography file.</param>
 	public abstract string ToString(WriteSettings writeSettings);
+
+
+	protected void AppendComment(StringBuilder bibliographyPart, WriteSettings writeSettings)
+	{
+		if (!string.IsNullOrEmpty(Comment))
+		{
+			bibliographyPart.Append(Comment.RemoveLastLineEnding());
+			bibliographyPart.Append(Environment.NewLine);
+		}
+	}
 
 	#endregion
 

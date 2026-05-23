@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Text;
+﻿using System.Text;
 
 namespace BibTeXLibrary;
 
@@ -119,10 +118,7 @@ public class StringEntry : BibliographyPart
 		StringBuilder bibliographyPart = new();
 
 		// Add the comment, if there is one.
-		if (!string.IsNullOrEmpty(Comment))
-		{
-			bibliographyPart.Append(Comment);
-		}
+		AppendComment(bibliographyPart, writeSettings);
 
 		// Build the entry opening and key.
 		bibliographyPart.Append("@");

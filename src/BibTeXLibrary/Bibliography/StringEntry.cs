@@ -23,7 +23,7 @@ public class StringEntry : BibliographyPart
 	public StringEntry() :
 		base(true)
 	{
-		HookUpEvents();
+		HookUpEvents(_field);
 	}
 
 	/// <summary>
@@ -33,13 +33,7 @@ public class StringEntry : BibliographyPart
 		base(stringEntry)
 	{
 		_field = new Field(stringEntry._field);
-		HookUpEvents();
-	}
-
-	private void HookUpEvents()
-	{
-		_field.ModifiedChanged += OnFieldModifiedChanged;
-		_field.PropertyChanged += OnFieldPropertyChanged;
+		HookUpEvents(_field);
 	}
 
 	#endregion

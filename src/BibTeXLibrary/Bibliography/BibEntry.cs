@@ -519,8 +519,7 @@ public class BibEntry : BibliographyPart
 	/// <param name="field">Field to add.</param>
 	private void AddNewField(Field field)
 	{
-		field.ModifiedChanged += OnFieldModifiedChanged;
-		field.PropertyChanged += OnFieldPropertyChanged;
+		HookUpEvents(field);
 		_fields[field.Name] = field;
 		OnPropertyChanged(nameof(FieldNames));
 		Modified = true;

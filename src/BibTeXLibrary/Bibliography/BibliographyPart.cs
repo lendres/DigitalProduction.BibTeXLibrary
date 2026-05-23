@@ -56,12 +56,18 @@ public abstract class BibliographyPart : NotifyPropertyModifiedChanged
 
 	#region Events
 
-	protected void OnFieldModifiedChanged(object sender, bool modified)
+	protected void HookUpEvents(Field field)
+	{
+		field.ModifiedChanged += OnFieldModifiedChanged;
+		field.PropertyChanged += OnFieldPropertyChanged;
+	}
+
+	private void OnFieldModifiedChanged(object sender, bool modified)
 	{
 		Modified = true;
 	}
 
-	protected void OnFieldPropertyChanged(object? sender, PropertyChangedEventArgs eventArgs)
+	private void OnFieldPropertyChanged(object? sender, PropertyChangedEventArgs eventArgs)
 	{
 		OnPropertyChanged(sender, eventArgs);
 	}

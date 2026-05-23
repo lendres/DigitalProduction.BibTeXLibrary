@@ -221,7 +221,7 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 	/// </summary>
 	/// <param name="sortBy">Method to sort the bibliography entries by.</param>
 	/// <exception cref="ArgumentException">The SortBy method is not valid.</exception>
-	public void SortBibEntries(SortBibliographyBy sortBy)
+	public void SortBibliographyEntries(SortBibliographyBy sortBy)
 	{
 		// The copy constructor doesn't work, it points to the _bibEntry list and when that list is cleared, both are cleared (and the enumerators).
 		BindingList<BibEntry> copy = [];
@@ -249,7 +249,7 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 	/// </summary>
 	/// <param name="sortBy">Method to sort the entries by.</param>
 	/// <exception cref="ArgumentException">The SortBy method is not valid.</exception>
-	public void SortStringConstants(SortStringsBy sortBy)
+	public void SortStringEntries(SortStringsBy sortBy)
 	{
 		// The copy constructor doesn't work, it points to the _bibEntry list and when that list is cleared, both are cleared (and the enumerators).
 		BindingList<StringEntry> copy = [];
@@ -284,7 +284,7 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 	/// <param name="searchString">The string to search for.</param>
 	/// <param name="caseSensitive">Whether the search should be case-sensitive.</param>
 	/// <returns>A list of matching bibliography entries.</returns>
-	public List<BibEntry> SearchBibEntries(IEnumerable<string> fields, bool searchKey, string searchString, bool caseSensitive = false)
+	public List<BibEntry> SearchBibliographyEntries(IEnumerable<string> fields, bool searchKey, string searchString, bool caseSensitive = false)
 	{
 		List<BibEntry> matches		= [];
 		StringComparison comparison	= caseSensitive ? StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase;
@@ -312,9 +312,9 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 	/// <param name="searchString">The string to search for.</param>
 	/// <param name="caseSensitive">Whether the search should be case-sensitive.</param>
 	/// <returns>A list of matching string constants.</returns>
-	public List<StringEntry> SearchStringConstants(bool searchName, string searchString, bool caseSensitive = false)
+	public List<StringEntry> SearchStringEntries(bool searchName, string searchString, bool caseSensitive = false)
 	{
-		List<StringEntry> matches	= [];
+		List<StringEntry> matches		= [];
 		StringComparison comparison		= caseSensitive ? StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase;
 
 		foreach (StringEntry entry in _strings)

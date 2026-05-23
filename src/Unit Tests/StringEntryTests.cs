@@ -172,7 +172,6 @@ public class StringEntryTests
 		};
 
 		string result = stringEntry.ToString(writeSettings);
-
 		Assert.Equal("% Comment before string\n@string(jcp = \"Journal of Chemical Physics\")\n", result);
 	}
 
@@ -259,23 +258,23 @@ public class StringEntryTests
 	[Fact]
     public void TestSearchInValues()
     {
-		List<StringEntry> result = _bibliographyDom.SearchStringConstants(false, "Fiction");
+		List<StringEntry> result = _bibliographyDom.SearchStringEntries(false, "Fiction");
 		Assert.Single(result);
 		
-		result = _bibliographyDom.SearchStringConstants(false, "Journal");
+		result = _bibliographyDom.SearchStringEntries(false, "Journal");
 		Assert.Equal(2, result.Count);
 
-		result = _bibliographyDom.SearchStringConstants(false, "{NUMER}");
+		result = _bibliographyDom.SearchStringEntries(false, "{NUMER}");
 		Assert.Single(result);
 	}
 
 	[Fact]
     public void TestSearchInNames()
     {
-		List<StringEntry> result = _bibliographyDom.SearchStringConstants(true, "A1");
+		List<StringEntry> result = _bibliographyDom.SearchStringEntries(true, "A1");
 		Assert.Single(result);
 		
-		result = _bibliographyDom.SearchStringConstants(true, "key");
+		result = _bibliographyDom.SearchStringEntries(true, "key");
 		Assert.Equal(3, result.Count);
 	}
 

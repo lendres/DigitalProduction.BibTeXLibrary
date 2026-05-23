@@ -30,10 +30,10 @@ public class BibliographyDomSearchingTests
     {
 		List<string> fieldNames = ["booktitle", "author", "year", "abstract"];
 
-		List<BibEntry> result = _bibliographyDom.SearchBibEntries(fieldNames, false, "acme");
+		List<BibEntry> result = _bibliographyDom.SearchBibliographyEntries(fieldNames, false, "acme");
 		Assert.Single(result);
 		
-		result = _bibliographyDom.SearchBibEntries(fieldNames, false, "Journal");
+		result = _bibliographyDom.SearchBibliographyEntries(fieldNames, false, "Journal");
 		Assert.Equal(2, result.Count);
 	}
 
@@ -41,11 +41,11 @@ public class BibliographyDomSearchingTests
     public void TestSearchInSpecificValues()
     {
 		List<string> fieldNames = ["author"];
-		List<BibEntry> result = _bibliographyDom.SearchBibEntries(fieldNames, false, "John");
+		List<BibEntry> result = _bibliographyDom.SearchBibliographyEntries(fieldNames, false, "John");
 		Assert.Single(result);
 	
 		fieldNames = ["author", "abstract"];
-		result = _bibliographyDom.SearchBibEntries(fieldNames, false, "John");
+		result = _bibliographyDom.SearchBibliographyEntries(fieldNames, false, "John");
 		Assert.Equal(2, result.Count);
 	}
 
@@ -53,7 +53,7 @@ public class BibliographyDomSearchingTests
     public void TestSearchWithKeys()
     {
 		List<string> fieldNames = [];
-		List<BibEntry> result = _bibliographyDom.SearchBibEntries(fieldNames, true, "A1");
+		List<BibEntry> result = _bibliographyDom.SearchBibliographyEntries(fieldNames, true, "A1");
 		Assert.Single(result);
 	}
 
@@ -62,7 +62,7 @@ public class BibliographyDomSearchingTests
     {
 		// The book title is "Journal of {SCIENCE} Fiction" but we will search for "Journal of SCIENCE Fiction".
 		List<string> fieldNames = ["booktitle"];
-		List<BibEntry> result = _bibliographyDom.SearchBibEntries(fieldNames, false, "Journal of SCIENCE Fiction");
+		List<BibEntry> result = _bibliographyDom.SearchBibliographyEntries(fieldNames, false, "Journal of SCIENCE Fiction");
 		Assert.Single(result);
 	}
 

@@ -108,7 +108,7 @@ public abstract class BibliographyPart : NotifyPropertyModifiedChanged
 		if (!string.IsNullOrEmpty(Comment))
 		{
 			bibliographyPart.Append(Comment.RemoveLastLineEnding());
-			bibliographyPart.Append(Environment.NewLine);
+			bibliographyPart.Append(writeSettings.NewLine);
 		}
 	}
 

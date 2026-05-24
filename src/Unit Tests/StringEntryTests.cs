@@ -1,6 +1,4 @@
 ﻿using BibTeXLibrary;
-using Newtonsoft.Json.Linq;
-using System.Xml.Linq;
 
 namespace DigitalProduction.UnitTests;
 

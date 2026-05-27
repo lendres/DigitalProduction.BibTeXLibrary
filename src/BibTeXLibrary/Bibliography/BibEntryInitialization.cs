@@ -11,7 +11,7 @@ public class BibEntryInitialization
 {
 	#region Fields
 
-	private SerializableDictionary<string, string>			_typeToTemplateMap			= [];
+	private SerializableDictionary<string, string>			_typeToTemplateMappings		= [];
 	private SerializableDictionary<string, List<string>>	_templates					= [];
 
 	#endregion
@@ -32,8 +32,8 @@ public class BibEntryInitialization
 	/// <summary>
 	/// Type bibliography type to template map.
 	/// </summary>
-	[XmlElement("aliases")]
-	public SerializableDictionary<string, string> Aliases { get => _typeToTemplateMap; set => _typeToTemplateMap = value; }
+	[XmlElement("typetotemplatemappings")]
+	public SerializableDictionary<string, string> TypeToTemplateMappings { get => _typeToTemplateMappings; set => _typeToTemplateMappings = value; }
 
 	/// <summary>
 	/// The templates used to initialize a BibEntry.
@@ -41,7 +41,7 @@ public class BibEntryInitialization
 	[XmlElement("templates")]
 	public SerializableDictionary<string, List<string>> Templates { get => _templates; set => _templates = value; }
 
-	public List<string> TypeNames { get => [.. from string item in _typeToTemplateMap.Keys select item]; }
+	public List<string> TypeNames { get => [.. from string item in _typeToTemplateMappings.Keys select item]; }
 
 	public List<string> TemplateNames { get => [.. from string item in _templates.Keys select item]; }
 
@@ -66,12 +66,7 @@ public class BibEntryInitialization
 	{
 		type = type.ToLower();
 
-		if (_templates.ContainsKey(type))
-		{
-			return _templates[type];
-		}
-
-		if (_typeToTemplateMap.TryGetValue(type, out string? template))
+		if (_typeToTemplateMappings.TryGetValue(type, out string? template))
 		{
 			return _templates[template];
 		}

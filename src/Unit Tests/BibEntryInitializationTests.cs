@@ -14,7 +14,7 @@ public class BibEntryInitializationTests
 
 	public BibEntryInitializationTests()
 	{
-		_initializationFilePath = FindRepositoryFile("User Files", "Bib Entry Initialization.tagord");
+		_initializationFilePath = FindRepositoryFile("User Files", "Bibliography Entry Initialization.bibtmp");
 	}
 
 	#endregion
@@ -27,7 +27,7 @@ public class BibEntryInitializationTests
 		BibEntryInitialization? initialization = BibEntryInitialization.Deserialize(_initializationFilePath);
 
 		Assert.NotNull(initialization);
-		Assert.NotNull(initialization!.Aliases);
+		Assert.NotNull(initialization!.TypeToTemplateMappings);
 		Assert.NotNull(initialization.Templates);
 	}
 
@@ -41,8 +41,8 @@ public class BibEntryInitializationTests
 		Assert.Contains("conference", initialization!.TypeNames);
 		Assert.Contains("article", initialization.TemplateNames);
 
-		Assert.Equal("basic", initialization.Aliases["conference"]);
-		Assert.Equal("inproceedings", initialization.Aliases["incollection"]);
+		Assert.Equal("basic", initialization.TypeToTemplateMappings["conference"]);
+		Assert.Equal("inproceedings", initialization.TypeToTemplateMappings["incollection"]);
 
 		Assert.Equal(["author", "title"], initialization.Templates["basic"]);
 		Assert.Equal("author", initialization.Templates["article"][0]);
@@ -57,10 +57,10 @@ public class BibEntryInitializationTests
 
 		Assert.NotNull(initialization);
 
-		Assert.Equal("basic", initialization!.Aliases["conference"]);
-		Assert.Equal("inproceedings", initialization.Aliases["incollection"]);
-		Assert.Equal("thesis", initialization.Aliases["mastersthesis"]);
-		Assert.Equal("thesis", initialization.Aliases["phdthesis"]);
+		Assert.Equal("basic", initialization!.TypeToTemplateMappings["conference"]);
+		Assert.Equal("inproceedings", initialization.TypeToTemplateMappings["incollection"]);
+		Assert.Equal("thesis", initialization.TypeToTemplateMappings["mastersthesis"]);
+		Assert.Equal("thesis", initialization.TypeToTemplateMappings["phdthesis"]);
 	}
 
 	[Fact]
@@ -80,7 +80,7 @@ public class BibEntryInitializationTests
 	{
 		BibEntryInitialization? initialization = BibEntryInitialization.Deserialize(_initializationFilePath);
 
-		BibEntry entry = BibEntry.NewBibEntryFromTemplate(initialization!, "inproceedings");
+		BibEntry entry = BibEntry.NewBibEntryFromTemplate(initialization!, "proceedings");
 
 		List<string> fields = entry.FieldNames;
 

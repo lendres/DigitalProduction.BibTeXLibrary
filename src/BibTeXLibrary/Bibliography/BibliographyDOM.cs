@@ -61,14 +61,14 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 
 	#region Events
 
-	private void OnBibEntriesCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+	private void OnBibEntriesCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs eventArgs)
 	{
 		Modified = true;
 		OnPropertyChanged(nameof(BibliographyEntries));
 		OnPropertyChanged(nameof(NumberOfBibliographyEntries));
 	}
 
-	private void OnStringsCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+	private void OnStringsCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs eventArgs)
 	{
 		Modified = true;
 		OnPropertyChanged(nameof(StringEntries));
@@ -77,7 +77,10 @@ public class BibliographyDOM : NotifyPropertyModifiedChanged
 
 	private void OnPartModifiedChanged(object sender, bool modified)
 	{
-		Modified = true;
+		if (modified)
+		{
+			Modified = true;
+		}
 	}
 
 	private void OnPartPropertyChanged(object? sender, PropertyChangedEventArgs eventArgs)

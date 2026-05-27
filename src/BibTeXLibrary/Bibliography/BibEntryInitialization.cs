@@ -65,13 +65,8 @@ public class BibEntryInitialization
 	public List<string> GetDefaultFields(string type)
 	{
 		type = type.ToLower();
-
-		if (_typeToTemplateMappings.TryGetValue(type, out string? template))
-		{
-			return _templates[template];
-		}
-		
-		return [];
+		bool foundTemplate = _typeToTemplateMappings.TryGetValue(type, out string? template);
+		return foundTemplate ? _templates[template!] : [];
 	}
 
 	#endregion

@@ -28,8 +28,8 @@
         <item key="unpublished">
             <value>basic</value>
         </item>
-    </aliases>
-    <typetotemplatemappings>
+    </typetotemplatemappings>
+    <templates>
         <item key="article">
             <value>author</value>
             <value>title</value>

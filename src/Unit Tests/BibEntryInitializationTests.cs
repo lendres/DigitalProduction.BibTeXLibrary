@@ -1,4 +1,5 @@
 ﻿using BibTeXLibrary;
+using System.Xml.Serialization;
 
 namespace DigitalProduction.UnitTests;
 
@@ -41,8 +42,8 @@ public class BibEntryInitializationTests
 		Assert.Contains("conference", initialization!.TypeNames);
 		Assert.Contains("article", initialization.TemplateNames);
 
-		Assert.Equal("basic", initialization.TypeToTemplateMappings["conference"]);
-		Assert.Equal("inproceedings", initialization.TypeToTemplateMappings["incollection"]);
+		Assert.Equal("basic", initialization["conference"]);
+		Assert.Equal("inproceedings", initialization["incollection"]);
 
 		Assert.Equal(["author", "title"], initialization.Templates["basic"]);
 		Assert.Equal("author", initialization.Templates["article"][0]);
@@ -57,10 +58,10 @@ public class BibEntryInitializationTests
 
 		Assert.NotNull(initialization);
 
-		Assert.Equal("basic", initialization!.TypeToTemplateMappings["conference"]);
-		Assert.Equal("inproceedings", initialization.TypeToTemplateMappings["incollection"]);
-		Assert.Equal("thesis", initialization.TypeToTemplateMappings["mastersthesis"]);
-		Assert.Equal("thesis", initialization.TypeToTemplateMappings["phdthesis"]);
+		Assert.Equal("basic", initialization!["conference"]);
+		Assert.Equal("inproceedings", initialization["incollection"]);
+		Assert.Equal("thesis", initialization["mastersthesis"]);
+		Assert.Equal("thesis", initialization["phdthesis"]);
 	}
 
 	[Fact]
@@ -102,9 +103,45 @@ public class BibEntryInitializationTests
 		Assert.Empty(fields);
 	}
 
+	[Fact]
+	public void Deserialize()
+	{
+		string xml =
+			"""
+			<?xml version="1.0" encoding="us-ascii"?>
+			<bibentryinitialization xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+			    <typetotemplatemappings>
+			        <item key="booklet">
+						<value from="booklet" to="basic"/>
+			        </item>
+			    </typetotemplatemappings>
+			    <templates>
+			        <item key="basic">
+			            <value>author</value>
+			            <value>title</value>
+			        </item>
+			    </templates>
+			</bibentryinitialization>
+			""";
+
+		BibEntryInitialization initialization = DeserializeObjectFromString<BibEntryInitialization>(xml);
+
+		Assert.Equal("basic", initialization["booklet"]);
+	}
+
+	[Fact]
+	public void Serialize()
+	{
+		BibEntryInitialization initialization = CreateTestInstance();
+
+		string xml = SerializeObjectToString(initialization);
+
+		Assert.Contains("booklet", xml);
+	}
+
 	#endregion
 
-	#region Private Methods
+	#region Helper Methods
 
 	private static string FindRepositoryFile(params string[] pathParts)
 	{
@@ -124,6 +161,33 @@ public class BibEntryInitializationTests
 
 		throw new FileNotFoundException(
 			$"Could not locate repository file: {Path.Combine(pathParts)}");
+	}
+
+	private static BibEntryInitialization CreateTestInstance()
+	{
+		BibEntryInitialization initialization = new();
+
+		initialization.TypeToTemplateMappings.Add("booklet", new NameMap("booklet", "basic"));
+		initialization.Templates.Add("basic", new List<string> { "author", "title" });
+
+		return initialization;
+	}
+
+	private static string SerializeObjectToString<T>(T value)
+	{
+		XmlSerializer serializer = new(typeof(T));
+
+		using StringWriter stringWriter = new();
+		serializer.Serialize(stringWriter, value);
+
+		return stringWriter.ToString();
+	}
+
+	private static T DeserializeObjectFromString<T>(string xml)
+	{
+		XmlSerializer serializer = new(typeof(T));
+		using StringReader stringReader = new(xml);
+		return (T)serializer.Deserialize(stringReader)!;
 	}
 
 	#endregion

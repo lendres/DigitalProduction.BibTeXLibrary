@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <bibentryinitialization xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <aliases>
+    <typetotemplatemappings>
         <item key="booklet">
-            <value>basic</value>
+			<value from="booklet" to="basic"/>
         </item>
         <item key="conference">
-            <value>basic</value>
+			<value from="conference" to="basic"/>
         </item>
         <item key="inbook">
-            <value>basic</value>
+			<value from="inbook" to="basic"/>
         </item>
         <item key="incollection">
-            <value>inproceedings</value>
+			<value from="incollection" to="inproceedings"/>
         </item>
         <item key="mastersthesis">
-            <value>thesis</value>
+			<value from="mastersthesis" to="thesis"/>
         </item>
         <item key="misc">
-            <value>basic</value>
+			<value from="misc" to="basic"/>
         </item>
         <item key="phdthesis">
-            <value>thesis</value>
+			<value from="phdthesis" to="thesis"/>
         </item>
         <item key="proceedings">
-            <value>inproceedings</value>
+			<value from="proceedings" to="inproceedings"/>
         </item>
         <item key="unpublished">
-            <value>basic</value>
+			<value from="unpublished" to="basic"/>
         </item>
-    </aliases>
+    </typetotemplatemappings>
     <templates>
         <item key="article">
             <value>author</value>

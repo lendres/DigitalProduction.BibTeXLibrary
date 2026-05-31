@@ -11,7 +11,7 @@ public class BibEntryInitialization
 {
 	#region Fields
 
-	private SerializableDictionary<string, string>			_typeToTemplateMap			= [];
+	private SerializableDictionary<string, NameMap>			_typeToTemplateMappings		= [];
 	private SerializableDictionary<string, List<string>>	_templates					= [];
 
 	#endregion
@@ -32,8 +32,8 @@ public class BibEntryInitialization
 	/// <summary>
 	/// Type bibliography type to template map.
 	/// </summary>
-	[XmlElement("aliases")]
-	public SerializableDictionary<string, string> Aliases { get => _typeToTemplateMap; set => _typeToTemplateMap = value; }
+	[XmlElement("typetotemplatemappings")]
+	public SerializableDictionary<string, NameMap> TypeToTemplateMappings { get => _typeToTemplateMappings; set => _typeToTemplateMappings = value; }
 
 	/// <summary>
 	/// The templates used to initialize a BibEntry.
@@ -41,13 +41,41 @@ public class BibEntryInitialization
 	[XmlElement("templates")]
 	public SerializableDictionary<string, List<string>> Templates { get => _templates; set => _templates = value; }
 
-	public List<string> TypeNames { get => [.. from string item in _typeToTemplateMap.Keys select item]; }
+	[XmlIgnore()]
+	public List<string> TypeNames { get => [.. from string item in _typeToTemplateMappings.Keys select item]; }
 
+	[XmlIgnore()]
+	public List<NameMap> NameMaps { get => [.. from NameMap item in _typeToTemplateMappings.Values select item]; }
+
+	[XmlIgnore()]
 	public List<string> TemplateNames { get => [.. from string item in _templates.Keys select item]; }
+
+	public string this[string type]
+	{
+		get
+		{
+			type = type.ToLower();
+			bool foundTemplate = _typeToTemplateMappings.TryGetValue(type, out NameMap? nameMap);
+			return foundTemplate? nameMap!.To : string.Empty;
+		}
+	}
 
 	#endregion
 
 	#region Methods
+
+	/// <summary>
+	/// Interface for user interfaces to use to set the type to template mappings.
+	/// </summary>
+	/// <param name="nameMaps"></param>
+	public void SetNameMaps(IEnumerable<NameMap> nameMaps)
+	{
+		_typeToTemplateMappings.Clear();
+		foreach (NameMap nameMap in nameMaps)
+		{
+			_typeToTemplateMappings[nameMap.From] = nameMap;
+		}
+	}
 
 	/// <summary>
 	/// Gets the default set of (ordered) fields for a type of bibliography entry.
@@ -64,19 +92,8 @@ public class BibEntryInitialization
 	/// <param name="type">BibTex entry type.</param>
 	public List<string> GetDefaultFields(string type)
 	{
-		type = type.ToLower();
-
-		if (_templates.ContainsKey(type))
-		{
-			return _templates[type];
-		}
-
-		if (_typeToTemplateMap.TryGetValue(type, out string? template))
-		{
-			return _templates[template];
-		}
-		
-		return [];
+		string toType = this[type];
+		return string.IsNullOrEmpty(toType) ? [] : _templates[toType];
 	}
 
 	#endregion

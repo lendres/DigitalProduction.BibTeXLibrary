@@ -99,7 +99,7 @@ public class BibEntryInitialization
 	public void SetTemplates(SerializableDictionary<string, List<string>> templates)
 	{
 		_templates.Clear();
-		foreach (KeyValuePair<string, List<string>> template in _templates)
+		foreach (KeyValuePair<string, List<string>> template in templates)
 		{
 			_templates[template.Key] = new List<string>(template.Value);
 		}

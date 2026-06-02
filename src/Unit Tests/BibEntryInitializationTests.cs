@@ -1,4 +1,5 @@
 ﻿using BibTeXLibrary;
+using DigitalProduction.Xml.Serialization;
 using System.Xml.Serialization;
 
 namespace DigitalProduction.UnitTests;
@@ -22,34 +23,7 @@ public class BibEntryInitializationTests
 
 	#region Tests
 
-	[Fact]
-	public void TestDeserialize()
-	{
-		BibEntryInitialization? initialization = BibEntryInitialization.Deserialize(_initializationFilePath);
-
-		Assert.NotNull(initialization);
-		Assert.NotNull(initialization!.TypeToTemplateMappings);
-		Assert.NotNull(initialization.Templates);
-	}
-
-	[Fact]
-	public void TestDeserializeReadsExpectedAliasAndTemplate()
-	{
-		BibEntryInitialization? initialization = BibEntryInitialization.Deserialize(_initializationFilePath);
-
-		Assert.NotNull(initialization);
-
-		Assert.Contains("conference", initialization!.TypeNames);
-		Assert.Contains("article", initialization.TemplateNames);
-
-		Assert.Equal("basic", initialization["conference"]);
-		Assert.Equal("inproceedings", initialization["incollection"]);
-
-		Assert.Equal(["author", "title"], initialization.Templates["basic"]);
-		Assert.Equal("author", initialization.Templates["article"][0]);
-		Assert.Equal("title", initialization.Templates["article"][1]);
-		Assert.Equal("journal", initialization.Templates["article"][2]);
-	}
+	#region Basic Tests
 
 	[Fact]
 	public void TestAliases()
@@ -95,13 +69,35 @@ public class BibEntryInitializationTests
 	public void TestGetDefaultFieldsForUnknownType()
 	{
 		BibEntryInitialization? initialization = BibEntryInitialization.Deserialize(_initializationFilePath);
-
 		Assert.NotNull(initialization);
 
 		List<string> fields = initialization!.GetDefaultFields("notARealType");
-
 		Assert.Empty(fields);
 	}
+
+	#endregion
+
+	#region Template Tests
+
+	[Fact]
+	public void TestSetTemplates()
+	{
+		BibEntryInitialization initialization = CreateTestInstance();
+
+		SerializableDictionary<string, List<string>> templates = [];
+		templates.Add("article", ["author", "title", "journal"]);
+		templates.Add("book", ["author", "title", "publisher"]);
+
+		initialization.SetTemplates(templates);
+
+		Assert.Equal(["article", "book"], initialization.TemplateNames);
+		Assert.Equal(["author", "title", "journal"], initialization.Templates["article"]);
+		Assert.Equal(["author", "title", "publisher"], initialization.Templates["book"]);
+	}
+
+	#endregion
+
+	#region Seriiazation Tests
 
 	[Fact]
 	public void Deserialize()
@@ -133,11 +129,41 @@ public class BibEntryInitializationTests
 	public void Serialize()
 	{
 		BibEntryInitialization initialization = CreateTestInstance();
-
 		string xml = SerializeObjectToString(initialization);
-
 		Assert.Contains("booklet", xml);
 	}
+
+	[Fact]
+	public void TestDeserializeFromFile()
+	{
+		BibEntryInitialization? initialization = BibEntryInitialization.Deserialize(_initializationFilePath);
+
+		Assert.NotNull(initialization);
+		Assert.NotNull(initialization!.TypeToTemplateMappings);
+		Assert.NotNull(initialization.Templates);
+	}
+
+	[Fact]
+	public void TestDeserializeReadsExpectedAliasAndTemplate()
+	{
+		BibEntryInitialization? initialization = BibEntryInitialization.Deserialize(_initializationFilePath);
+
+		Assert.NotNull(initialization);
+
+		Assert.Contains("conference", initialization!.TypeNames);
+		Assert.Contains("article", initialization.TemplateNames);
+
+		Assert.Equal("basic", initialization["conference"]);
+		Assert.Equal("inproceedings", initialization["incollection"]);
+
+		Assert.Equal(["author", "title"], initialization.Templates["basic"]);
+		Assert.Equal("author", initialization.Templates["article"][0]);
+		Assert.Equal("title", initialization.Templates["article"][1]);
+		Assert.Equal("journal", initialization.Templates["article"][2]);
+	}
+
+
+	#endregion
 
 	#endregion
 

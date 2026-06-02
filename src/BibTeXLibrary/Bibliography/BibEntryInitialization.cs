@@ -11,6 +11,7 @@ public class BibEntryInitialization
 {
 	#region Fields
 
+	private string											_path						= string.Empty;
 	private SerializableDictionary<string, NameMap>			_typeToTemplateMappings		= [];
 	private SerializableDictionary<string, List<string>>	_templates					= [];
 
@@ -67,13 +68,40 @@ public class BibEntryInitialization
 	/// <summary>
 	/// Interface for user interfaces to use to set the type to template mappings.
 	/// </summary>
-	/// <param name="nameMaps"></param>
+	/// <param name="nameMaps">The NameMaps</param>
+	public IEnumerable<NameMap> CopyNameMaps()
+	{
+		List<NameMap> newNameMaps = new();
+		foreach (KeyValuePair<string, NameMap> keyValuyePair in _typeToTemplateMappings)
+		{
+			newNameMaps.Add(new NameMap(keyValuyePair.Value));
+		}
+		return newNameMaps;
+	}
+
+	/// <summary>
+	/// Interface for user interfaces to use to set the type to template mappings.
+	/// </summary>
+	/// <param name="nameMaps">The NameMaps</param>
 	public void SetNameMaps(IEnumerable<NameMap> nameMaps)
 	{
 		_typeToTemplateMappings.Clear();
 		foreach (NameMap nameMap in nameMaps)
 		{
-			_typeToTemplateMappings[nameMap.From] = nameMap;
+			_typeToTemplateMappings[nameMap.From] = new NameMap(nameMap);
+		}
+	}
+
+	/// <summary>
+	/// Interface for user interfaces to use to set the type to templates.
+	/// </summary>
+	/// <param name="nameMaps"></param>
+	public void SetTemplates(SerializableDictionary<string, List<string>> templates)
+	{
+		_templates.Clear();
+		foreach (KeyValuePair<string, List<string>> template in templates)
+		{
+			_templates[template.Key] = new List<string>(template.Value);
 		}
 	}
 
@@ -101,6 +129,15 @@ public class BibEntryInitialization
 	#region XML
 
 	/// <summary>
+	/// Write this object to a file to the default path (where it was deserialized from).
+	/// </summary>
+	/// <exception cref="InvalidOperationException">Thrown when the projects path is not valid.</exception>
+	public void Serialize()
+	{
+		Serialize(_path);
+	}
+
+	/// <summary>
 	/// Write this object to a file to the provided path.
 	/// </summary>
 	/// <param name="path">Path (full path and filename) to write to.</param>
@@ -122,7 +159,12 @@ public class BibEntryInitialization
 	/// <param name="path">The file to read from.</param>
 	public static BibEntryInitialization? Deserialize(string path)
 	{
-		return Serialization.DeserializeObject<BibEntryInitialization>(path);
+		BibEntryInitialization? initializer = Serialization.DeserializeObject<BibEntryInitialization>(path);
+		if (initializer != null)
+		{
+			initializer._path = path;
+		}
+		return initializer;
 	}
 
 	#endregion

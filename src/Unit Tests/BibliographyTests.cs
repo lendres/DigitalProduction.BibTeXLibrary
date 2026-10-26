@@ -1,4 +1,4 @@
-﻿using BibTeXLibrary;
+using BibTeXLibrary;
 using System.Collections.ObjectModel;
 
 namespace DigitalProduction.UnitTests;
@@ -28,6 +28,28 @@ public class BibliographyTests
 	#region Cite Key
 
 	#region Generation
+
+	[Fact]
+	public void GenerateUniqueCiteKeyIncludesYearForBook()
+	{
+		Bibliography bibliography = ParseBibEntry("@book{bookKey, author = {John Smith}, year = {2023}}");
+		BibEntry entry = bibliography.BibliographyEntries.Last();
+
+		bibliography.GenerateUniqueCiteKey(entry);
+
+		Assert.Equal("ref:smith2023a", entry.Key);
+	}
+
+	[Fact]
+	public void GenerateUniqueCiteKeyIncludesFiledYearForPatent()
+	{
+		Bibliography bibliography = ParseBibEntry("@patent{patentKey, author = {Jane Smith}, filedyear = {2021}}");
+		BibEntry entry = bibliography.BibliographyEntries.Last();
+
+		bibliography.GenerateUniqueCiteKey(entry);
+
+		Assert.Equal("ref:smith2021a", entry.Key);
+	}
 
 	[Fact]
 	public void TestHavingAndInName()

@@ -194,7 +194,13 @@ public class Bibliography : BibliographyDOM
 		}
 
 		key.Append(keyName);
-		key.Append(entry.Year);
+
+        string year = entry.Year;
+        if (string.IsNullOrEmpty(year))
+        {
+            year = entry["filedyear"];
+        }
+        key.Append(year);
 		return key.ToString();
 	}
 
